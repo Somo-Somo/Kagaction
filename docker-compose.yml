@@ -12,3 +12,11 @@ services:
       - ./web:/work
       - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf
     working_dir: /work
+  db:
+    image: neo4j:latest
+    build: ./infra/neo4j
+    ports:
+      - 7474:7474
+      - 7687:7687
+    volumes:
+      - ./database:/data
