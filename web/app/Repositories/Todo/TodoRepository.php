@@ -112,8 +112,8 @@ class TodoRepository implements TodoRepositoryInterface
         $delete_child = $this->client->run(
             <<<'CYPHER'
                 MATCH (user:User { uuid : $user_uuid }) - [r1] -> (todo:Todo{ uuid :$uuid }) ,
-                 (child:Todo) - [*] -> (todo) - [r2] -> (parent),
-                 (todo) - [r3] - (),
+                (todo) - [r2] - ()
+                OPTIONAL MATCH (child:Todo) - [*] -> (todo) - [r3] -> (parent),
                  (child) - [r4] - ()
                 DELETE r1, r2, r3, r4, todo, child
                 RETURN child

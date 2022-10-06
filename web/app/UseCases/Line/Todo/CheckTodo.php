@@ -34,13 +34,22 @@ class CheckTodo
     protected $todo_repository;
 
     /**
-     * @param App\Repositories\Todo\TodoRepositoryInterface $todo_repository_interface
+     * @param \App\UseCases\Line\Todo\CreateTodoListCarouselColumns
      */
-    public function __construct(TodoRepositoryInterface $todo_repository_interface)
-    {
+    protected $create_todo_list_carousel;
+
+    /**
+     * @param App\Repositories\Todo\TodoRepositoryInterface $todo_repository_interface
+     * @param \App\UseCases\Line\Todo\CreateTodoListCarouselColumns  $create_todo_list_carousel
+     */
+    public function __construct(
+        TodoRepositoryInterface $todo_repository_interface,
+        \App\UseCases\Line\Todo\CreateTodoListCarouselColumns $create_todo_list_carousel
+    ) {
         $this->httpClient = new CurlHTTPClient(config('app.line_channel_access_token'));
         $this->bot = new LINEBot($this->httpClient, ['channelSecret' => config('app.line_channel_secret')]);
         $this->todo_repository = $todo_repository_interface;
+        $this->create_todo_list_carousel = $create_todo_list_carousel;
     }
 
     /**
@@ -48,11 +57,27 @@ class CheckTodo
      *
      * @param object $event
      * @param User $line_user
-     * @param string $todo_uuid
+     * @param string $second_value
      * @return
      */
-    public function invoke(object $event, User $line_user, string $action_type, string $todo_uuid)
-    {
+    public function invoke(
+        object $event,
+        User $line_user,
+        string $action_type,
+        string $second_value
+    ) {
+        $todo_uuid = null;
+        $current_page = null;
+        mb_strlen($second_value) === 32 ?
+            $todo_uuid = $second_value :
+            $current_page = intval($second_value);
+
+        Log::debug($action_type);
+        Log::debug($second_value);
+        Log::debug(mb_strlen($second_value));
+        Log::debug(mb_strlen($todo_uuid));
+        Log::debug(mb_strlen($current_page));
+
         if ($action_type === 'FINISH_CHECK_TODO') {
             $message = CheckedTodo::getTextMessageOfFinishCheckTodo($line_user->question);
             $this->bot->replyText($event->getReplyToken(), $message);
@@ -73,45 +98,27 @@ class CheckTodo
                 $next_week = $today_date_time->modify('+1 week')->format('Y-m-d');
                 $todo_list = Todo::where('user_uuid', $line_user->uuid)
                     ->whereBetween('date', [$today, $next_week])
+                    ->orderBy('date', 'asc')
                     ->get();
             } elseif ($action_type === 'SELECT_TODO_LIST_TO_CHECK') {
                 $todo_list = $line_user->todo;
             }
 
-            $todo_carousel_columns = [];
-            foreach ($todo_list as $todo) {
-                if (count($todo->accomplish) === 0) {
-                    $todo_carousel_columns[] = Todo::createBubbleContainer($todo, $action_type);
-                }
-            }
+            $todo_carousel_columns = $this->create_todo_list_carousel->invoke(
+                $line_user,
+                $todo_list,
+                $action_type,
+                $current_page
+            );
 
-            $over_due_todo_list = Todo::where('user_uuid', $line_user->uuid)
-                ->where('date', '<', $today);
-            foreach ($over_due_todo_list as $over_due_todo) {
-                if ($over_due_todo->accomplish === null) {
-                    $todo_carousel_columns[] = Todo::createBubbleContainer($over_due_todo, $action_type);
-                }
-            }
-            $message = Todo::createTodoListTitleMessage($line_user, $action_type, $todo_carousel_columns);
-
-            // 該当のTodoがある場合
-            if (count($todo_carousel_columns) > 0) {
-                $todo_carousels = new CarouselContainerBuilder($todo_carousel_columns);
-                $flex_message = new FlexMessageBuilder(
-                    'やること一覧',
-                    $todo_carousels
-                );
-                $builder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
-                $builder->add(
-                    new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($message['text'])
-                );
-                $builder->add($flex_message);
-            } else {
-                $builder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($message['text']);
-            }
+            $todo_carousels = new CarouselContainerBuilder($todo_carousel_columns);
+            $flex_message = new FlexMessageBuilder(
+                'やること一覧',
+                $todo_carousels
+            );
             $this->bot->replyMessage(
                 $event->getReplyToken(),
-                $builder
+                $flex_message
             );
 
             // なんの振り返りをしているか記憶しておく
