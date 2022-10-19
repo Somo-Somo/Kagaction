@@ -4,6 +4,8 @@ namespace App\UseCases\Line\Todo;
 
 use App\Models\User;
 use App\Models\Todo;
+use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
+use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\CarouselContainerBuilder;
 use DateTime;
 
 class CreateTodoListCarouselColumns
@@ -31,7 +33,6 @@ class CreateTodoListCarouselColumns
         $today_date_time = new DateTime();
         $today = $today_date_time->format('Y-m-d');
 
-
         $todo_carousel_columns = [];
         foreach ($todo_list as $todo) {
             if (count($todo->accomplish) === 0) {
@@ -46,7 +47,7 @@ class CreateTodoListCarouselColumns
         ) {
             $over_due_todo_list = Todo::where('user_uuid', $line_user->uuid)
                 ->where('date', '<', $today)
-                ->orderBy('date', 'asc')
+                ->orderBy('date', 'desc')
                 ->get();
             foreach ($over_due_todo_list as $over_due_todo) {
                 if (count($over_due_todo->accomplish) === 0) {
@@ -71,6 +72,12 @@ class CreateTodoListCarouselColumns
             array_unshift($todo_carousel_columns, $report_message);
         }
 
-        return $todo_carousel_columns;
+        $todo_carousels = new CarouselContainerBuilder($todo_carousel_columns);
+        $flex_message = new FlexMessageBuilder(
+            'やること一覧',
+            $todo_carousels
+        );
+
+        return $flex_message;
     }
 }

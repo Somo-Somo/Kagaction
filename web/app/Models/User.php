@@ -71,4 +71,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Onboarding::class, 'user_uuid', 'uuid');
     }
+
+    /**
+     * ユーザー(LINE)に振り返り通知設定
+     *
+     */
+    public function todo_check_notifications()
+    {
+        return $this->hasOne(TodoCheckNotificationDateTime::class, 'user_uuid', 'uuid');
+    }
 }

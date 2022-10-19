@@ -6,10 +6,11 @@ use App\Models\CheckedTodo;
 use App\Models\User;
 use App\Models\Todo;
 use App\Models\LineUsersQuestion;
+use App\Models\TodoCheckNotificationDateTime;
+use App\UseCases\Line\Todo\Notification\SetupNotificationForTodoCheck;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
 use Illuminate\Support\Facades\Log;
-
 
 class PostbackReceivedAction
 {
@@ -92,12 +93,12 @@ class PostbackReceivedAction
 
         //postbackのデータをactionとuuidで分割
         list($action_data, $uuid_data) = explode("&", $event->getPostbackData());
-        [$action_key, $action_value] = explode("=", $action_data);
+        [$action_key, $action_type] = explode("=", $action_data);
         [$second_key, $second_value] = explode("=", $uuid_data);
 
-        if (isset(LineUsersQuestion::TODO_LIST[$action_value])) {
-            $this->select_todo_list_action->invoke($event, $line_user, $action_value, $second_value);
-        } else if ($action_value === 'ADD_TODO') {
+        if (isset(LineUsersQuestion::TODO_LIST[$action_type])) {
+            $this->select_todo_list_action->invoke($event, $line_user, $action_type, $second_value);
+        } else if ($action_type === 'ADD_TODO') {
             if ($second_value) {
                 $parent_todo = Todo::where('uuid', $second_value)->first();
                 // 返信メッセージ
@@ -108,20 +109,25 @@ class PostbackReceivedAction
                     'parent_uuid' => $second_value,
                 ]);
             }
-        } else if ($action_value === 'LIMIT_DATE') {
+        } else if ($action_type === 'LIMIT_DATE') {
             // 日付に関する質問の場合
             $this->date_response_action->invoke($event, $line_user, $second_value);
-        } else if ($action_value === 'CHANGE_TODO') {
+        } else if ($action_type === 'CHANGE_TODO') {
             $builder = Todo::changeTodo(Todo::where('uuid', $second_value)->first());
             $this->bot->replyMessage($event->getReplyToken(), $builder);
-        } else if ($action_value === 'RENAME_TODO') {
+        } else if ($action_type === 'RENAME_TODO') {
             $this->rename_todo->invoke($event, $line_user, $second_value);
-        } else if (isset(LineUsersQuestion::DELETE_TODO[$action_value])) {
-            $this->delete_todo->invoke($event, $line_user, $action_value, $second_value);
-        } else if (isset(LineUsersQuestion::CHANGE_DATE[$action_value])) {
-            $this->change_date->invoke($event, $line_user, $action_value, $second_value);
-        } else if (isset(CheckedTodo::CHECK_TODO[$action_value])) {
-            $this->check_todo->invoke($event, $line_user, $action_value, $second_value);
+        } else if (isset(LineUsersQuestion::DELETE_TODO[$action_type])) {
+            $this->delete_todo->invoke($event, $line_user, $action_type, $second_value);
+        } else if (isset(LineUsersQuestion::CHANGE_DATE[$action_type])) {
+            $this->change_date->invoke($event, $line_user, $action_type, $second_value);
+        } else if (isset(CheckedTodo::CHECK_TODO[$action_type])) {
+            $this->check_todo->invoke($event, $line_user, $action_type, $second_value);
+        } else if (isset(TodoCheckNotificationDateTime::SETTING_NOTIFICATION_FOR_TODO_CHECK[$action_type])) {
+            $notify_check_todo = new SetupNotificationForTodoCheck();
+            $notify_check_todo->invoke($event, $line_user, $action_type, $second_value);
+        } else if (isset(TodoCheckNotificationDateTime::NOTIFY_TODO_CHECK[$action_type])) {
+            # code...
         }
         return;
     }

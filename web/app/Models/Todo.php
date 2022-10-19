@@ -424,7 +424,7 @@ class Todo extends Model
             $todo_type = 'プロジェクト:「' . $line_user->question->project->name . '」のやること';
         } elseif ($action_type === 'WEEKLY_TODO_LIST' || 'CHECK_TODO_BY_THIS_WEEK') {
             $todo_type = '今週までにやること';
-        } elseif ($action_type === 'CHECK_TODO_BY_TODAY') {
+        } elseif ($action_type === 'CHECK_TODO_BY_TODAY' || $action_type ===  'NOTIFY_TODO_CHECK') {
             $todo_type = '今日までにやること';
         }
 

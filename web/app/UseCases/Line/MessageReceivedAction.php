@@ -7,8 +7,10 @@ use App\Models\User;
 use App\Models\Todo;
 use App\Models\LineUsersQuestion;
 use App\UseCases\Line\ProjectResponseAction;
+use App\UseCases\Line\Todo\Notification\NotifyTodoCheck;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
+use Illuminate\Support\Facades\Log;
 
 
 class MessageReceivedAction
@@ -68,9 +70,9 @@ class MessageReceivedAction
 
         $question_number = $line_user->question->question_number;
         if ($event->getText() === '振り返る') {
-            $this->bot->replyMessage(
+            $test = $this->bot->replyMessage(
                 $event->getReplyToken(),
-                CheckedTodo::askWhichCheckTodo()
+                CheckedTodo::createCheckTodoFlexMessage()
             );
         } else if ($event->getText() === 'やること') {
             // リッチメニューからやることを選択
@@ -83,6 +85,9 @@ class MessageReceivedAction
                 $event->getReplyToken(),
                 'ごめんなさい！まだ使い方の説明を実装してないです！'
             );
+        } else if ($event->getText() === 'テスト') {
+            $notify_todo_check = new NotifyTodoCheck();
+            $notify_todo_check->invoke($event);
         } else if ($question_number === LineUsersQuestion::NO_QUESTION) {
             // 質問がない場合
         } else if ($question_number === LineUsersQuestion::PROJECT) {
