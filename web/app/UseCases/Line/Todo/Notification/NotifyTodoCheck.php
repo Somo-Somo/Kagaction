@@ -41,16 +41,20 @@ class NotifyTodoCheck
      */
     public function invoke()
     {
+        Log::info('success');
         $datetime = new DateTime();
         $time = $datetime->format('H') . ':00';
         $day_of_week = date('w');
         $recive_notification_users = TodoCheckNotificationDateTime::where('notification_time', $time)
-            ->where('notification_time', $time)
             ->where(function ($query) use ($day_of_week) {
                 $query->orwhere('notification_date', 7)
                     ->orwhere('notification_date', $day_of_week);
             })->get();
+        Log::debug($time);
+        Log::debug((array)$recive_notification_users);
+        Log::debug(count($recive_notification_users));
         if (count($recive_notification_users) > 0) {
+            Log::info('has');
             foreach ($recive_notification_users as  $recive_notification_user) {
                 $today_date_time = new DateTime();
                 $today = $today_date_time->format('Y-m-d');
@@ -77,10 +81,11 @@ class NotifyTodoCheck
                 $multi_message_builder = new MultiMessageBuilder();
                 $multi_message_builder->add(new TextMessageBuilder($notify_todo_check_message));
                 $multi_message_builder->add($second_message);
-                $this->bot->pushMessage(
+                $log = $this->bot->pushMessage(
                     $recive_notification_user->users->line_user_id,
                     $multi_message_builder
                 );
+                Log::debug((array)$log);
             }
         }
         return;

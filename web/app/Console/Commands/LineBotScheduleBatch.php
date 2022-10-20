@@ -39,7 +39,7 @@ class LineBotScheduleBatch extends Command
      */
     public function handle()
     {
-        Log::info('success');
+        Log::info('start');
         $notify_todo_check = new NotifyTodoCheck();
         $notify_todo_check->invoke();
         return 0;
