@@ -7,8 +7,6 @@ use App\Models\Todo;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
-use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
-use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\CarouselContainerBuilder;
 use DateTime;
 
 class SelectTodoListAction
@@ -67,18 +65,13 @@ class SelectTodoListAction
             $todo_list = [];
         }
 
-        $todo_carousel_columns = $this->create_todo_list_carousel->invoke(
+        $flex_message = $this->create_todo_list_carousel->invoke(
             $line_user,
             $todo_list,
             $action_value,
             $current_page
         );
 
-        $todo_carousels = new CarouselContainerBuilder($todo_carousel_columns);
-        $flex_message = new FlexMessageBuilder(
-            'やること一覧',
-            $todo_carousels
-        );
         $this->bot->replyMessage(
             $event->getReplyToken(),
             $flex_message

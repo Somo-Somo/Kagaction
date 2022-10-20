@@ -42,7 +42,7 @@ class NotifyTodoCheck
     public function invoke()
     {
         $datetime = new DateTime();
-        $time = $datetime->format('H') . ':00:00';
+        $time = $datetime->format('H') . ':00';
         $day_of_week = date('w');
         $recive_notification_users = TodoCheckNotificationDateTime::where('notification_time', $time)
             ->where('notification_time', $time)

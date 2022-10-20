@@ -107,9 +107,33 @@ class TodoRepository implements TodoRepositoryInterface
      * @param array $todo
      * @return array $delete_child
      */
-    public function destroy(array $todo)
+    public function fetchDeleteTodo(array $todo)
     {
         $delete_child = $this->client->run(
+            <<<'CYPHER'
+                MATCH (user:User { uuid : $user_uuid }) - [r1] -> (todo:Todo{ uuid :$uuid }) ,
+                (todo) - [r2] - ()
+                OPTIONAL MATCH (child:Todo) - [*] -> (todo) - [r3] -> (parent),
+                 (child) - [r4] - ()
+                RETURN collect(DISTINCT child) AS childs
+                CYPHER,
+            [
+                'uuid' => $todo['uuid'],
+                'user_uuid' => $todo['user_uuid'],
+            ]
+        );
+        return $delete_child->toArray();
+    }
+
+    /**
+     * Todoとユーザーを結ぶリレーションを削除
+     *
+     * @param array $todo
+     * @return array $delete_child
+     */
+    public function destroy(array $todo)
+    {
+        $this->client->run(
             <<<'CYPHER'
                 MATCH (user:User { uuid : $user_uuid }) - [r1] -> (todo:Todo{ uuid :$uuid }) ,
                 (todo) - [r2] - ()
@@ -123,7 +147,6 @@ class TodoRepository implements TodoRepositoryInterface
                 'user_uuid' => $todo['user_uuid'],
             ]
         );
-        return $delete_child->toArray();
     }
 
     /**

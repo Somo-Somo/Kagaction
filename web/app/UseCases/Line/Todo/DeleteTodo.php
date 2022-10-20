@@ -7,8 +7,7 @@ use App\Models\Todo;
 use App\Repositories\Todo\TodoRepositoryInterface;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
-
-use function Psy\debug;
+use Illuminate\Support\Facades\Log;
 
 class DeleteTodo
 {
@@ -54,11 +53,12 @@ class DeleteTodo
                 Todo::confirmDeleteTodo($todo)
             );
         } else if ($action_type === 'OK_DELETE_TODO') {
-            // neo4j側のTodoを削除and削除されるTodo以下の子Todoを持ってくる
-            $delete_childs = $this->todo_repository->destroy([
+            //neo4j側のTodoを削除and削除されるTodo以下の子Todoを持ってくる
+            $delete_childs = $this->todo_repository->fetchDeleteTodo([
                 'uuid' => $todo_uuid,
                 'user_uuid' => $line_user->uuid
             ]);
+            $delete_childs = $delete_childs[0]['childs'];
 
             $delete_num = count($delete_childs) + 1;
             $message = '「' . $todo->name . '」を含む' . $delete_num . '件のやることが削除されました';
@@ -72,11 +72,16 @@ class DeleteTodo
             // 削除するTodoのuuidだけ配列に入れる
             $delete_uuids = [$todo_uuid];
             foreach ($delete_childs as $delete_child) {
-                $delete_uuids[] = $delete_child->toArray()['child']->getProperties()['uuid'];
+                $delete_uuids[] = $delete_child['properties']->toArray()['uuid'];
             }
-
+            Log::debug($delete_uuids);
             // SQLの方のTodoを削除
             Todo::whereIn('uuid', $delete_uuids)->delete();
+            $this->todo_repository->destroy([
+                'uuid' => $todo_uuid,
+                'user_uuid' => $line_user->uuid
+            ]);
+            // $test = Todo::where('id', '>', 32)->delete();
         } else if ($action_type === 'NOT_DELETE_TODO') {
             // 削除のキャンセル
             // 返信メッセージ
