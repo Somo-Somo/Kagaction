@@ -74,17 +74,20 @@ class MessageReceivedAction
                 $event->getReplyToken(),
                 CheckedTodo::createCheckTodoFlexMessage()
             );
+            if ($line_user->question->checked_todo) $line_user->question->update(['checked_todo' => null, 'parent_uuid' => null]);
         } else if ($event->getText() === 'やること') {
             // リッチメニューからやることを選択
             $this->bot->replyMessage(
                 $event->getReplyToken(),
                 Todo::askAddOrList($line_user->name)
             );
+            if ($line_user->question->checked_todo) $line_user->question->update(['checked_todo' => null, 'parent_uuid' => null]);
         } else if ($event->getText() === '使い方') {
             $this->bot->replyText(
                 $event->getReplyToken(),
                 'ごめんなさい！まだ使い方の説明を実装してないです！'
             );
+            if ($line_user->question->checked_todo) $line_user->question->update(['checked_todo' => null, 'parent_uuid' => null]);
         } else if ($event->getText() === 'テスト') {
             $notify_todo_check = new NotifyTodoCheck();
             $notify_todo_check->invoke($event);

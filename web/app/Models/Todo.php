@@ -276,7 +276,7 @@ class Todo extends Model
     {
         $carouselText =  '「' . $project->name . '」のやること一覧に戻りますか？';
         $actions = [
-            new PostbackTemplateActionBuilder('戻る', 'action=TODO_LIST&todo_uuid=' . $project->uuid),
+            new PostbackTemplateActionBuilder('戻る', 'action=ALL_TODO_LIST&page=1'),
         ];
         $builder = new CarouselColumnTemplateBuilder(null, $carouselText, null, $actions);
         return $builder;
