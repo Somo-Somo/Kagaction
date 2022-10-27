@@ -4,6 +4,7 @@ namespace App\UseCases\Line\Todo;
 
 use App\Models\User;
 use App\Models\Todo;
+use App\Models\Habit;
 use App\Repositories\Date\DateRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
@@ -73,7 +74,11 @@ class ChangeDate
 
             // Neo4jのアップデート
             $this->date_repository->updateDate($new_date);
+        } else if ($action_type === 'ASK_CHANGE_INTERVAL') {
+            $multi_message_builder = Habit::askFrequencyHabit(['uuid' => $todo->uuid, 'name' => $todo->name]);
+            $this->bot->replyMessage($event->getReplyToken(), $multi_message_builder);
         }
+
         return;
     }
 }

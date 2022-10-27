@@ -98,7 +98,8 @@ class MessageReceivedAction
             $this->project_response_action->invoke($event, $line_user);
         } else if (
             $question_number === LineUsersQuestion::GOAL ||
-            $question_number === LineUsersQuestion::TODO
+            $question_number === LineUsersQuestion::TODO ||
+            $question_number === LineUsersQuestion::HABIT
         ) {
             // TodoやGOALに関する質問の場合
             $this->todo_response_action->invoke($event, $line_user, $question_number);

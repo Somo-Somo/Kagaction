@@ -4,6 +4,7 @@ namespace App\UseCases\Line;
 
 use App\Models\User;
 use App\Models\Todo;
+use App\Models\Habit;
 use App\Models\LineUsersQuestion;
 use App\Repositories\Goal\GoalRepositoryInterface;
 use App\Repositories\Todo\TodoRepositoryInterface;
@@ -80,19 +81,19 @@ class TodoResponseAction
             'depth' => $depth
         ];
 
+        $message_builder = $question_number === LineUsersQuestion::HABIT ?
+            Habit::askFrequencyHabit($todo) : Todo::askTodoLimited($line_user->name, $todo);
+
         // 返信メッセージ(日付)
-        $this->bot->replyMessage(
-            $event->getReplyToken(),
-            Todo::askTodoLimited($line_user->name, $todo)
-        );
+        $this->bot->replyMessage($event->getReplyToken(), $message_builder);
 
         // TodoのSQLへの保存
         Todo::create($todo);
 
-        //質問の更新
+        //質問の消す
         $line_user->question->update([
-            'question_number' => LineUsersQuestion::DATE,
-            'parent_uuid' => $todo['uuid']
+            'question_number' => LineUsersQuestion::NO_QUESTION,
+            'parent_uuid' => null
         ]);
 
         // GraphDBに保存

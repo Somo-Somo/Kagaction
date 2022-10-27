@@ -15,7 +15,8 @@ class LineUsersQuestion extends Model
     const PROJECT = 1;
     const GOAL = 2;
     const TODO = 3;
-    const DATE = 4;
+    const HABIT = 4;
+    const DATE = 5;
     const RENAME_TODO = 31;
     const TODO_LIST = [
         'ALL_TODO_LIST' => true,
@@ -24,15 +25,6 @@ class LineUsersQuestion extends Model
     const ADD_TODO = 'ADD_TODO';
     const LIMIT_DATE = 'LIMIT_DATE';
     const CHANGE_TODO = 'CHANGE_TODO';
-    const DELETE_TODO = [
-        'DELETE_TODO' => true,
-        'OK_DELETE_TODO' => true,
-        'NOT_DELETE_TODO' => true
-    ];
-    const CHANGE_DATE = [
-        'ASK_RESCHEDULE' => true,
-        'RESCHEDULE' => true,
-    ];
 
     /**
      * The attributes that are mass assignable.

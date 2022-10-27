@@ -148,7 +148,7 @@ class TodoCheckNotificationDateTime extends Model
      */
     public static function createSettingTimeMessageBuilder(string $notify_setting_value)
     {
-        [$day_of_week, $meridiem] = explode("-", $notify_setting_value);
+        [$day_of_week, $meridiem] = explode(",", $notify_setting_value);
         // body
         $body_box_contents = [];
         for ($column = 0; $column < 6; $column++) {
@@ -161,7 +161,7 @@ class TodoCheckNotificationDateTime extends Model
                 } else {
                     $time =  $column + 12 + (6 * $row) . ':00';
                 }
-                $data =  'action=FINISH_SETTING_NOTIFICATION_CHECK_TODO&value=' . $day_of_week . '-' . $time;
+                $data =  'action=FINISH_SETTING_NOTIFICATION_CHECK_TODO&value=' . $day_of_week . ',' . $time;
                 $button_component =  new ButtonComponentBuilder(
                     new PostbackTemplateActionBuilder($time, $data),
                 );
@@ -229,7 +229,7 @@ class TodoCheckNotificationDateTime extends Model
             $text_component = [$meridiem_text_component];
             $post_back_template_action = new PostbackTemplateActionBuilder(
                 $meridiem,
-                'action=SETTING_NOTIFY_DATETIME&value=' . $day_of_week . '-' . $meridiem_key
+                'action=SETTING_NOTIFY_DATETIME&value=' . $day_of_week . ',' . $meridiem_key
             );
             $meridiem_box_component = new BoxComponentBuilder('vertical', $text_component);
             $meridiem_box_component->setAction($post_back_template_action);

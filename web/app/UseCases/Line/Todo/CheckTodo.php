@@ -135,8 +135,8 @@ class CheckTodo
                 $builder->add(new TemplateMessageBuilder('やることの追加', CheckedTodo::addTodoAfterCheckTodo($todo)));
                 $this->bot->replyMessage($event->getReplyToken(), $builder);;
             } else if ($action_type === 'ADD_TODO_AFTER_CHECK_TODO') {
-                $builder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder(Todo::askTodoName($todo));
-                $this->bot->replyMessage($event->getReplyToken(), $builder);
+                $multi_message_builder = Todo::selectWhetherToAddTodoOrHabitMessageBuilder($todo);
+                $this->bot->replyMessage($event->getReplyToken(), $multi_message_builder);
                 // なんのTodoのためのTodoを追加するか記憶しておく
                 $line_user->question->update([
                     'question_number' => LineUsersQuestion::TODO,

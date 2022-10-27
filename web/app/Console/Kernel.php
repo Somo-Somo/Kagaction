@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('batch:line-bot-schedule')->hourly();
+        $schedule->command('batch:update-habit-date')->daily();
     }
 
     /**

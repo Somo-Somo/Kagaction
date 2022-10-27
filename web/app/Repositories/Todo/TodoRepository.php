@@ -190,4 +190,34 @@ class TodoRepository implements TodoRepositoryInterface
             ]
         );
     }
+
+    /**
+     * 習慣にする
+     *
+     * @param array $todo
+     */
+    public function updateHabit(array $todo)
+    {
+        $this->client->run(
+            <<<'CYPHER'
+                    MATCH (user:User { uuid : $user_uuid }), (todo:Todo { uuid: $uuid })
+                    SET todo.interval = $interval,
+                    todo.habit_date = $habit_day_no
+                    WITH user,todo
+                    OPTIONAL MATCH x = (user)-[updated:UPDATED]->(todo)
+                    WHERE x IS NOT NULL
+                    SET updated.at = localdatetime({timezone: 'Asia/Tokyo'})
+                    WITH user,todo,x
+                    WHERE x IS NULL
+                    CREATE (user)-[:UPDATED{at:localdatetime({timezone: 'Asia/Tokyo'})}]->(todo)
+                    RETURN todo
+                    CYPHER,
+            [
+                'uuid' => $todo['uuid'],
+                'user_uuid' => $todo['user_uuid'],
+                'interval' => $todo['interval'],
+                'habit_day_no' => $todo['habit_day_no'],
+            ]
+        );
+    }
 }

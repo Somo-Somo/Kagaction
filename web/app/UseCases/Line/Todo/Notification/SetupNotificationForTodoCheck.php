@@ -90,7 +90,7 @@ class SetupNotificationForTodoCheck
             );
         } else if ($action_type === 'FINISH_SETTING_NOTIFICATION_CHECK_TODO') {
             $day_of_weeks = ['日', '月', '火', '水', '木', '金', '土', '毎日'];
-            [$day_of_week, $time] = explode("-", $notify_setting_value);
+            [$day_of_week, $time] = explode(",", $notify_setting_value);
             $notification_date = $day_of_weeks[$day_of_week] === '毎日' ?
                 $day_of_weeks[$day_of_week] : '毎週' . $day_of_weeks[$day_of_week] . '曜日';
             $reply_message = '振り返りの時間を「' . $notification_date  . $time . '」に設定しました！';

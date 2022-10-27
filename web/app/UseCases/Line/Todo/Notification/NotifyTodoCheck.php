@@ -2,6 +2,7 @@
 
 namespace App\UseCases\Line\Todo\Notification;
 
+use App\Models\CheckedTodo;
 use App\Models\Todo;
 use App\Models\TodoCheckNotificationDateTime;
 use App\UseCases\Line\Todo\CreateTodoListCarouselColumns as TodoCreateTodoListCarouselColumns;
@@ -66,16 +67,20 @@ class NotifyTodoCheck
                     $notify_todo_check_message =
                         '振り返りの時間です。' . "\n" . $recive_notification_user->users->name . 'さんが今日までにやるもの一覧です。' . "\n" . '頑張って振り返っていきましょう!';
                     $create_todo_list_carousel_columns_action = new TodoCreateTodoListCarouselColumns();
+                    $action_type = 'CHECK_TODO_BY_TODAY';
                     $second_message = $create_todo_list_carousel_columns_action->invoke(
                         $recive_notification_user->users,
                         $todo_list,
-                        $action_type = 'NOTIFY_TODO_CHECK',
+                        $action_type,
                         $current_page = 1
                     );
+                    $recive_notification_user->question->update([
+                        'checked_todo' => CheckedTodo::CHECK_TODO[$action_type]
+                    ]);
                 } else {
                     $notify_todo_check_message =
                         '振り返りの時間です。' . "\n" . $recive_notification_user->users->name . 'さんが今日までにやることは0件です。' . "\n" . '目標達成のためにやることを追加していきましょう！';
-                    $second_message = new TextMessageBuilder('後で実装');
+                    $second_message = new TextMessageBuilder('やることを追加しましょう！');
                 }
 
                 $multi_message_builder = new MultiMessageBuilder();

@@ -4,6 +4,7 @@ namespace App\UseCases\Line\Todo;
 
 use App\Models\User;
 use App\Models\Todo;
+use App\Models\Habit;
 use App\Repositories\Todo\TodoRepositoryInterface;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
@@ -74,14 +75,14 @@ class DeleteTodo
             foreach ($delete_childs as $delete_child) {
                 $delete_uuids[] = $delete_child['properties']->toArray()['uuid'];
             }
-            Log::debug($delete_uuids);
+
+            Habit::whereIn('todo_uuid', $delete_uuids)->delete();
             // SQLの方のTodoを削除
             Todo::whereIn('uuid', $delete_uuids)->delete();
             $this->todo_repository->destroy([
                 'uuid' => $todo_uuid,
                 'user_uuid' => $line_user->uuid
             ]);
-            // $test = Todo::where('id', '>', 32)->delete();
         } else if ($action_type === 'NOT_DELETE_TODO') {
             // 削除のキャンセル
             // 返信メッセージ

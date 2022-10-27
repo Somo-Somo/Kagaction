@@ -2,18 +2,19 @@
 
 namespace App\Console\Commands;
 
-use App\UseCases\Line\Todo\Notification\NotifyTodoCheck;
+use App\UseCases\Line\Habit\UpdateHabitDate;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class LineBotScheduleBatch extends Command
+
+class UpdateHabitDateBatch extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'batch:line-bot-schedule';
+    protected $signature = 'batch:update-habit-date';
 
     /**
      * The console command description.
@@ -39,10 +40,9 @@ class LineBotScheduleBatch extends Command
      */
     public function handle()
     {
-        Log::info('schedule-batch');
-        $notify_todo_check = new NotifyTodoCheck();
-        $notify_todo_check->invoke();
-
+        Log::info('update-habit-date');
+        $update_habit_date = new UpdateHabitDate();
+        $update_habit_date->invoke();
         return 0;
     }
 }

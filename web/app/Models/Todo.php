@@ -14,6 +14,7 @@ use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselColumnTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ConfirmTemplateBuilder;
+use LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\BoxComponentBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\TextComponentBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\IconComponentBuilder;
@@ -22,10 +23,10 @@ use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\SeparatorComponentBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\BlockStyleBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\BubbleStylesBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\BubbleContainerBuilder;
+use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\CarouselContainerBuilder;
+use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
+use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
 
-use SebastianBergmann\Template\Template;
-
-use function Psy\debug;
 use Illuminate\Support\Facades\Log;
 
 class Todo extends Model
@@ -85,6 +86,43 @@ class Todo extends Model
         return $this->hasMany(CheckedTodo::class, 'todo_uuid', 'uuid');
     }
 
+    /**
+     * Todoに紐づく習慣
+     *
+     */
+    public function habit()
+    {
+        return $this->hasMany(Habit::class, 'todo_uuid', 'uuid');
+    }
+
+    /**
+     * Todo追加
+     */
+    const ADD_TODO = [
+        'SELECT_WHETHER_TO_ADD_TODO_OR_HABIT' => true,
+        'ADD_TODO' => true,
+        'ADD_HABIT' => true,
+    ];
+
+    /**
+     * 日付をつける
+     */
+    const DATE = [
+        'ASK_DATE_LIMIT' => true,
+    ];
+
+    const DELETE_TODO = [
+        'DELETE_TODO' => true,
+        'OK_DELETE_TODO' => true,
+        'NOT_DELETE_TODO' => true
+    ];
+
+    const CHANGE_DATE = [
+        'ASK_RESCHEDULE' => true,
+        'RESCHEDULE' => true,
+        'ASK_CHANGE_INTERVAL' => true,
+        'CHANGE_INTERVAL' => true,
+    ];
 
     /**
      *
@@ -117,11 +155,13 @@ class Todo extends Model
      * Todoの名前を聞く
      *
      * @param Todo $todo
+     * @param string $action_type
      * @return string $reply_message
      */
-    public static function askTodoName(Todo $todo)
+    public static function askTodoName(Todo $todo, string $action_type)
     {
-        return '「' . $todo->name . '」を達成するためにやることを教えてください！';
+        $to_achieve = $action_type === 'ADD_TODO' ? 'こと' : '習慣';
+        return '「' . $todo->name . '」を達成するためにやる' . $to_achieve . 'を教えてください！';
     }
 
     /**
@@ -148,6 +188,74 @@ class Todo extends Model
     }
 
     /**
+     *
+     *
+     * やることの追加 AddTodo
+     *
+     *
+     */
+
+    /**
+     *
+     * 習慣を追加するのかやることを追加するのか聞く
+     *
+     * @param Todo $parent_todo
+     * @return \LINE\LINEBot\MessageBuilder\FlexMessageBuilder
+     */
+    public static function selectWhetherToAddTodoOrHabitMessageBuilder(Todo $parent_todo)
+    {
+        $actions = [];
+        $todo_or_habit = ['やること', '習慣'];
+
+        foreach ($todo_or_habit as $key => $select_type) {
+            $text_component  = new TextComponentBuilder($select_type, 1);
+            $text_component->setWeight('bold');
+            $text_component->setGravity('center');
+            $text_component->setAlign('center');
+            $text_component_builders = [$text_component];
+            $action = $select_type === 'やること' ? 'ADD_TODO' : 'ADD_HABIT';
+            $post_back_template_action = new PostbackTemplateActionBuilder(
+                $select_type,
+                'action=' . $action . '&todo_uuid=' . $parent_todo->uuid
+            );
+            $box_component = new BoxComponentBuilder('vertical', $text_component_builders);
+            $box_component->setAction($post_back_template_action);
+            $box_component->setHeight('80px');
+            $bubble_container = new BubbleContainerBuilder();
+            $bubble_container->setBody($box_component);
+            $bubble_container->setSize('nano');
+            $actions[] = $bubble_container;
+        }
+        $carousels = new CarouselContainerBuilder($actions);
+        $question_message = '「' . $parent_todo->name . '」を達成するために「やること」と「習慣」どちらを追加しますか？';
+
+        $multi_message_builder = new MultiMessageBuilder();
+        $multi_message_builder->add(new TextMessageBuilder($question_message));
+        $multi_message_builder->add(new FlexMessageBuilder($question_message, $carousels));
+
+        return $multi_message_builder;
+    }
+
+    /**
+     * Todo追加した後どうするか
+     *
+     * @param Todo $todo
+     * @param User $line_user
+     * @param string $date
+     * @return \LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselTemplateBuilder
+     */
+    public static function createWhatToDoAfterAddingTodoCarousel(Todo $todo, User $line_user)
+    {
+        $parent_todo = Todo::where('uuid', $todo->parent_uuid)->first();
+        $carousel_columns = [
+            Todo::continueAddTodoOfTodo($todo),
+            Todo::continueAddTodoOfParentTodo($parent_todo),
+        ];
+        if (!$line_user->question->checked_todo) $carousel_columns[] = Todo::comeBackTodoList($todo->project);
+        return new CarouselTemplateBuilder($carousel_columns);
+    }
+
+    /**
      * 作ったTodoのTodoを新しく追加する
      *
      * @param object $todo
@@ -157,7 +265,7 @@ class Todo extends Model
     {
         $carouselText =  '「' . $todo->name . '」を達成するためにやることを新しく追加しますか?';
         $actions = [
-            new PostbackTemplateActionBuilder('追加する', 'action=ADD_TODO&todo_uuid=' . $todo->uuid),
+            new PostbackTemplateActionBuilder('追加する', 'action=SELECT_WHETHER_TO_ADD_TODO_OR_HABIT&todo_uuid=' . $todo->uuid),
         ];
         $builder = new CarouselColumnTemplateBuilder(null, $carouselText, null, $actions);
         return $builder;
@@ -173,7 +281,7 @@ class Todo extends Model
     {
         $carouselText =  '「' . $parent_todo->name . '」を達成するためにやることを引き続き追加しますか?';
         $actions = [
-            new PostbackTemplateActionBuilder('追加する', 'action=ADD_TODO&todo_uuid=' . $parent_todo->uuid),
+            new PostbackTemplateActionBuilder('追加する', 'action=SELECT_WHETHER_TO_ADD_TODO_OR_HABIT&todo_uuid=' . $parent_todo->uuid),
         ];
         $builder = new CarouselColumnTemplateBuilder(null, $carouselText, null, $actions);
         return $builder;
@@ -189,6 +297,9 @@ class Todo extends Model
     public static function changeTodo(Todo $todo)
     {
         $title =  '「' . $todo->name . '」';
+        $change_date_postback = count($todo->habit) > 0 ?
+            new PostbackTemplateActionBuilder('習慣の変更', 'action=ASK_CHANGE_INTERVAL&todo_uuid=' . $todo->uuid) :
+            new PostbackTemplateActionBuilder('期限の変更', 'action=ASK_RESCHEDULE&todo_uuid=' . $todo->uuid);
         return new TemplateMessageBuilder(
             $title,
             new ButtonTemplateBuilder(
@@ -198,7 +309,7 @@ class Todo extends Model
                 [
                     new PostbackTemplateActionBuilder("名前の変更", 'action=RENAME_TODO&todo_uuid=' . $todo->uuid),
                     new PostbackTemplateActionBuilder('やることの削除', 'action=DELETE_TODO&todo_uuid=' . $todo->uuid),
-                    new PostbackTemplateActionBuilder('期限の変更', 'action=ASK_RESCHEDULE&todo_uuid=' . $todo->uuid),
+                    $change_date_postback
                 ]
             )
         );
@@ -312,7 +423,7 @@ class Todo extends Model
                     'いつまでに達成したいか考えてみよう！', // text
                     null, // 画像url
                     [
-                        new DatetimePickerTemplateActionBuilder('期日を選択', 'action=LIMIT_DATE&todo_uuid=' . $todo['uuid'], 'date')
+                        new DatetimePickerTemplateActionBuilder('期日を選択', 'action=ASK_DATE_LIMIT&todo_uuid=' . $todo['uuid'], 'date')
                     ]
                 )
             )
@@ -541,7 +652,8 @@ class Todo extends Model
             $subtitle_text = 'プロジェクト:「' . $todo->project->name . '」のゴール';
         } else {
             $parent_todo = Todo::where('uuid', $todo->parent_uuid)->first();
-            $subtitle_text = '「' . $parent_todo->name . '」のためにやること';
+            $todo_or_habit = $todo->habit() ? '習慣' : 'こと';
+            $subtitle_text = '「' . $parent_todo->name . '」のためにやる' . $todo_or_habit . 'こと';
         }
         $subtitle_text_component = new TextComponentBuilder($subtitle_text);
         $subtitle_text_component->setSize("xxs");
@@ -618,6 +730,19 @@ class Todo extends Model
             }
         } else {
             $date_text = "日付:未設定";
+        }
+
+        $habit = Habit::where('todo_uuid', $todo->uuid)->first();
+        if ($habit) {
+            if ($habit->day && Habit::FREQUENCY['毎週'] === $habit->interval) {
+                $date_text = $date_text . '（毎週' . Habit::DAY_OF_WEEK_JA[$habit->day] . '曜日）';
+            } else if ($habit->day && Habit::FREQUENCY['毎月'] === $habit->interval) {
+                $date_text = $habit->day !== 32 ?
+                    $date_text . '（毎月' . $habit->day . '日）' :
+                    $date_text . '（毎月末日）';
+            } else {
+                $date_text = $date_text . '（' . array_keys(Habit::FREQUENCY, $habit->interval)[0] . '）';
+            }
         }
 
         $date_text_component = new TextComponentBuilder($date_text);
@@ -752,12 +877,12 @@ class Todo extends Model
             $actions[] = $check_todo_btn;
         } else {
             $change_todo_btn = new ButtonComponentBuilder(
-                new PostbackTemplateActionBuilder('名前・期限の変更/削除', 'action=CHANGE_TODO&todo_uuid=' . $todo->uuid)
+                new PostbackTemplateActionBuilder('名前・期限などの変更/削除', 'action=CHANGE_TODO&todo_uuid=' . $todo->uuid)
             );
             $change_todo_btn->setHeight('sm');
             $actions[] = $change_todo_btn;
             $add_todo_btn = new ButtonComponentBuilder(
-                new PostbackTemplateActionBuilder('やることの追加', 'action=ADD_TODO&todo_uuid=' . $todo->uuid)
+                new PostbackTemplateActionBuilder('やること・習慣の追加', 'action=SELECT_WHETHER_TO_ADD_TODO_OR_HABIT&todo_uuid=' . $todo->uuid)
             );
             $add_todo_btn->setHeight('sm');
             $add_todo_btn->setMargin('md');

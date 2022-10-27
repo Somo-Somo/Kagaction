@@ -11,4 +11,5 @@ interface TodoRepositoryInterface
     public function destroy(array $todo);
     public function updateAccomplish(array $todo);
     public function destroyAccomplish(array $todo);
+    public function updateHabit(array $todo);
 }

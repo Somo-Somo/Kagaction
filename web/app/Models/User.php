@@ -80,4 +80,13 @@ class User extends Authenticatable
     {
         return $this->hasOne(TodoCheckNotificationDateTime::class, 'user_uuid', 'uuid');
     }
+
+    /**
+     * ユーザー(LINE)に紐づく習慣
+     *
+     */
+    public function habits()
+    {
+        return $this->hasMany(TodoCheckNotificationDateTime::class, 'user_uuid', 'uuid');
+    }
 }
