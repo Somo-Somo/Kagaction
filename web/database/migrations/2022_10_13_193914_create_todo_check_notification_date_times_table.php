@@ -15,7 +15,7 @@ class CreateTodoCheckNotificationDateTimesTable extends Migration
     {
         Schema::create('todo_check_notification_date_times', function (Blueprint $table) {
             $table->id();
-            $table->string('user_uuid');
+            $table->string('user_uuid', 255);
             $table->integer('notification_date');
             $table->time('notification_time');
             $table->timestamps();

@@ -16,10 +16,10 @@ class CreateTodosTable extends Migration
         Schema::create('todos', function (Blueprint $table) {
             $table->id();
             $table->string('user_uuid');
-            $table->string('name');
-            $table->string('uuid')->unique();
-            $table->string('project_uuid');
-            $table->string('parent_uuid');
+            $table->string('name', 100);
+            $table->string('uuid', 255)->unique();
+            $table->string('project_uuid', 255);
+            $table->string('parent_uuid', 255);
             $table->date('date')->nullable();
             $table->integer('depth');
             $table->timestamps();

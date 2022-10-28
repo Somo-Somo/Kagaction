@@ -15,8 +15,8 @@ class CreateAccomplishTodosTable extends Migration
     {
         Schema::create('accomplish_todos', function (Blueprint $table) {
             $table->id();
-            $table->string('user_uuid');
-            $table->string('todo_uuid')->unique();
+            $table->string('user_uuid', 255);
+            $table->string('todo_uuid', 255)->unique();
             $table->timestamps();
             $table->foreign('user_uuid')->references('uuid')->on('users');
             $table->foreign('todo_uuid')->references('uuid')->on('todos');

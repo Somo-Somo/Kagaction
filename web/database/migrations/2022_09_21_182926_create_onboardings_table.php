@@ -15,7 +15,7 @@ class CreateOnboardingsTable extends Migration
     {
         Schema::create('onboardings', function (Blueprint $table) {
             $table->id();
-            $table->string('user_uuid')->unique();
+            $table->string('user_uuid', 255)->unique();
             $table->timestamps();
             $table->foreign('user_uuid')->references('uuid')->on('users');
         });

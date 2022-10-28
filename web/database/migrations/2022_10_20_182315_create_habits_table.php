@@ -15,8 +15,8 @@ class CreateHabitsTable extends Migration
     {
         Schema::create('habits', function (Blueprint $table) {
             $table->id();
-            $table->string('user_uuid');
-            $table->string('todo_uuid')->unique();
+            $table->string('user_uuid', 255);
+            $table->string('todo_uuid', 255)->unique();
             $table->integer('interval');
             $table->integer('day')->nullable();
             $table->integer('consecutive_days')->default(0);
