@@ -71,20 +71,19 @@ class HabitSettingResponseAction
      */
     public function invoke(object $event, User $line_user, string $action_type, string $postback_value)
     {
-        [$todo_uuid, $frequency_str, $day_str] = explode(",", $postback_value);
+        [$todo_uuid, $frequency_str, $day] = explode(",", $postback_value);
         $frequency = (int)$frequency_str;
-        $day = (int)$day_str;
         $todo = Todo::where('uuid', $todo_uuid)->first();
-        if (!$day && $frequency === Habit::FREQUENCY['毎週']) {
+        if ($day === "" && $frequency === Habit::FREQUENCY['毎週']) {
             $multi_message_builder = Habit::selectDayOfWeek($todo, $frequency);
             $this->bot->replyMessage($event->getReplyToken(), $multi_message_builder);
-        } else if (!$day && $frequency === Habit::FREQUENCY['毎月']) {
+        } else if ($day === "" && $frequency === Habit::FREQUENCY['毎月']) {
             $multi_message_builder = Habit::selectDayOfMonth($todo, $frequency);
             $this->bot->replyMessage($event->getReplyToken(), $multi_message_builder);
         } else {
             $carousel = Todo::createWhatToDoAfterAddingTodoCarousel($todo, $line_user);
             $builder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
-            $builder->add(new TextMessageBuilder(Habit::confirmHabit($todo, $frequency, $day)));
+            $builder->add(new TextMessageBuilder(Habit::confirmHabit($todo, $frequency, (int)$day)));
             $builder->add(new TemplateMessageBuilder('選択', $carousel));
             $this->bot->replyMessage($event->getReplyToken(), $builder);
             // データの更新
@@ -101,13 +100,13 @@ class HabitSettingResponseAction
             if ($frequency === Habit::FREQUENCY['毎日']) {
                 $todo_date = $carbon->copy()->format('Y-m-d');
             } else if ($frequency === Habit::FREQUENCY['毎週']) {
-                if ($frequency === $carbon->copy()->format('w')) {
+                if ($day === (int)$carbon->copy()->format('w')) {
                     $todo_date = $carbon->copy()->format('Y-m-d');
                 } else {
-                    $todo_date = $carbon->copy()->next(Habit::DAY_OF_WEEK_CARBON[$day])->format('Y-m-d');
+                    $todo_date = $carbon->copy()->next(Habit::DAY_OF_WEEK_CARBON[(int)$day])->format('Y-m-d');
                 }
             } else if ($frequency === Habit::FREQUENCY['毎月']) {
-                $this_month_date = $carbon->copy()->setDate($carbon->year, $carbon->month, $day);
+                $this_month_date = $carbon->copy()->setDate($carbon->year, $carbon->month, (int)$day);
                 $todo_date = $carbon->lt($this_month_date) ? $this_month_date->format('Y-m-d') : $this_month_date->addMonthsNoOverflow()->format('Y-m-d');
             } else if ($frequency === Habit::FREQUENCY['平日']) {
                 $todo_date = $carbon->isWeekday() ?
