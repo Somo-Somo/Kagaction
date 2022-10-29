@@ -5,6 +5,7 @@ namespace App\UseCases\Line;
 use App\Models\User;
 use App\Models\LineUsersQuestion;
 use App\Models\Onboarding;
+use App\Models\TodoCheckNotificationDateTime;
 use App\Repositories\User\UserRepositoryInterface;
 use Illuminate\Support\Str;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
@@ -62,20 +63,18 @@ class FollowAction
                 'user_uuid' => $user['uuid']
             ]);
 
+            TodoCheckNotificationDateTime::create([
+                'user_uuid' => $user['uuid'],
+                'notification_date' => 0,
+                'notification_time' => '21:00'
+            ]);
+
             // userをneo4jのDBにも登録
             if ($user) {
                 $this->user_repository->register($user);
             }
         }
-        // 一旦開発中はこれで
-        // 質問を最初に戻す
-        if ($has_line_user_account) {
-            $has_line_user_account->update([
-                'question_number' => LineUsersQuestion::PROJECT,
-                'parent_uuid' => null,
-                'project_uuid' => null,
-            ]);
-        }
+
         return;
     }
 }
