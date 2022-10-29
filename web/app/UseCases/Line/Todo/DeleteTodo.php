@@ -2,6 +2,8 @@
 
 namespace App\UseCases\Line\Todo;
 
+use App\Models\AccomplishTodo;
+use App\Models\CheckedTodo;
 use App\Models\User;
 use App\Models\Todo;
 use App\Models\Habit;
@@ -77,6 +79,8 @@ class DeleteTodo
             }
 
             Habit::whereIn('todo_uuid', $delete_uuids)->delete();
+            AccomplishTodo::whereIn('todo_uuid', $delete_uuids)->delete();
+            CheckedTodo::whereIn('todo_uuid', $delete_uuids)->delete();
             // SQLの方のTodoを削除
             Todo::whereIn('uuid', $delete_uuids)->delete();
             $this->todo_repository->destroy([

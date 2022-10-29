@@ -80,7 +80,13 @@ class NotifyTodoCheck
                 } else {
                     $notify_todo_check_message =
                         '振り返りの時間です。' . "\n" . $recive_notification_user->users->name . 'さんが今日までにやることは0件です。' . "\n" . '目標達成のためにやることを追加していきましょう！';
-                    $second_message = new TextMessageBuilder('やることを追加しましょう！');
+                    $create_todo_list_carousel_columns_action = new TodoCreateTodoListCarouselColumns();
+                    $second_message = $create_todo_list_carousel_columns_action->invoke(
+                        $recive_notification_user->users,
+                        Todo::where('user_uuid', $recive_notification_user->users->uuid)->get(),
+                        'ALL_TODO_LIST',
+                        $current_page = 1
+                    );
                 }
 
                 $multi_message_builder = new MultiMessageBuilder();
