@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Todo;
 use App\Models\LineUsersQuestion;
 use App\Models\TodoCheckNotificationDateTime;
+use App\Models\Contact;
 use App\UseCases\Line\Todo\Notification\SetupNotificationForTodoCheck;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
@@ -136,8 +137,9 @@ class PostbackReceivedAction
         } else if (isset(TodoCheckNotificationDateTime::SETTING_NOTIFICATION_FOR_TODO_CHECK[$action_type])) {
             $notify_check_todo = new SetupNotificationForTodoCheck();
             $notify_check_todo->invoke($event, $line_user, $action_type, $second_value);
-        } else if (isset(TodoCheckNotificationDateTime::NOTIFY_TODO_CHECK[$action_type])) {
-            # code...
+        } else if ($action_type === 'SELECT_FEEDBACK') {
+            $this->bot->replyText($event->getReplyToken(), Contact::askFeedback());
+            $line_user->question->update(['question_number' => LineUsersQuestion::CONTACT]);
         }
         return;
     }

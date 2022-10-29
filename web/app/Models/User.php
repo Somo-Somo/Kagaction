@@ -87,6 +87,15 @@ class User extends Authenticatable
      */
     public function habits()
     {
-        return $this->hasMany(TodoCheckNotificationDateTime::class, 'user_uuid', 'uuid');
+        return $this->hasMany(Habit::class, 'user_uuid', 'uuid');
+    }
+
+    /**
+     * ユーザー(LINE)に紐づく問い合わせ
+     *
+     */
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class, 'user_uuid', 'uuid');
     }
 }
