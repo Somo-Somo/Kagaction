@@ -243,7 +243,7 @@ class Habit extends Model
         } else if ($frequency === Habit::FREQUENCY['毎月']) {
             $day_text = $day !== 32 ? $day  . '日' : '末日';
         } else {
-            $day_text = $day;
+            $day_text = null;
         }
         $frequency_text = array_keys(Habit::FREQUENCY, $frequency)[0];
         $habit_date = $frequency_text . $day_text;
