@@ -7,6 +7,7 @@ use App\Models\Todo;
 use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\CarouselContainerBuilder;
 use DateTime;
+use Illuminate\Support\Facades\Log;
 
 class CreateTodoListCarouselColumns
 {
@@ -35,7 +36,11 @@ class CreateTodoListCarouselColumns
 
         $todo_carousel_columns = [];
         foreach ($todo_list as $todo) {
-            if (count($todo->accomplish) === 0) {
+            ## 達成していないtodoもしくは達成が今日じゃなくて過去に達成してるかつ習慣のtodo
+            if (
+                count($todo->accomplish) === 0 ||
+                ($todo->accomplish->where('created_at', '<', date('Y-m-d'))->first() && count($todo->habit) > 0)
+            ) {
                 $todo_carousel_columns[] = Todo::createBubbleContainer($todo, $action_type);
             }
         }
