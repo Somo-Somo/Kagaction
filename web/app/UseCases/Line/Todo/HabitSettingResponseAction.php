@@ -86,14 +86,16 @@ class HabitSettingResponseAction
             $builder->add(new TextMessageBuilder(Habit::confirmHabit($todo, $frequency, (int)$day)));
             $builder->add(new TemplateMessageBuilder('選択', $carousel));
             $this->bot->replyMessage($event->getReplyToken(), $builder);
+            $insert_data =  [
+                'user_uuid' => $line_user->uuid,
+                'interval' => $frequency
+            ];
+            if ($day) $insert_data['day'] = (int)$day;
+
             // データの更新
             Habit::updateOrCreate(
                 ['todo_uuid' => $todo_uuid],
-                [
-                    'user_uuid' => $line_user->uuid,
-                    'interval' => $frequency,
-                    'day' => $day
-                ]
+                $insert_data
             );
 
             $carbon = Carbon::now();
