@@ -66,7 +66,7 @@ class FollowAction
             TodoCheckNotificationDateTime::create([
                 'user_uuid' => $user['uuid'],
                 'notification_date' => 0,
-                'notification_time' => '21:00'
+                'notification_time' => '21:00:00'
             ]);
 
             // userをneo4jのDBにも登録

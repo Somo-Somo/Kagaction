@@ -86,7 +86,7 @@ class TodoCheckNotificationDateTime extends Model
             $notification_date = $notification_date_time->notification_date === 7 ?
                 "毎日" : "毎週" . $week_day[$notification_date_time->notification_date] . "曜日";
             $notification_time = $notification_date_time->notification_time;
-            $title = "振り返りの時間: " . $notification_date  . $notification_time;
+            $title = "振り返りの時間: " . $notification_date  . mb_substr($notification_time, 0, 5);
             $text = "現在振り返りの時間を" . $notification_date  . $notification_time . "に設定されています。";
             $actions = [
                 new PostbackTemplateActionBuilder("振り返りの曜日・時間の変更", 'action=SETTING_NOTIFY_DAY_OF_WEEK&value='),

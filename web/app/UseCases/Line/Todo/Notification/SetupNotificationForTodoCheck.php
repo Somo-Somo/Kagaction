@@ -102,7 +102,7 @@ class SetupNotificationForTodoCheck
                 ['user_uuid' => $line_user->uuid],
                 [
                     'notification_date' => (int)$day_of_week,
-                    'notification_time' => $time
+                    'notification_time' => $time . ':00'
                 ]
             );
         }
