@@ -12,8 +12,6 @@ use App\Repositories\Line\LineBotRepositoryInterface;
 use Illuminate\Support\Str;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
-use DateTime;
-
 
 class TodoResponseAction
 {
@@ -68,6 +66,9 @@ class TodoResponseAction
      */
     public function invoke(object $event, User $line_user, int $question_number)
     {
+        if (mb_strlen($event->getText()) > 36) {
+            $this->bot->replyText($event->getReplyToken(), '36文字以内での入力でお願いします!');
+        }
         $parentTodo = Todo::where('uuid', $line_user->question->parent_uuid)->first();
         $depth = $parentTodo ? (int)$parentTodo->depth + 1 : 0;
 

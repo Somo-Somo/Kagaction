@@ -652,8 +652,8 @@ class Todo extends Model
             $subtitle_text = 'プロジェクト:「' . $todo->project->name . '」のゴール';
         } else {
             $parent_todo = Todo::where('uuid', $todo->parent_uuid)->first();
-            $todo_or_habit = $todo->habit() ? '習慣' : 'こと';
-            $subtitle_text = '「' . $parent_todo->name . '」のためにやる' . $todo_or_habit . 'こと';
+            $todo_or_habit = count($todo->habit) > 0 ? '習慣' : 'こと';
+            $subtitle_text = '「' . $parent_todo->name . '」のためにやる' . $todo_or_habit;
         }
         $subtitle_text_component = new TextComponentBuilder($subtitle_text);
         $subtitle_text_component->setSize("xxs");
