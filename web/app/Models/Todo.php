@@ -717,7 +717,10 @@ class Todo extends Model
     {
         if ($todo->date) {
             $date = new Carbon($todo->date);
-            if (count($todo->accomplish) > 0) {
+            if (
+                count($todo->accomplish) > 0 &&
+                !($todo->accomplish->where('created_at', '<', date('Y-m-d'))->first() && count($todo->habit) > 0)
+            ) {
                 $date_text = "達成";
             } else if ($date->isToday()) {
                 $date_text = "今日まで";
@@ -763,7 +766,10 @@ class Todo extends Model
     {
         if ($todo->date) {
             $date = new Carbon($todo->date);
-            if (count($todo->accomplish) > 0) {
+            if (
+                count($todo->accomplish) > 0 &&
+                !($todo->accomplish->where('created_at', '<', date('Y-m-d'))->first() && count($todo->habit) > 0)
+            ) {
                 $icon_path = LineBotSvg::CALENDER_CHECK;
             } else if ($date->isToday()) {
                 $icon_path = LineBotSvg::CALENDER_TODAY;
