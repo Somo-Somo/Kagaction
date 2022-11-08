@@ -93,16 +93,16 @@ class UpdateHabitDate
         $update_todos_key_and_date = [];
         foreach ($todos as $todo) {
             if ($todo->habit->first()->interval === Habit::FREQUENCY['毎日']) {
-                $date = $today->copy()->addDay()->format('Y-m-d');
+                $date = $yesterday->copy()->addDay()->format('Y-m-d');
             } else if ($todo->habit->first()->interval === Habit::FREQUENCY['毎週']) {
-                $date = $today->copy()->addDay(7)->format('Y-m-d');
+                $date = $yesterday->copy()->addDay(7)->format('Y-m-d');
             } else if ($todo->habit->first()->interval === Habit::FREQUENCY['毎月']) {
-                $date = $today->copy()->addMonthNoOverflow();
+                $date = $yesterday->copy()->addMonthNoOverflow();
             } else if ($todo->habit->first()->interval === Habit::FREQUENCY['平日']) {
-                $date = $today->isWeekday() ? $today->copy()->format('Y-m-d') : $today->copy()->next(Carbon::MONDAY)->format('Y-m-d');
+                $date = $yesterday->isWeekday() ? $yesterday->copy()->format('Y-m-d') : $yesterday->copy()->next(Carbon::MONDAY)->format('Y-m-d');
             } else if ($todo->habit->first()->interval === Habit::FREQUENCY['週末']) {
-                $date = $today->isWeekend() ?
-                    $today->copy()->format('Y-m-d') : $today->copy()->next(Carbon::SATURDAY)->format('Y-m-d');
+                $date = $yesterday->isWeekend() ?
+                    $yesterday->copy()->format('Y-m-d') : $yesterday->copy()->next(Carbon::SATURDAY)->format('Y-m-d');
             } else {
                 $date = null;
             }
