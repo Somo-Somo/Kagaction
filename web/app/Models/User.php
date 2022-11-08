@@ -55,6 +55,15 @@ class User extends Authenticatable
     }
 
     /**
+     * ユーザー(LINE)に紐づくプロジェクト全ての取得
+     *
+     */
+    public function project()
+    {
+        return $this->hasMany(Project::class, 'user_uuid', 'uuid');
+    }
+
+    /**
      * ユーザー(LINE)に紐づくTodo全ての取得
      *
      */

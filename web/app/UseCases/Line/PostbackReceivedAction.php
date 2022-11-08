@@ -114,6 +114,16 @@ class PostbackReceivedAction
         [$action_key, $action_type] = explode("=", $action_data);
         [$second_key, $second_value] = explode("=", $uuid_data);
 
+        // まだプロジェクトが追加されていない場合
+        if (count($line_user->project) === 0) {
+            $cannot_move_text = $line_user->name . "さんが現在取り組んでいること、またはこれから取り組もうとしていることを教えて頂かないとこの操作はできません。";
+            $ask_question_text = "現在、" . $line_user->name . "が取り組んでいること、またはこれから取り組もうとしていることを一つ教えてください！" . "\n" . "\n" . "例: 筋トレ";
+            $builder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
+            $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($cannot_move_text));
+            $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($ask_question_text));
+            return $this->bot->replyMessage($event->getReplyToken(), $builder);
+        }
+
         if (isset(LineUsersQuestion::TODO_LIST[$action_type])) {
             $this->select_todo_list_action->invoke($event, $line_user, $action_type, $second_value);
         } else if (isset(Todo::ADD_TODO[$action_type])) {

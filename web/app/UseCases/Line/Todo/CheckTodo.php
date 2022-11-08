@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
+use LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselTemplateBuilder;
+use LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselColumnTemplateBuilder;
 use DateTime;
 
 class CheckTodo
@@ -103,15 +105,38 @@ class CheckTodo
                 $current_page
             );
 
-            $this->bot->replyMessage(
-                $event->getReplyToken(),
-                $todo_carousel_flex_message
-            );
+            $builder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
+            $builder->add($todo_carousel_flex_message);
 
-            // なんの振り返りをしているか記憶しておく
-            $line_user->question->update([
-                'checked_todo' => CheckedTodo::CHECK_TODO[$action_type]
-            ]);
+            if (count($todo_list) === 0) {
+                $user_todo = Todo::where('user_uuid', $line_user->uuid)->first();
+                if ($user_todo) {
+                    $something_todo_text = $action_type === 'CHECK_TODO_BY_TODAY' ? '今日までにやること' : '今週までにやること';
+                    $carousel_text = $something_todo_text . 'がありません。やること一覧からやることを追加してみてください！';
+                    $actions = [
+                        new \LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('やること一覧へ', 'action=ALL_TODO_LIST&page=1'),
+                    ];
+                    $carousel_column_template_builder = [new CarouselColumnTemplateBuilder(null, $carousel_text, null, $actions)];
+                    $builder->add(new TemplateMessageBuilder('やること一覧へ', new CarouselTemplateBuilder($carousel_column_template_builder)));
+                } else {
+                    $ask_goal_text = '「' . $line_user->project->first()->name . '」のゴールがありません！' . "\n" . '「' . $line_user->project->first()->name . '」で達成したいゴールを教えてください!';
+                    $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($ask_goal_text));
+                    $line_user->question->update(
+                        [
+                            'question_number' => LineUsersQuestion::GOAL,
+                            'parent_uuid' => $line_user->project->first()->uuid,
+                            'project_uuid' => $line_user->project->first()->uuid
+                        ]
+                    );
+                }
+                $this->bot->replyMessage($event->getReplyToken(), $builder);
+            } else {
+                $this->bot->replyMessage($event->getReplyToken(), $builder);
+                // なんの振り返りをしているか記憶しておく
+                $line_user->question->update([
+                    'checked_todo' => CheckedTodo::CHECK_TODO[$action_type]
+                ]);
+            }
         } else {
             $todo = Todo::where('uuid', $todo_uuid)->first();
             if ($action_type === 'CHECK_TODO') {

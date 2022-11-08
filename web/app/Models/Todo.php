@@ -533,7 +533,7 @@ class Todo extends Model
     {
         if ($action_type === 'ALL_TODO_LIST' || $action_type === 'SELECT_TODO_LIST_TO_CHECK') {
             $todo_type = 'プロジェクト:「' . $line_user->question->project->name . '」のやること';
-        } elseif ($action_type === 'WEEKLY_TODO_LIST' || 'CHECK_TODO_BY_THIS_WEEK') {
+        } elseif ($action_type === 'WEEKLY_TODO_LIST' ||  $action_type === 'CHECK_TODO_BY_THIS_WEEK') {
             $todo_type = '今週までにやること';
         } elseif ($action_type === 'CHECK_TODO_BY_TODAY' || $action_type ===  'NOTIFY_TODO_CHECK') {
             $todo_type = '今日までにやること';
