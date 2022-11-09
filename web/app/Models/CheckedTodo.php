@@ -172,8 +172,6 @@ class CheckedTodo extends Model
      *
      * 振り返りのフレックスメッセージ
      *
-     * @return \LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
-     *
      */
     public static function createCheckTodoFlexMessage()
     {

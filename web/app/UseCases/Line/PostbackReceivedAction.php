@@ -147,6 +147,11 @@ class PostbackReceivedAction
         } else if (isset(TodoCheckNotificationDateTime::SETTING_NOTIFICATION_FOR_TODO_CHECK[$action_type])) {
             $notify_check_todo = new SetupNotificationForTodoCheck();
             $notify_check_todo->invoke($event, $line_user, $action_type, $second_value);
+        } else if ($action_type === 'CONTACT_OR_FEEDBACK') {
+            $this->bot->replyMessage(
+                $event->getReplyToken(),
+                Contact::createContactOrFeedbackMessageBuilder()
+            );
         } else if ($action_type === 'SELECT_FEEDBACK') {
             $this->bot->replyText($event->getReplyToken(), Contact::askFeedback());
             $line_user->question->update(['question_number' => LineUsersQuestion::CONTACT]);
