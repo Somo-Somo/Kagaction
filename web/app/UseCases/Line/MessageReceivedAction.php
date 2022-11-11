@@ -70,7 +70,7 @@ class MessageReceivedAction
         $line_user = User::where('line_user_id', $event->getUserId())->first();
 
         $question_number = $line_user->question->question_number;
-        if ($event->getText() === '振り返り') {
+        if ($event->getText() === '振り返る') {
             $this->bot->replyMessage(
                 $event->getReplyToken(),
                 CheckedTodo::createCheckTodoFlexMessage()

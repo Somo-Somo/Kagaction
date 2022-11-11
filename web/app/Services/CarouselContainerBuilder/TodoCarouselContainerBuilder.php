@@ -11,6 +11,7 @@ use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\BoxComponentBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\TextComponentBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\IconComponentBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\BubbleContainerBuilder;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Todoのカル-セル生成クラス
@@ -195,6 +196,7 @@ class TodoCarouselContainerBuilder
      */
     public static function createDateTextComponent(Todo $todo)
     {
+        Log::debug($todo->date);
         if ($todo->date) {
             $date = new Carbon($todo->date);
             if (
@@ -203,16 +205,16 @@ class TodoCarouselContainerBuilder
             ) {
                 $date_text = "達成";
             } else if ($date->isToday()) {
-                $date_text = "今日まで";
+                $date_text = "振り返る日: 今日";
             } else if ($date->isTomorrow()) {
-                $date_text = "明日まで";
+                $date_text = "振り返る日: 明日";
             } else if ($date->isPast()) {
-                $date_text = $date->diffInDays(Carbon::now()->setTime(0, 0, 0)) . "日経過";
+                $date_text = "振り返る日" . $date->diffInDays(Carbon::now()->setTime(0, 0, 0)) . "日経過";
             } else if ($date->isFuture()) {
-                $date_text = "残り" . $date->diffInDays(Carbon::now()->setTime(0, 0, 0)) . "日";
+                $date_text = "振り返る日: あと" . $date->diffInDays(Carbon::now()->setTime(0, 0, 0)) . "日";
             }
         } else {
-            $date_text = "日付:未設定";
+            $date_text = "振り返る日: 未設定";
         }
 
         $habit = Habit::where('todo_uuid', $todo->uuid)->first();

@@ -20,7 +20,7 @@ class ChangeAndDeleteTodoButtonComponentBuilder
     public static function createChangeAndDeleteTodoComponentButton(Todo $todo)
     {
         $change_todo_btn = new ButtonComponentBuilder(
-            new PostbackTemplateActionBuilder('名前・期限の変更', 'action=CHANGE_TODO&todo_uuid=' . $todo->uuid)
+            new PostbackTemplateActionBuilder('名前・振り返る日の変更', 'action=CHANGE_TODO&todo_uuid=' . $todo->uuid)
         );
         $change_todo_btn->setHeight('sm');
         $actions[] = $change_todo_btn;

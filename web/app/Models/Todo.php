@@ -98,7 +98,6 @@ class Todo extends Model
     // TodoList 表示系
     const TODO_LIST = [
         'ALL_TODO_LIST' => true,
-        'WEEKLY_TODO_LIST' => true,
         'SHOW_TODO_LIST_TO_ADD_TODO' => true
     ];
 
@@ -306,7 +305,7 @@ class Todo extends Model
         $title =  '「' . $todo->name . '」';
         $change_date_postback = count($todo->habit) > 0 ?
             new PostbackTemplateActionBuilder('習慣の変更', 'action=ASK_CHANGE_INTERVAL&todo_uuid=' . $todo->uuid) :
-            new PostbackTemplateActionBuilder('期限の変更', 'action=ASK_RESCHEDULE&todo_uuid=' . $todo->uuid);
+            new PostbackTemplateActionBuilder('振り返る日の変更', 'action=ASK_RESCHEDULE&todo_uuid=' . $todo->uuid);
         return new TemplateMessageBuilder(
             $title,
             new ButtonTemplateBuilder(
@@ -370,15 +369,12 @@ class Todo extends Model
         ) {
             $title = '「' . $line_user->question->project->name . '」の遂げること一覧';
             $text =   'プロジェクト:「' . $line_user->question->project->name . '」の遂げることは' . count($line_user->todo) . '件です';
-        } else if (
-            $action_value === 'WEEKLY_TODO_LIST' ||
-            $action_value === 'CHECK_TODO_BY_THIS_WEEK'
-        ) {
-            $title = $line_user->name . 'さんの今週までに遂げること一覧';
-            $text = $line_user->name . 'さんの今週までに遂げることは' . count($todo_carousel_columns) . '件です';
+        } else if ($action_value === 'CHECK_TODO_BY_THIS_WEEK') {
+            $title = $line_user->name . 'さんの今週までに振り返ること一覧';
+            $text = $line_user->name . 'さんの今週までに振り返ることは' . count($todo_carousel_columns) . '件です';
         } else if ($action_value === 'CHECK_TODO_BY_TODAY') {
-            $title = $line_user->name . 'さんの今日までに遂げること一覧';
-            $text = $line_user->name . 'さんの今日までに遂げることは' . count($todo_carousel_columns) . '件です';
+            $title = $line_user->name . 'さんの今日までに振り返ること一覧';
+            $text = $line_user->name . 'さんの今日までに振り返ることは' . count($todo_carousel_columns) . '件です';
         }
         return ['title' => $title, 'text' => $text];
     }
@@ -403,13 +399,13 @@ class Todo extends Model
     /**
      *
      *
-     * 遂げることの期限 Date
+     * 遂げることの振り返り日 Date
      *
      *
      */
 
     /**
-     * Todoの期限を聞く
+     * Todoの振り返る日を聞く
      *
      * @param string $user_name
      * @param array $todo
@@ -417,8 +413,8 @@ class Todo extends Model
      */
     public static function askTodoLimited(string $user_name, array $todo)
     {
-        $title = '「' . $todo['name'] . '」の期日';
-        $text = 'それでは' . $user_name . 'さんはいつまでに「' . $todo['name'] . '」を遂げたいですか?';
+        $title = '「' . $todo['name'] . '」を遂げることができたか振り返る日';
+        $text = 'それでは' . $user_name . 'さんはいつ「' . $todo['name'] . '」を遂げることができたか振り返りますか?';
         $builder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
         $builder->add(new TextMessageBuilder($text));
         $builder->add(
@@ -426,10 +422,10 @@ class Todo extends Model
                 $title, // チャット一覧に表示される
                 new ButtonTemplateBuilder(
                     $title, // title
-                    'いつまでに遂げたいか考えてみよう！', // text
+                    '振り返る日を考えてみよう！', // text
                     null, // 画像url
                     [
-                        new DatetimePickerTemplateActionBuilder('期日を選択', 'action=ASK_DATE_LIMIT&todo_uuid=' . $todo['uuid'], 'date')
+                        new DatetimePickerTemplateActionBuilder('振り返る日を選択', 'action=ASK_DATE_LIMIT&todo_uuid=' . $todo['uuid'], 'date')
                     ]
                 )
             )
@@ -438,7 +434,7 @@ class Todo extends Model
     }
 
     /**
-     * Todoの期限を聞く
+     * Todoの振り返る日を聞く
      *
      * @param string $user_name
      * @param Todo $todo
@@ -449,13 +445,13 @@ class Todo extends Model
         $date = new DateTime($todo->date);
         $builder =
             new TemplateMessageBuilder(
-                '期日の変更', // チャット一覧に表示される
+                '振り返る日の変更', // チャット一覧に表示される
                 new ButtonTemplateBuilder(
-                    $todo->name . 'の期日', // title
-                    $date->format('Y年m月d日') . 'までに' . $todo->name, // text
+                    '「' . $todo->name . '」', // title
+                    '振り返る日: ' . $date->format('Y年m月d日'), // text
                     null, // 画像url
                     [
-                        new DatetimePickerTemplateActionBuilder('期日の変更', 'action=RESCHEDULE&todo_uuid=' . $todo->uuid, 'date')
+                        new DatetimePickerTemplateActionBuilder('振り返る日の変更', 'action=RESCHEDULE&todo_uuid=' . $todo->uuid, 'date')
                     ]
                 )
             );
@@ -472,7 +468,7 @@ class Todo extends Model
     public static function confirmDate(Todo $todo, DateTime $date)
     {
         $confirm =  '「' . $date->format('Y年m月d日') . '」ですね！';
-        $fighting =  'それでは' . $date->format('Y年m月d日') . 'までに「' . $todo->name . '」が遂げることができるよう頑張っていきましょう！';
+        $fighting =  'それでは' . $date->format('Y年m月d日') . 'に「' . $todo->name . '」が遂げることができたか振り返りましょう！';
         return $confirm . "\n" . $fighting;
     }
 
@@ -486,7 +482,7 @@ class Todo extends Model
     public static function confirmReschedule(Todo $todo, DateTime $new_date)
     {
         $old_date = new DateTime($todo->date);
-        return '「' . $todo->name . '」の期限を' . $old_date->format('Y年m月d日') . 'から' .  $new_date->format('Y年m月d日') . 'に変更しました';
+        return '「' . $todo->name . '」の振り返る日を' . $old_date->format('Y年m月d日') . 'から' .  $new_date->format('Y年m月d日') . 'に変更しました';
     }
 
     /**
@@ -539,10 +535,10 @@ class Todo extends Model
     {
         if ($action_type === 'ALL_TODO_LIST' || $action_type === 'SELECT_TODO_LIST_TO_CHECK') {
             $todo_type = 'プロジェクト:「' . $line_user->question->project->name . '」の遂げること';
-        } elseif ($action_type === 'WEEKLY_TODO_LIST' ||  $action_type === 'CHECK_TODO_BY_THIS_WEEK') {
-            $todo_type = '今週までに遂げること';
+        } elseif ($action_type === 'CHECK_TODO_BY_THIS_WEEK') {
+            $todo_type = '今週までに振り返ること';
         } elseif ($action_type === 'CHECK_TODO_BY_TODAY' || $action_type ===  'NOTIFY_TODO_CHECK') {
-            $todo_type = '今日までに遂げること';
+            $todo_type = '今日までに振り返ること';
         }
 
         $result_count_todo_list_text = '📝' . ' ' . $count_todo_list;

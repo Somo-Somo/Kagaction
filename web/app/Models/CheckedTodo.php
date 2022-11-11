@@ -62,8 +62,8 @@ class CheckedTodo extends Model
                     '選択してください', // text
                     null, // 画像url
                     [
-                        new PostbackTemplateActionBuilder('今日までに遂げること', 'action=CHECK_TODO_BY_TODAY&page=1'),
-                        new PostbackTemplateActionBuilder('今週までに遂げること', 'action=CHECK_TODO_BY_THIS_WEEK&page=1'),
+                        new PostbackTemplateActionBuilder('今日までに振り返ること', 'action=CHECK_TODO_BY_TODAY&page=1'),
+                        new PostbackTemplateActionBuilder('今週までに振り返ること', 'action=CHECK_TODO_BY_THIS_WEEK&page=1'),
                         new PostbackTemplateActionBuilder('遂げること一覧から選択', 'action=SELECT_TODO_LIST_TO_CHECK&page=1'),
                     ]
                 )
@@ -120,10 +120,10 @@ class CheckedTodo extends Model
     public static function askContinueCheckTodo(LineUsersQuestion $question)
     {
         if ($question->checked_todo === CheckedTodo::CHECK_TODO['CHECK_TODO_BY_TODAY']) {
-            $title = '今日までに遂げることの振り返りを続けますか？';
+            $title = '今日までの振り返りを続けますか？';
             $action_type = 'CHECK_TODO_BY_TODAY';
         } else if ($question->checked_todo === CheckedTodo::CHECK_TODO['CHECK_TODO_BY_THIS_WEEK']) {
-            $title = '今週までに遂げることの振り返りを続けますか？';
+            $title = '今週までの振り返りを続けますか？';
             $action_type = 'CHECK_TODO_BY_THIS_WEEK';
         } else if ($question->checked_todo === CheckedTodo::CHECK_TODO['SELECT_TODO_LIST_TO_CHECK']) {
             $title = '振り返りを続けますか？';
@@ -151,9 +151,9 @@ class CheckedTodo extends Model
     public static function getTextMessageOfFinishCheckTodo(LineUsersQuestion $question)
     {
         if ($question->checked_todo === CheckedTodo::CHECK_TODO['CHECK_TODO_BY_TODAY']) {
-            $text = '今日までに遂げることの振り返りを終了しました。';
+            $text = '今日までの振り返りを終了しました。';
         } else if ($question->checked_todo === CheckedTodo::CHECK_TODO['CHECK_TODO_BY_THIS_WEEK']) {
-            $text = '今週までに遂げることの振り返りを終了しました。';
+            $text = '今週までの振り返りを終了しました。';
         } else if ($question->checked_todo === CheckedTodo::CHECK_TODO['SELECT_TODO_LIST_TO_CHECK']) {
             $text = '振り返りを終了しました。';
         }
@@ -180,7 +180,6 @@ class CheckedTodo extends Model
             CheckedTodo::createReflectionBubbleContainer('今日'),
             CheckedTodo::createReflectionBubbleContainer('今週'),
             CheckedTodo::createReflectionBubbleContainer('一覧'),
-            CheckedTodo::createReflectionBubbleContainer('通知'),
         ];
         $check_todo_carousels = new CarouselContainerBuilder($check_todo_carousel_columns);
         return new FlexMessageBuilder('振り返る',  $check_todo_carousels);
@@ -231,16 +230,13 @@ class CheckedTodo extends Model
             $reflection_title_component_flex = 2;
             if ($carousel_type === '今日') {
                 $reflection_title = '📘' . ' ' . $carousel_type;
-                $reflection_text = '今日までに遂げること';
+                $reflection_text = '今日までに振り返ること';
             } else if ($carousel_type === '今週') {
                 $reflection_title = '📙' . ' ' . $carousel_type;
-                $reflection_text = '今週までに遂げること';
+                $reflection_text = '今週までに振り返ること';
             } else if ($carousel_type === '一覧') {
                 $reflection_title = '📚' . ' ' . $carousel_type;
                 $reflection_text = '遂げること一覧から選択';
-            } else if ($carousel_type === '通知') {
-                $reflection_title = '⏰' . ' ' . $carousel_type;
-                $reflection_text = '振り返りの時間の設定';
             }
         }
 
@@ -273,18 +269,13 @@ class CheckedTodo extends Model
      */
     public static function createReflectionFooterContainer(string $carousel_type)
     {
+        $label = '振り返る';
         if ($carousel_type === '今日') {
-            $label = '振り返る';
             $data = 'action=CHECK_TODO_BY_TODAY&page=1';
         } else if ($carousel_type === '今週') {
-            $label = '振り返る';
             $data = 'action=CHECK_TODO_BY_THIS_WEEK&page=1';
         } else if ($carousel_type === '一覧') {
-            $label = '振り返る';
             $data = 'action=SELECT_TODO_LIST_TO_CHECK&page=1';
-        } else if ($carousel_type === '通知') {
-            $label = '設定する';
-            $data = 'action=IF_YOU_WANT_TO_SET_UP_NOTIFY_CHECK_TODO&value=';
         }
         $footer_button = new ButtonComponentBuilder(
             new PostbackTemplateActionBuilder($label, $data),
