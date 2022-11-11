@@ -19,10 +19,6 @@ class LineUsersQuestion extends Model
     const DATE = 5;
     const CONTACT = 6;
     const RENAME_TODO = 31;
-    const TODO_LIST = [
-        'ALL_TODO_LIST' => true,
-        'WEEKLY_TODO_LIST' => true
-    ];
     const ADD_TODO = 'ADD_TODO';
     const LIMIT_DATE = 'LIMIT_DATE';
     const CHANGE_TODO = 'CHANGE_TODO';

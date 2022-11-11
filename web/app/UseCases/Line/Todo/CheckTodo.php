@@ -114,7 +114,7 @@ class CheckTodo
                     $something_todo_text = $action_type === 'CHECK_TODO_BY_TODAY' ? '今日までにやること' : '今週までにやること';
                     $carousel_text = $something_todo_text . 'がありません。やること一覧からやることを追加してみてください！';
                     $actions = [
-                        new \LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('やること一覧へ', 'action=ALL_TODO_LIST&page=1'),
+                        new \LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('やること一覧へ', 'action=SHOW_TODO_LIST_TO_ADD_TODO&page=1'),
                     ];
                     $carousel_column_template_builder = [new CarouselColumnTemplateBuilder(null, $carousel_text, null, $actions)];
                     $builder->add(new TemplateMessageBuilder('やること一覧へ', new CarouselTemplateBuilder($carousel_column_template_builder)));

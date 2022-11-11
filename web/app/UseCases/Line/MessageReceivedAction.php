@@ -7,12 +7,12 @@ use App\Models\User;
 use App\Models\Todo;
 use App\Models\LineUsersQuestion;
 use App\Models\Contact;
-use App\Services\MessageBuilder\Carousels\OtherMenuCarousels;
+use App\Services\CarouselContainerBuilder\OtherMenuCarouselContainerBuilder;
 use App\UseCases\Line\ProjectResponseAction;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
 use Illuminate\Support\Facades\Log;
-
+use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
 
 class MessageReceivedAction
 {
@@ -84,11 +84,10 @@ class MessageReceivedAction
             );
             if ($line_user->question->checked_todo) $line_user->question->update(['checked_todo' => null, 'parent_uuid' => null]);
         } else if ($event->getText() === 'その他') {
-            $test = $this->bot->replyMessage(
+            $this->bot->replyMessage(
                 $event->getReplyToken(),
-                OtherMenuCarousels::createFlexMessageBuilder()
+                new FlexMessageBuilder('メニュー: その他', OtherMenuCarouselContainerBuilder::createCarouselContainerBuilder())
             );
-            Log::debug((array)$test);
             if ($line_user->question->checked_todo) $line_user->question->update(['checked_todo' => null, 'parent_uuid' => null]);
         } else if ($question_number === LineUsersQuestion::NO_QUESTION) {
             // 質問がない場合

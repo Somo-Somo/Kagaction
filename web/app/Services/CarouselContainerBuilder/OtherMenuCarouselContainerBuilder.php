@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\MessageBuilder\Carousels;
+namespace App\Services\CarouselContainerBuilder;
 
 use LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\BoxComponentBuilder;
@@ -10,15 +10,15 @@ use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\CarouselContainerBuilder;
 use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
 
 /**
- * Neo4jのDBを呼び出す処理をFacadeを使って共通化
+ * メニュー:その他を押すと表示されるカルーセルの生成クラス
  */
-class OtherMenuCarousels
+class OtherMenuCarouselContainerBuilder
 {
     const OTHER_MENUS = [
-        [
-            'text' => '🛠️ 使い方',
-            'postback_data' => 'action=&value='
-        ],
+        // [
+        //     'text' => '🛠️ 使い方',
+        //     'postback_data' => 'action=&value='
+        // ],
         [
             'text' => '🔔 通知の設定',
             'postback_data' => 'action=IF_YOU_WANT_TO_SET_UP_NOTIFY_CHECK_TODO&value='
@@ -29,19 +29,14 @@ class OtherMenuCarousels
         ]
     ];
 
-    public static function createFlexMessageBuilder()
-    {
-        $carousel_container_builder = OtherMenuCarousels::createCrouselContainerBuilder();
-        return new FlexMessageBuilder('メニュー：その他', $carousel_container_builder);
-    }
-
-    public static function createCrouselContainerBuilder()
+    public static function createCarouselContainerBuilder()
     {
         $bubble_container_builders = [];
-        for ($num = 0; $num < count(OtherMenuCarousels::OTHER_MENUS); $num++) {
-            $bubble_container_builders[] = OtherMenuCarousels::createBubbleContainerBuilder(
-                OtherMenuCarousels::OTHER_MENUS[$num]
-            );
+        for ($num = 0; $num < count(OtherMenuCarouselContainerBuilder::OTHER_MENUS); $num++) {
+            $bubble_container_builders[] =
+                OtherMenuCarouselContainerBuilder::createBubbleContainerBuilder(
+                    OtherMenuCarouselContainerBuilder::OTHER_MENUS[$num]
+                );
         }
         return new CarouselContainerBuilder($bubble_container_builders);
     }

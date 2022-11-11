@@ -4,6 +4,8 @@ namespace App\UseCases\Line\Todo;
 
 use App\Models\User;
 use App\Models\Todo;
+use App\Services\CarouselContainerBuilder\TodoCarouselContainerBuilder;
+use App\UseCases\Line\Todo\IdentifyTodoCarouselButton;
 use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\CarouselContainerBuilder;
 use DateTime;
@@ -12,10 +14,16 @@ use Illuminate\Support\Facades\Log;
 class CreateTodoListCarouselColumns
 {
     /**
-     *
+     * @param \App\UseCases\Line\Todo\IdentifyTodoCarouselButton
      */
-    public function __construct()
+    protected $identify_todo_carousel_button;
+
+    /**
+     * @param \App\UseCases\Line\Todo\IdentifyTodoCarouselButton
+     */
+    public function __construct(\App\UseCases\Line\Todo\IdentifyTodoCarouselButton $identify_todo_carousel_button)
     {
+        $this->identify_todo_carousel_button = $identify_todo_carousel_button;
     }
 
     /**
@@ -41,12 +49,13 @@ class CreateTodoListCarouselColumns
                 count($todo->accomplish) === 0 ||
                 ($todo->accomplish->where('created_at', '<', date('Y-m-d'))->first() && count($todo->habit) > 0)
             ) {
-                $todo_carousel_columns[] = Todo::createBubbleContainer($todo, $action_type);
+
+                $actions = $this->identify_todo_carousel_button->invoke($todo, $action_type);
+                $todo_carousel_columns[] = TodoCarouselContainerBuilder::createTodoBubbleContainer($todo, $actions);
             }
         }
 
         if (
-            $action_type === 'WEEKLY_TODO_LIST' ||
             $action_type === 'CHECK_TODO_BY_TODAY' ||
             $action_type === 'CHECK_TODO_BY_THIS_WEEK'
         ) {
@@ -56,7 +65,8 @@ class CreateTodoListCarouselColumns
                 ->get();
             foreach ($over_due_todo_list as $over_due_todo) {
                 if (count($over_due_todo->accomplish) === 0) {
-                    $todo_carousel_columns[] = Todo::createBubbleContainer($over_due_todo, $action_type);
+                    $actions = $this->identify_todo_carousel_button->invoke($over_due_todo, $action_type);
+                    $todo_carousel_columns[] = TodoCarouselContainerBuilder::createTodoBubbleContainer($over_due_todo, $actions);
                 }
             }
         }
@@ -73,7 +83,14 @@ class CreateTodoListCarouselColumns
 
         // Todoが何件あるか報告するメッセージ
         if ($current_page === 1) {
-            $report_message = Todo::createCountTodoBubbleContainer($line_user, $action_type, $count_todo_carousel_column);
+            if ($action_type === 'CHECK_TODO_BY_TODAY' || $action_type ===  'NOTIFY_TODO_CHECK') {
+                $todo_type = '今日までにやること';
+            } elseif ($action_type === 'WEEKLY_TODO_LIST' ||  $action_type === 'CHECK_TODO_BY_THIS_WEEK') {
+                $todo_type = '今週までにやること';
+            } else {
+                $todo_type = 'プロジェクト:「' . $line_user->question->project->name . '」のやること';
+            }
+            $report_message = TodoCarouselContainerBuilder::createCountTodoBubbleContainer($todo_type, $count_todo_carousel_column);
             array_unshift($todo_carousel_columns, $report_message);
         }
 

@@ -36,7 +36,7 @@ class Onboarding extends Model
                 [
                     new PostbackTemplateActionBuilder(
                         'やること一覧を見る',
-                        'action=ALL_TODO_LIST&project_uuid=',
+                        'action=SHOW_TODO_LIST_TO_ADD_TODO&page=1',
                         null,
                         'openRichMenu',
                         null

@@ -61,7 +61,6 @@ class AddTodo
                 'parent_uuid' => $todo_uuid,
             ]);
         }
-
         return;
     }
 }
