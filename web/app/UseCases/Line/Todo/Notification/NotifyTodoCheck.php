@@ -57,8 +57,6 @@ class NotifyTodoCheck
                 $query->orwhere('notification_date', 7)
                     ->orwhere('notification_date', $day_of_week);
             })->get();
-
-        Log::info((array)$recive_notification_users);
         if (count($recive_notification_users) > 0) {
             Log::info('has');
             foreach ($recive_notification_users as  $recive_notification_user) {
@@ -78,7 +76,7 @@ class NotifyTodoCheck
                         $action_type,
                         $current_page = 1
                     );
-                    LineUsersQuestion::where('user_uuid', $recive_notification_user->users->uuid)->update([
+                    LineUsersQuestion::where('line_user_id', $recive_notification_user->users->line_user_id)->update([
                         'checked_todo' => CheckedTodo::CHECK_TODO[$action_type]
                     ]);
                 } else {
