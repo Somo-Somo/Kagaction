@@ -14,16 +14,13 @@ use Illuminate\Support\Facades\Log;
 class CreateTodoListCarouselColumns
 {
     /**
-     * @param \App\UseCases\Line\Todo\IdentifyTodoCarouselButton
+     * @param App\UseCases\Line\Todo\IdentifyTodoCarouselButton
      */
     protected $identify_todo_carousel_button;
 
-    /**
-     * @param \App\UseCases\Line\Todo\IdentifyTodoCarouselButton
-     */
-    public function __construct(\App\UseCases\Line\Todo\IdentifyTodoCarouselButton $identify_todo_carousel_button)
+    public function __construct()
     {
-        $this->identify_todo_carousel_button = $identify_todo_carousel_button;
+        $this->identify_todo_carousel_button = new IdentifyTodoCarouselButton();
     }
 
     /**

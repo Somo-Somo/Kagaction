@@ -121,6 +121,7 @@ class PostbackReceivedAction
             $builder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
             $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($cannot_move_text));
             $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($ask_question_text));
+            $line_user->question->update(['question_number' => LineUsersQuestion::PROJECT]);
             return $this->bot->replyMessage($event->getReplyToken(), $builder);
         }
 
