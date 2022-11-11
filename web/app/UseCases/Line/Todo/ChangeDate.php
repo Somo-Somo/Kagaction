@@ -69,7 +69,7 @@ class ChangeDate
 
             // SQLのアップデート
             $todo->update([
-                'date' => $new_date
+                'date' => $new_date['date']
             ]);
 
             // Neo4jのアップデート
