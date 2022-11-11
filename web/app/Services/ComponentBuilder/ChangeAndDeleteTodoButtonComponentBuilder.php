@@ -25,7 +25,7 @@ class ChangeAndDeleteTodoButtonComponentBuilder
         $change_todo_btn->setHeight('sm');
         $actions[] = $change_todo_btn;
         $add_todo_btn = new ButtonComponentBuilder(
-            new PostbackTemplateActionBuilder('やることの削除', 'action=DELETE_TODO&todo_uuid=' . $todo->uuid)
+            new PostbackTemplateActionBuilder('遂げることの削除', 'action=DELETE_TODO&todo_uuid=' . $todo->uuid)
         );
         $add_todo_btn->setHeight('sm');
         $add_todo_btn->setMargin('md');

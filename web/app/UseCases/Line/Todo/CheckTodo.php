@@ -111,13 +111,13 @@ class CheckTodo
             if (count($todo_list) === 0) {
                 $user_todo = Todo::where('user_uuid', $line_user->uuid)->first();
                 if ($user_todo) {
-                    $something_todo_text = $action_type === 'CHECK_TODO_BY_TODAY' ? '今日までにやること' : '今週までにやること';
-                    $carousel_text = $something_todo_text . 'がありません。やること一覧からやることを追加してみてください！';
+                    $something_todo_text = $action_type === 'CHECK_TODO_BY_TODAY' ? '今日までに遂げること' : '今週までに遂げること';
+                    $carousel_text = $something_todo_text . 'がありません。遂げること一覧から遂げることを追加してみてください！';
                     $actions = [
-                        new \LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('やること一覧へ', 'action=SHOW_TODO_LIST_TO_ADD_TODO&page=1'),
+                        new \LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('遂げること一覧へ', 'action=SHOW_TODO_LIST_TO_ADD_TODO&page=1'),
                     ];
                     $carousel_column_template_builder = [new CarouselColumnTemplateBuilder(null, $carousel_text, null, $actions)];
-                    $builder->add(new TemplateMessageBuilder('やること一覧へ', new CarouselTemplateBuilder($carousel_column_template_builder)));
+                    $builder->add(new TemplateMessageBuilder('遂げること一覧へ', new CarouselTemplateBuilder($carousel_column_template_builder)));
                 } else {
                     $ask_goal_text = '「' . $line_user->project->first()->name . '」のゴールがありません！' . "\n" . '「' . $line_user->project->first()->name . '」で達成したいゴールを教えてください!';
                     $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($ask_goal_text));
@@ -157,7 +157,7 @@ class CheckTodo
             } else if ($action_type === 'NOT_ACCOMPLISHED_TODO') {
                 $builder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
                 $builder->add(new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('引き続き「' . $todo->name . '」の達成に向けて頑張っていきましょう！'));
-                $builder->add(new TemplateMessageBuilder('やることの追加', CheckedTodo::addTodoAfterCheckTodo($todo)));
+                $builder->add(new TemplateMessageBuilder('遂げることの追加', CheckedTodo::addTodoAfterCheckTodo($todo)));
                 $this->bot->replyMessage($event->getReplyToken(), $builder);;
             } else if ($action_type === 'ADD_TODO_AFTER_CHECK_TODO') {
                 $multi_message_builder = Todo::selectWhetherToAddTodoOrHabitMessageBuilder($todo);

@@ -76,8 +76,8 @@ class MessageReceivedAction
                 CheckedTodo::createCheckTodoFlexMessage()
             );
             if ($line_user->question->checked_todo) $line_user->question->update(['checked_todo' => null, 'parent_uuid' => null]);
-        } else if ($event->getText() === 'やること') {
-            // リッチメニューからやることを選択
+        } else if ($event->getText() === '遂げること') {
+            // リッチメニューから遂げることを選択
             $this->bot->replyMessage(
                 $event->getReplyToken(),
                 Todo::askAddOrList($line_user->name)

@@ -70,7 +70,7 @@ class NotifyTodoCheck
                     ->get();
                 if (count($todo_list) > 0) {
                     $notify_todo_check_message =
-                        '振り返りの時間です。' . "\n" . $recive_notification_user->users->name . 'さんが今日までにやるもの一覧です。' . "\n" . '頑張って振り返っていきましょう!';
+                        '振り返りの時間です。' . "\n" . $recive_notification_user->users->name . 'さんが今日までに遂げるもの一覧です。' . "\n" . '頑張って振り返っていきましょう!';
                     $action_type = 'CHECK_TODO_BY_TODAY';
                     $second_message = $this->create_todo_list_carousel_columns->invoke(
                         $recive_notification_user->users,
@@ -83,7 +83,7 @@ class NotifyTodoCheck
                     ]);
                 } else {
                     $notify_todo_check_message =
-                        '振り返りの時間です。' . "\n" . $recive_notification_user->users->name . 'さんが今日までにやることは0件です。' . "\n" . '目標達成のためにやることを追加していきましょう！';
+                        '振り返りの時間です。' . "\n" . $recive_notification_user->users->name . 'さんが今日までに遂げることは0件です。' . "\n" . '目標達成のために遂げることを追加していきましょう！';
                     $second_message = $this->create_todo_list_carousel_columns->invoke(
                         $recive_notification_user->users,
                         Todo::where('user_uuid', $recive_notification_user->users->uuid)->get(),

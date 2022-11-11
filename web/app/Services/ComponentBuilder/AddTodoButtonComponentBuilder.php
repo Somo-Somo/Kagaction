@@ -21,7 +21,7 @@ class AddTodoButtonComponentBuilder
     {
         $actions = [];
         $add_todo_btn = new ButtonComponentBuilder(
-            new PostbackTemplateActionBuilder('やること・習慣の追加', 'action=SELECT_WHETHER_TO_ADD_TODO_OR_HABIT&todo_uuid=' . $todo->uuid)
+            new PostbackTemplateActionBuilder('遂げること・習慣の追加', 'action=SELECT_WHETHER_TO_ADD_TODO_OR_HABIT&todo_uuid=' . $todo->uuid)
         );
         $add_todo_btn->setHeight('sm');
         $add_todo_btn->setMargin('md');

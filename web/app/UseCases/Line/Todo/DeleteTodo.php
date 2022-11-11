@@ -64,7 +64,7 @@ class DeleteTodo
             $delete_childs = $delete_childs[0]['childs'];
 
             $delete_num = count($delete_childs) + 1;
-            $message = '「' . $todo->name . '」を含む' . $delete_num . '件のやることが削除されました';
+            $message = '「' . $todo->name . '」を含む' . $delete_num . '件の遂げることが削除されました';
 
             // 返信メッセージ
             $this->bot->replyText(

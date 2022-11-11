@@ -168,7 +168,7 @@ class Todo extends Model
     public static function askTodoName(Todo $todo, string $action_type)
     {
         $to_achieve = $action_type === 'ADD_TODO' ? 'こと' : '習慣';
-        return '「' . $todo->name . '」を達成するためにやる' . $to_achieve . 'を教えてください！';
+        return '「' . $todo->name . '」を遂げるためにやる' . $to_achieve . 'を教えてください！';
     }
 
     /**
@@ -179,7 +179,7 @@ class Todo extends Model
      */
     public static function askTodoReName(Todo $todo)
     {
-        return 'やること:「' . $todo->name . '」の変更後の名前を教えてください！';
+        return '遂げること:「' . $todo->name . '」の変更後の名前を教えてください！';
     }
 
     /**
@@ -234,7 +234,7 @@ class Todo extends Model
             $actions[] = $bubble_container;
         }
         $carousels = new CarouselContainerBuilder($actions);
-        $question_message = '「' . $parent_todo->name . '」を達成するために「やること」と「習慣」どちらを追加しますか？';
+        $question_message = '「' . $parent_todo->name . '」を遂げるために「やること」と「習慣」どちらを追加しますか？';
 
         $multi_message_builder = new MultiMessageBuilder();
         $multi_message_builder->add(new TextMessageBuilder($question_message));
@@ -270,7 +270,7 @@ class Todo extends Model
      */
     public static function continueAddTodoOfTodo(object $todo)
     {
-        $carouselText =  '「' . $todo->name . '」を達成するためにやることを新しく追加しますか?';
+        $carouselText =  '「' . $todo->name . '」を遂げるためにやることを新しく追加しますか?';
         $actions = [
             new PostbackTemplateActionBuilder('追加する', 'action=SELECT_WHETHER_TO_ADD_TODO_OR_HABIT&todo_uuid=' . $todo->uuid),
         ];
@@ -286,7 +286,7 @@ class Todo extends Model
      */
     public static function continueAddTodoOfParentTodo(object $parent_todo)
     {
-        $carouselText =  '「' . $parent_todo->name . '」を達成するためにやることを引き続き追加しますか?';
+        $carouselText =  '「' . $parent_todo->name . '」を遂げるためにやることを引き続き追加しますか?';
         $actions = [
             new PostbackTemplateActionBuilder('追加する', 'action=SELECT_WHETHER_TO_ADD_TODO_OR_HABIT&todo_uuid=' . $parent_todo->uuid),
         ];
@@ -339,14 +339,14 @@ class Todo extends Model
     {
         $builder =
             new TemplateMessageBuilder(
-                'やること', // チャット一覧に表示される
+                '遂げること', // チャット一覧に表示される
                 new ButtonTemplateBuilder(
-                    $line_user_name . 'さんのやること', // title
+                    $line_user_name . 'さんの遂げること', // title
                     '選択してください', // text
                     null, // 画像url
                     [
                         new PostbackTemplateActionBuilder('一覧を見る', 'action=ALL_TODO_LIST&page=1'),
-                        new PostbackTemplateActionBuilder('やることを追加する', 'action=SHOW_TODO_LIST_TO_ADD_TODO&page=1'),
+                        new PostbackTemplateActionBuilder('遂げることを追加する', 'action=SHOW_TODO_LIST_TO_ADD_TODO&page=1'),
                     ]
                 )
 
@@ -368,17 +368,17 @@ class Todo extends Model
             $action_value === 'ALL_TODO_LIST' ||
             $action_value === 'SELECT_TODO_LIST_TO_CHECK'
         ) {
-            $title = '「' . $line_user->question->project->name . '」のやること一覧';
-            $text =   'プロジェクト:「' . $line_user->question->project->name . '」のやることは' . count($line_user->todo) . '件です';
+            $title = '「' . $line_user->question->project->name . '」の遂げること一覧';
+            $text =   'プロジェクト:「' . $line_user->question->project->name . '」の遂げることは' . count($line_user->todo) . '件です';
         } else if (
             $action_value === 'WEEKLY_TODO_LIST' ||
             $action_value === 'CHECK_TODO_BY_THIS_WEEK'
         ) {
-            $title = $line_user->name . 'さんの今週までにやること一覧';
-            $text = $line_user->name . 'さんの今週までにやることは' . count($todo_carousel_columns) . '件です';
+            $title = $line_user->name . 'さんの今週までに遂げること一覧';
+            $text = $line_user->name . 'さんの今週までに遂げることは' . count($todo_carousel_columns) . '件です';
         } else if ($action_value === 'CHECK_TODO_BY_TODAY') {
-            $title = $line_user->name . 'さんの今日までにやること一覧';
-            $text = $line_user->name . 'さんの今日までにやることは' . count($todo_carousel_columns) . '件です';
+            $title = $line_user->name . 'さんの今日までに遂げること一覧';
+            $text = $line_user->name . 'さんの今日までに遂げることは' . count($todo_carousel_columns) . '件です';
         }
         return ['title' => $title, 'text' => $text];
     }
@@ -391,7 +391,7 @@ class Todo extends Model
      */
     public static function comeBackTodoList(object $project)
     {
-        $carouselText =  '「' . $project->name . '」のやること一覧に戻りますか？';
+        $carouselText =  '「' . $project->name . '」の遂げること一覧に戻りますか？';
         $actions = [
             new PostbackTemplateActionBuilder('戻る', 'action=SHOW_TODO_LIST_TO_ADD_TODO&page=1'),
         ];
@@ -403,7 +403,7 @@ class Todo extends Model
     /**
      *
      *
-     * やることの期限 Date
+     * 遂げることの期限 Date
      *
      *
      */
@@ -418,7 +418,7 @@ class Todo extends Model
     public static function askTodoLimited(string $user_name, array $todo)
     {
         $title = '「' . $todo['name'] . '」の期日';
-        $text = 'それでは' . $user_name . 'さんはいつまでに「' . $todo['name'] . '」を達成したいですか?';
+        $text = 'それでは' . $user_name . 'さんはいつまでに「' . $todo['name'] . '」を遂げたいですか?';
         $builder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
         $builder->add(new TextMessageBuilder($text));
         $builder->add(
@@ -426,7 +426,7 @@ class Todo extends Model
                 $title, // チャット一覧に表示される
                 new ButtonTemplateBuilder(
                     $title, // title
-                    'いつまでに達成したいか考えてみよう！', // text
+                    'いつまでに遂げたいか考えてみよう！', // text
                     null, // 画像url
                     [
                         new DatetimePickerTemplateActionBuilder('期日を選択', 'action=ASK_DATE_LIMIT&todo_uuid=' . $todo['uuid'], 'date')
@@ -472,7 +472,7 @@ class Todo extends Model
     public static function confirmDate(Todo $todo, DateTime $date)
     {
         $confirm =  '「' . $date->format('Y年m月d日') . '」ですね！';
-        $fighting =  'それでは' . $date->format('Y年m月d日') . 'までに「' . $todo->name . '」が達成できるよう頑張っていきましょう！';
+        $fighting =  'それでは' . $date->format('Y年m月d日') . 'までに「' . $todo->name . '」が遂げることができるよう頑張っていきましょう！';
         return $confirm . "\n" . $fighting;
     }
 
@@ -497,7 +497,7 @@ class Todo extends Model
      */
     public static function confirmDeleteTodo(Todo $todo)
     {
-        $text = 'やること:「' . $todo->name . '」を削除してもよろしいですか？' . "\n" . '「' . $todo->name . '」を達成するために設定したやることも全て削除されてしまいます。';
+        $text = '遂げること:「' . $todo->name . '」を削除してもよろしいですか？' . "\n" . '「' . $todo->name . '」を遂げるために設定した遂げることも全て削除されてしまいます。';
         $builder =
             new TemplateMessageBuilder(
                 '削除の確認',
@@ -538,11 +538,11 @@ class Todo extends Model
     public static function createCountTodoBubbleContainer(User $line_user, string $action_type, int $count_todo_list)
     {
         if ($action_type === 'ALL_TODO_LIST' || $action_type === 'SELECT_TODO_LIST_TO_CHECK') {
-            $todo_type = 'プロジェクト:「' . $line_user->question->project->name . '」のやること';
+            $todo_type = 'プロジェクト:「' . $line_user->question->project->name . '」の遂げること';
         } elseif ($action_type === 'WEEKLY_TODO_LIST' ||  $action_type === 'CHECK_TODO_BY_THIS_WEEK') {
-            $todo_type = '今週までにやること';
+            $todo_type = '今週までに遂げること';
         } elseif ($action_type === 'CHECK_TODO_BY_TODAY' || $action_type ===  'NOTIFY_TODO_CHECK') {
-            $todo_type = '今日までにやること';
+            $todo_type = '今日までに遂げること';
         }
 
         $result_count_todo_list_text = '📝' . ' ' . $count_todo_list;

@@ -26,16 +26,16 @@ class Onboarding extends Model
      */
     public static function callForAdditionalTodo()
     {
-        $text =   '「やること一覧」からゴール達成のためにやることを追加していくことができます！' . "\n" . 'どんどん追加していきましょう！';
+        $text =   '「遂げること一覧」からゴール達成のためにやることを追加していくことができます！' . "\n" . 'どんどん追加していきましょう！';
         return new TemplateMessageBuilder(
-            '「やること一覧」からゴール達成のためのやることを追加していくことができます！', // チャット一覧に表示される
+            '「遂げること一覧」からゴール達成のためのやることを追加していくことができます！', // チャット一覧に表示される
             new ButtonTemplateBuilder(
                 'ゴールを達成するためにやることを追加してみよう!', // title
                 $text, // text
                 null, // 画像url
                 [
                     new PostbackTemplateActionBuilder(
-                        'やること一覧を見る',
+                        '遂げること一覧を見る',
                         'action=SHOW_TODO_LIST_TO_ADD_TODO&page=1',
                         null,
                         'openRichMenu',

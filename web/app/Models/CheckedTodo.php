@@ -58,13 +58,13 @@ class CheckedTodo extends Model
             new TemplateMessageBuilder(
                 '振り返り', // チャット一覧に表示される
                 new ButtonTemplateBuilder(
-                    'どちらのやることを振り返りますか？', // title
+                    'どちらの遂げることを振り返りますか？', // title
                     '選択してください', // text
                     null, // 画像url
                     [
-                        new PostbackTemplateActionBuilder('今日までにやること', 'action=CHECK_TODO_BY_TODAY&page=1'),
-                        new PostbackTemplateActionBuilder('今週までにやること', 'action=CHECK_TODO_BY_THIS_WEEK&page=1'),
-                        new PostbackTemplateActionBuilder('やること一覧から選択', 'action=SELECT_TODO_LIST_TO_CHECK&page=1'),
+                        new PostbackTemplateActionBuilder('今日までに遂げること', 'action=CHECK_TODO_BY_TODAY&page=1'),
+                        new PostbackTemplateActionBuilder('今週までに遂げること', 'action=CHECK_TODO_BY_THIS_WEEK&page=1'),
+                        new PostbackTemplateActionBuilder('遂げること一覧から選択', 'action=SELECT_TODO_LIST_TO_CHECK&page=1'),
                     ]
                 )
             );
@@ -79,7 +79,7 @@ class CheckedTodo extends Model
      */
     public static function askIfTodoHasBeenAccomplished(Todo $todo)
     {
-        $text = '「' . $todo->name . '」について達成できましたか？';
+        $text = '「' . $todo->name . '」について遂げることができましたか？';
         $builder =
             new ConfirmTemplateBuilder(
                 $text,
@@ -99,7 +99,7 @@ class CheckedTodo extends Model
      */
     public static function addTodoAfterCheckTodo(Todo $todo)
     {
-        $text = '「' . $todo->name . '」を達成するためにやることを新しく追加しますか?';
+        $text = '「' . $todo->name . '」を遂げるためにやることを新しく追加しますか?';
         $builder =
             new ConfirmTemplateBuilder(
                 $text,
@@ -120,10 +120,10 @@ class CheckedTodo extends Model
     public static function askContinueCheckTodo(LineUsersQuestion $question)
     {
         if ($question->checked_todo === CheckedTodo::CHECK_TODO['CHECK_TODO_BY_TODAY']) {
-            $title = '今日までにやることの振り返りを続けますか？';
+            $title = '今日までに遂げることの振り返りを続けますか？';
             $action_type = 'CHECK_TODO_BY_TODAY';
         } else if ($question->checked_todo === CheckedTodo::CHECK_TODO['CHECK_TODO_BY_THIS_WEEK']) {
-            $title = '今週までにやることの振り返りを続けますか？';
+            $title = '今週までに遂げることの振り返りを続けますか？';
             $action_type = 'CHECK_TODO_BY_THIS_WEEK';
         } else if ($question->checked_todo === CheckedTodo::CHECK_TODO['SELECT_TODO_LIST_TO_CHECK']) {
             $title = '振り返りを続けますか？';
@@ -151,9 +151,9 @@ class CheckedTodo extends Model
     public static function getTextMessageOfFinishCheckTodo(LineUsersQuestion $question)
     {
         if ($question->checked_todo === CheckedTodo::CHECK_TODO['CHECK_TODO_BY_TODAY']) {
-            $text = '今日までにやることの振り返りを終了しました。';
+            $text = '今日までに遂げることの振り返りを終了しました。';
         } else if ($question->checked_todo === CheckedTodo::CHECK_TODO['CHECK_TODO_BY_THIS_WEEK']) {
-            $text = '今週までにやることの振り返りを終了しました。';
+            $text = '今週までに遂げることの振り返りを終了しました。';
         } else if ($question->checked_todo === CheckedTodo::CHECK_TODO['SELECT_TODO_LIST_TO_CHECK']) {
             $text = '振り返りを終了しました。';
         }
@@ -231,13 +231,13 @@ class CheckedTodo extends Model
             $reflection_title_component_flex = 2;
             if ($carousel_type === '今日') {
                 $reflection_title = '📘' . ' ' . $carousel_type;
-                $reflection_text = '今日までにやること';
+                $reflection_text = '今日までに遂げること';
             } else if ($carousel_type === '今週') {
                 $reflection_title = '📙' . ' ' . $carousel_type;
-                $reflection_text = '今週までにやること';
+                $reflection_text = '今週までに遂げること';
             } else if ($carousel_type === '一覧') {
                 $reflection_title = '📚' . ' ' . $carousel_type;
-                $reflection_text = 'やること一覧から選択';
+                $reflection_text = '遂げること一覧から選択';
             } else if ($carousel_type === '通知') {
                 $reflection_title = '⏰' . ' ' . $carousel_type;
                 $reflection_text = '振り返りの時間の設定';

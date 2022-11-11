@@ -248,7 +248,7 @@ class Habit extends Model
         $frequency_text = array_keys(Habit::FREQUENCY, $frequency)[0];
         $habit_date = $frequency_text . $day_text;
         $confirm =  '「' . $habit_date . '」ですね！';
-        $fighting =  '「' . $todo->name . '」が' . '継続して達成できるように頑張っていきましょう！';
+        $fighting =  '「' . $todo->name . '」が' . '継続して遂げることができるように頑張っていきましょう！';
         return $confirm . "\n" . $fighting;
     }
 }

@@ -81,11 +81,11 @@ class CreateTodoListCarouselColumns
         // Todoが何件あるか報告するメッセージ
         if ($current_page === 1) {
             if ($action_type === 'CHECK_TODO_BY_TODAY' || $action_type ===  'NOTIFY_TODO_CHECK') {
-                $todo_type = '今日までにやること';
+                $todo_type = '今日までに遂げること';
             } elseif ($action_type === 'WEEKLY_TODO_LIST' ||  $action_type === 'CHECK_TODO_BY_THIS_WEEK') {
-                $todo_type = '今週までにやること';
+                $todo_type = '今週までに遂げること';
             } else {
-                $todo_type = 'プロジェクト:「' . $line_user->question->project->name . '」のやること';
+                $todo_type = 'プロジェクト:「' . $line_user->question->project->name . '」の遂げること';
             }
             $report_message = TodoCarouselContainerBuilder::createCountTodoBubbleContainer($todo_type, $count_todo_carousel_column);
             array_unshift($todo_carousel_columns, $report_message);
@@ -93,7 +93,7 @@ class CreateTodoListCarouselColumns
 
         $todo_carousels = new CarouselContainerBuilder($todo_carousel_columns);
         $flex_message = new FlexMessageBuilder(
-            'やること一覧',
+            '遂げること一覧',
             $todo_carousels
         );
 
