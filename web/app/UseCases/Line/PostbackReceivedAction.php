@@ -10,6 +10,7 @@ use App\Models\LineUsersQuestion;
 use App\Models\TodoCheckNotificationDateTime;
 use App\Models\Contact;
 use App\UseCases\Line\Todo\Notification\SetupNotificationForTodoCheck;
+use Illuminate\Support\Arr;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
 use Illuminate\Support\Facades\Log;

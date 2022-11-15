@@ -111,8 +111,8 @@ class CheckTodo
             if (count($todo_list) === 0) {
                 $user_todo = Todo::where('user_uuid', $line_user->uuid)->first();
                 if ($user_todo) {
-                    $something_todo_text = $action_type === 'CHECK_TODO_BY_TODAY' ? '今日までに遂げること' : '今週までに遂げること';
-                    $carousel_text = $something_todo_text . 'がありません。遂げること一覧から遂げることを追加してみてください！';
+                    $something_todo_text = $action_type === 'CHECK_TODO_BY_TODAY' ? '今日までに振り返ること' : '今週までに振り返ること';
+                    $carousel_text = $something_todo_text . 'がありません。遂げること一覧からやることを追加してみてください！';
                     $actions = [
                         new \LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder('遂げること一覧へ', 'action=SHOW_TODO_LIST_TO_ADD_TODO&page=1'),
                     ];
