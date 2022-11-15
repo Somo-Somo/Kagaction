@@ -114,6 +114,7 @@ class MessageReceivedAction
             $this->bot->replyText($event->getReplyToken(), Contact::thanksMessage());
             Mail::to(env('MAIL_TO_ADDRESS'))->send(new ContactMail($line_user, $event->getText()));
             Contact::create(['user_uuid' => $line_user->uuid, 'text' => $event->getText()]);
+            $line_user->question->update(['question_number' => LineUsersQuestion::NO_QUESTION]);
         } else if ($question_number === LineUsersQuestion::NO_QUESTION) {
             // 質問がない場合
             $this->bot->replyText($event->getReplyToken(), 'すみません！そのメッセージには対応できません！');
@@ -122,14 +123,8 @@ class MessageReceivedAction
         if (
             $event->getText() === '振り返る' || $event->getText() === '遂げること' || $event->getText() === 'その他'
         ) {
-            if ($line_user->question->checked_todo) $line_user->question->update(
-                [
-                    'checked_todo' => null, 'parent_uuid' => null
-                ]
-            );
-            $line_user->question->update([
-                'question_number' => LineUsersQuestion::NO_QUESTION
-            ]);
+            if ($line_user->question->checked_todo) $line_user->question->update(['checked_todo' => null, 'parent_uuid' => null]);
+            $line_user->question->update(['question_number' => LineUsersQuestion::NO_QUESTION]);
         }
         return;
     }
