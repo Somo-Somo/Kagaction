@@ -63,8 +63,7 @@ class NotifyTodoCheck
                 $today_date_time = new DateTime();
                 $today = $today_date_time->format('Y-m-d');
                 $todo_list = Todo::where('user_uuid', $recive_notification_user->user_uuid)
-                    ->where('date', '<=', $today)
-                    ->orderBy('date', 'desc')
+                    ->where('date', '=', $today)
                     ->get();
                 if (count($todo_list) > 0) {
                     $notify_todo_check_message =
