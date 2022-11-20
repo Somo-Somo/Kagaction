@@ -83,7 +83,7 @@ class TodoResponseAction
         ];
 
         $message_builder = $question_number === LineUsersQuestion::HABIT ?
-            Habit::askFrequencyHabit($todo) : Todo::askTodoLimited($line_user->name, $todo);
+            Habit::askFrequencyHabit($todo) : Todo::askTodoLimited($line_user->name, $todo, $question_number);
 
         // 返信メッセージ(日付)
         $this->bot->replyMessage($event->getReplyToken(), $message_builder);

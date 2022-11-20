@@ -409,12 +409,22 @@ class Todo extends Model
      *
      * @param string $user_name
      * @param array $todo
+     * @param int $question_number
      * @return \LINE\LINEBot\MessageBuilder\MultiMessageBuilder()
      */
-    public static function askTodoLimited(string $user_name, array $todo)
+    public static function askTodoLimited(string $user_name, array $todo, int $question_number)
     {
-        $title = '「' . $todo['name'] . '」を遂げることができたか振り返る日';
-        $text = 'それでは' . $user_name . 'さんはいつ「' . $todo['name'] . '」を遂げることができたか振り返りますか?';
+        if ($question_number ===  LineUsersQuestion::GOAL) {
+            $title =  'いつまでに「' . $todo['name'] . '」を成し遂げたいですか？';
+            $text =  'それでは' . $user_name . 'さんは「' . $todo['name'] . '」をいつまでに成し遂げたいですか?';
+            $sub_text = '達成したい日に考えてみよう！';
+            $action_btn_text = '成し遂げたい日を選択';
+        } else {
+            $title =  '「' . $todo['name'] . '」を遂げることができたか振り返る日';
+            $text = 'それでは' . $user_name . 'さんはいつ「' . $todo['name'] . '」を遂げることができたか振り返りますか?';
+            $sub_text = '振り返る日を考えてみよう！';
+            $action_btn_text = '振り返る日を選択';
+        }
         $builder = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
         $builder->add(new TextMessageBuilder($text));
         $builder->add(
@@ -422,10 +432,10 @@ class Todo extends Model
                 $title, // チャット一覧に表示される
                 new ButtonTemplateBuilder(
                     $title, // title
-                    '振り返る日を考えてみよう！', // text
+                    $sub_text, // text
                     null, // 画像url
                     [
-                        new DatetimePickerTemplateActionBuilder('振り返る日を選択', 'action=ASK_DATE_LIMIT&todo_uuid=' . $todo['uuid'], 'date')
+                        new DatetimePickerTemplateActionBuilder($action_btn_text, 'action=ASK_DATE_LIMIT&todo_uuid=' . $todo['uuid'], 'date')
                     ]
                 )
             )
