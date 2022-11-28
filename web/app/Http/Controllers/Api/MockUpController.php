@@ -9,6 +9,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
+use LINE\LINEBot\MessageBuilder\TemplateBuilder\ButtonTemplateBuilder;
+use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
+use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
+use LINE\LINEBot\QuickReplyBuilder\ButtonBuilder\QuickReplyButtonBuilder;
+use LINE\LINEBot\QuickReplyBuilder\QuickReplyMessageBuilder;
+use LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder;
+use LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder;
+use LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder;
 
 class MockUpController extends Controller
 {
@@ -64,6 +72,65 @@ class MockUpController extends Controller
                         MockUp::askFeeling($user_name)
                     );
                     Log::debug((array)$test);
+                }
+                if ($event->getText() === '仕事を早く終わらせることができた！') {
+                    $quick_reply_buttons = [
+                        new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('できた', 'できた')),
+                        new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('できなかった', 'できなかった'))
+                    ];
+                    $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
+                    $text_message_builder = new TextMessageBuilder('今日したかった「朝6:00に起きる」はできた?', $quick_reply_message_builder);
+                    $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
+                    $multi_message->add(new TextMessageBuilder('それはよかった！'));
+                    $multi_message->add($text_message_builder);
+                    $test = $this->bot->replyMessage($event->getReplyToken(), $text_message_builder);
+                    Log::debug((array)$test);
+                }
+                if ($event->getText() === 'できなかった') {
+                    $quick_reply_buttons = [
+                        new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('ある', 'ある')),
+                        new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('ない', 'ない'))
+                    ];
+                    $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
+                    $text_message_builder = new TextMessageBuilder('明日したいことや改善したいことはある？', $quick_reply_message_builder);
+                    $test = $this->bot->replyMessage($event->getReplyToken(), $text_message_builder);
+                    Log::debug((array)$test);
+                }
+                if ($event->getText() === 'ある') {
+                    $text_message_builder = new TextMessageBuilder('ちなみにどんなことか教えて！');
+                    $test = $this->bot->replyMessage($event->getReplyToken(), $text_message_builder);
+                    Log::debug((array)$test);
+                }
+                if ($event->getText() === '朝6:00に起きる') {
+                    $quick_reply_buttons = [
+                        new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('ある', 'ある')),
+                        new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('ない', 'ない'))
+                    ];
+                    $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
+                    $text_message_builder = new TextMessageBuilder('他にも明日したいことや改善したいことはある？', $quick_reply_message_builder);
+                    $test = $this->bot->replyMessage($event->getReplyToken(), $text_message_builder);
+                    Log::debug((array)$test);
+                }
+                if ($event->getText() === 'ない') {
+                    $builder =
+                        new TemplateMessageBuilder(
+                            '今日も一日お疲れ様です！', // チャット一覧に表示される
+                            new ButtonTemplateBuilder(
+                                null, // title
+                                '今日も一日お疲れ様です！明日も頑張っていきましょう！', // text
+                                null, // 画像url
+                                [
+                                    new UriTemplateActionBuilder('もっと記録する', 'https://liff.line.me/1657690379-MG15W7yl')
+                                ]
+                            )
+
+                        );
+                    $test = $this->bot->replyMessage($event->getReplyToken(), $builder);
+                    Log::debug((array)$test);
+                }
+            } else if ($event->getType() === 'postback') {
+                if ($event->getPostbackData() === '絶好調') {
+                    $this->bot->replyText($event->getReplyToken(), 'どんなところが絶好調だったか教えて！');
                 }
             }
         }
