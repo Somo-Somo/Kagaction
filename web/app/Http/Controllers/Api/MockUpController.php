@@ -83,7 +83,7 @@ class MockUpController extends Controller
                     $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
                     $multi_message->add(new TextMessageBuilder('それはよかった！'));
                     $multi_message->add($text_message_builder);
-                    $test = $this->bot->replyMessage($event->getReplyToken(), $text_message_builder);
+                    $test = $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                     Log::debug((array)$test);
                 }
                 if ($event->getText() === 'できなかった') {
@@ -93,7 +93,10 @@ class MockUpController extends Controller
                     ];
                     $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
                     $text_message_builder = new TextMessageBuilder('明日したいことや改善したいことはある？', $quick_reply_message_builder);
-                    $test = $this->bot->replyMessage($event->getReplyToken(), $text_message_builder);
+                    $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
+                    $multi_message->add(new TextMessageBuilder('それは残念！また頑張ろう！'));
+                    $multi_message->add($text_message_builder);
+                    $test = $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                     Log::debug((array)$test);
                 }
                 if ($event->getText() === 'ある') {
@@ -108,13 +111,16 @@ class MockUpController extends Controller
                     ];
                     $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
                     $text_message_builder = new TextMessageBuilder('他にも明日したいことや改善したいことはある？', $quick_reply_message_builder);
-                    $test = $this->bot->replyMessage($event->getReplyToken(), $text_message_builder);
+                    $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
+                    $multi_message->add(new TextMessageBuilder('それじゃあ明日「' . $event->getText() . '」ができるように頑張ろう！'));
+                    $multi_message->add($text_message_builder);
+                    $test = $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                     Log::debug((array)$test);
                 }
                 if ($event->getText() === 'ない') {
                     $builder =
                         new TemplateMessageBuilder(
-                            '今日も一日お疲れ様です！', // チャット一覧に表示される
+                            '今日も一日お疲れ様です！明日も頑張っていきましょう！', // チャット一覧に表示される
                             new ButtonTemplateBuilder(
                                 null, // title
                                 '今日も一日お疲れ様です！明日も頑張っていきましょう！', // text
@@ -123,7 +129,6 @@ class MockUpController extends Controller
                                     new UriTemplateActionBuilder('もっと記録する', 'https://liff.line.me/1657690379-MG15W7yl')
                                 ]
                             )
-
                         );
                     $test = $this->bot->replyMessage($event->getReplyToken(), $builder);
                     Log::debug((array)$test);

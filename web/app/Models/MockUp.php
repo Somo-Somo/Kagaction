@@ -75,7 +75,7 @@ class MockUp extends Model
             $bubble_container_builder = new BubbleContainerBuilder();
             $bubble_container_builder->setBody($body_box);
             $bubble_container_builder->setSize('nano');
-            $template_action_builder = new PostbackTemplateActionBuilder($value['text'], $value['postback_data']);
+            $template_action_builder = new PostbackTemplateActionBuilder($value['text'], $value['postback_data'], null, 'openKeyboard', null);
             $bubble_container_builder->setAction($template_action_builder);
             $bubble_container_builders[] = $bubble_container_builder;
         }
