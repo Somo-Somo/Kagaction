@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h1>aaa</h1>
+        <h2>2022/11/28</h2>
+        <h1>こっからも記録できる</h1>
     </div>
 </template>
 
