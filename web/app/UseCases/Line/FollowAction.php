@@ -72,7 +72,8 @@ class FollowAction
         if ($has_line_user_account === NULL) {
             // Lineユーザーへの質問テーブルにも新しくレコードを保存する
             Question::create([
-                'line_user_id' => $line_user_id
+                'line_user_id' => $line_user_id,
+                'operation_type' => 0
             ]);
         }
 

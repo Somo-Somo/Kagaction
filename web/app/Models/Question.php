@@ -23,4 +23,14 @@ class Question extends Model
         'order_number',
         'created_at'
     ];
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'operation_type' => 'integer',
+        'order_number' => 'integer',
+    ];
 }

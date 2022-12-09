@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
 use App\Models\MockUp;
+use App\Models\Question;
+use App\Models\Condition;
 use App\Http\Controllers\Controller;
+use App\UseCases\Line\FollowAction;
 use App\Services\LineBotService;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
@@ -53,10 +58,8 @@ class MockUpController extends Controller
      *
      * @param Request $request
      */
-    public function reply(Request $request)
+    public function reply(Request $request, FollowAction $follow_action,)
     {
-        Log::debug('a');
-
         $status_code = $this->line_bot_service->eventHandler($request);
 
         // リクエストをEventオブジェクトに変換する
@@ -64,15 +67,43 @@ class MockUpController extends Controller
 
         foreach ($events as $event) {
             if ($event->getType() === 'follow') {
+                $follow_action->invoke($event->getUserId());
             } else if ($event->getType() === 'message') {
+                $user = User::where('line_id', $event->getUserId())->first();
+                $question = Question::where('line_user_id', $event->getUserId())->first();
+                Log::debug((array)$question);
                 if ($event->getText() === '話す') {
                     $user_name = $this->bot->getProfile($event->getUserId())->getJSONDecodedBody()['displayName'];
-                    $test = $this->bot->replyMessage(
+                    $question->update(['operation_type' => 1, 'order_number' => 1]);
+                    $this->bot->replyMessage(
                         $event->getReplyToken(),
-                        MockUp::askFeeling($user_name)
+                        Condition::askCondition($user_name)
                     );
-                    Log::debug((array)$test);
                 }
+                if ($question->operation_type === 1) {
+                    if ($question->order_number === 1) {
+                        if ($event->getText() === '絶好調' || $event->getText() === '好調') {
+                            $date_time = new DateTime();
+                            // 保存
+                            $condition = Condition::create([
+                                'user_uuid' => $user->uuid,
+                                'evaluation' => Condition::CONDITION_TYPE[$event->getText()],
+                                'date' => $date_time->format('Y-m-d'),
+                                'time' => $date_time->format('H:i:s')
+                            ]);
+                            $this->bot->replyMessage($event->getReplyToken(), Condition::askWhatIsHappened($user, $event->getText()));
+                            $question->update(['condition_id' => $condition->id, 'order_number' => 2]);
+                        } else if ($event->getText() === 'まあまあ') {
+                            # code...
+                        } else if ($event->getText() === '不調') {
+                            # code...
+                        } else if ($event->getText() === '絶不調') {
+                            # code...
+                        }
+                    } else if ($question->order_number === 2) {
+                    }
+                }
+
                 if ($event->getText() === '仕事を早く終わらせることができた！') {
                     $quick_reply_buttons = [
                         new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('できた', 'できた')),

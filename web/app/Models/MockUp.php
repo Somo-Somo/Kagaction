@@ -49,13 +49,6 @@ class MockUp extends Model
         //     ['text' => '落ち込んでる', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/atlrf-sunis.png", "postback_data" => "順調"],
         //     ['text' => '無気力', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/al52c-hug28.png", "postback_data" => "順調"],
         // ];
-        $carousels = [
-            ['text' => '絶好調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/al2kg-d0h8j.png", "postback_data" => "絶好調"],
-            ['text' => '好調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/aaahl-m8z5k.png", "postback_data" => "絶好調"],
-            ['text' => 'まあまあ', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/anssb-vmz8a.png", "postback_data" => "絶好調"],
-            ['text' => '不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/anq6g-ajo1o.png", "postback_data" => "絶好調"],
-            ['text' => '絶不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/atlrf-sunis.png", "postback_data" => "絶好調"],
-        ];
         $time = new DateTime();
         $now_hour = $time->format('H');
         if ($now_hour > 4 && $now_hour < 11) {
