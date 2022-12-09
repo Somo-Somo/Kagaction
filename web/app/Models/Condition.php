@@ -171,4 +171,31 @@ class Condition extends Model
     {
         return 'まあまあだったんだね！' . "\n" . $user->name . '今どんなことしてたの？？';
     }
+
+    /**
+     * 不調
+     */
+    /**
+     * first message
+     * function askAboutFeeling
+     * @return string
+     */
+    public static function askAboutFeelingIfWorse()
+    {
+        return '今の自分の気持ちを表すものがこの中にあったりするかな？';
+    }
+
+    /**
+     * 絶不調
+     */
+    /**
+     * first message
+     * function askAboutFeeling
+     * @param User $user
+     * @return string
+     */
+    public static function askAboutFeelingIfWorst()
+    {
+        return '何か心配だったり不安に思うことだったりすることがあるのかな？' . "\n" . '今の自分の気持ちを表すものがこの中にあったりするかな？';
+    }
 }

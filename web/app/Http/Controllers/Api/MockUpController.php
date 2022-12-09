@@ -97,10 +97,8 @@ class MockUpController extends Controller
                             $this->bot->replyMessage($event->getReplyToken(), Question::askWhatIsHappened($user, $event->getText()));
                         } else if ($event->getText() === 'まあまあ') {
                             $this->bot->replyMessage($event->getReplyToken(), Question::pleaseWriteWhatHappened($question, $user));
-                        } else if ($event->getText() === '不調') {
-                            # code...
-                        } else if ($event->getText() === '絶不調') {
-                            # code...
+                        } else if ($event->getText() === '不調' || $event->getText() === '絶不調') {
+                            $this->bot->replyMessage($event->getReplyToken(), Question::askAboutFeeling($question));
                         }
                     } else if ($question->order_number === 2) {
                         if ($event->getText() === 'ある') {

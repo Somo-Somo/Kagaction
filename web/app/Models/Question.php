@@ -109,7 +109,32 @@ class Question extends Model
     }
 
     /**
-     * なにが起きたのかきく
+     * 今の気持ちを聞く
+     *
+     * @param Question $question
+     * @param User $user
+     * @return
+     */
+    public static function askAboutFeeling(Question $question)
+    {
+        $question->update(['order_number' => 2]);
+        if ($question->condition->evaluation === 2) {
+            $ask_message = Condition::askAboutFeelingIfWorse();
+        } else if ($question->condition->evaluation === 1) {
+            $ask_message = Condition::askAboutFeelingIfWorst();
+        }
+        $condition = Condition::where('id', $question->condition_id)->first();
+        $first_message = '今日は' . Condition::CONDITION_TYPE[$condition->evaluation] . 'だったんだね。' . "\n" . 'お疲れ様!';
+        $quick_reply_buttons = Feeling::feelingQuickReplyBtn();
+        $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
+        $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
+        $multi_message->add(new TextMessageBuilder($first_message));
+        $multi_message->add(new TextMessageBuilder($ask_message, $quick_reply_message_builder));
+        return $multi_message;
+    }
+
+    /**
+     * ありがとうのメッセージ
      *
      * @param Question $question
      * @return
