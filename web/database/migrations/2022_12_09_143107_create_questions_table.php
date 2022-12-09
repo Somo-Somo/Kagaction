@@ -15,13 +15,13 @@ class CreateQuestionsTable extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->string('user_uuid', 255)->unique();
+            $table->string('line_user_id', 255)->unique();
             $table->integer('condition_id')->nullable();
             $table->integer('feeling_id')->nullable();
             $table->integer('operation_type')->nullable();
             $table->integer('order_number')->nullable();
             $table->timestamps();
-            $table->foreign('user_uuid')->references('uuid')->on('users');
+            $table->foreign('line_user_id')->references('line_id')->on('users');
             $table->foreign('condition_id')->references('id')->on('conditions');
             $table->foreign('feeling_id')->references('id')->on('feelings');
         });

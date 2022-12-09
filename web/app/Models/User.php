@@ -23,7 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'uuid',
-        'line_user_id',
+        'line_id',
         'created_at'
     ];
 
