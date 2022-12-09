@@ -7,6 +7,7 @@ use App\Models\MockUp;
 use App\Models\Question;
 use App\Models\Condition;
 use App\Http\Controllers\Controller;
+use App\Models\Diary;
 use App\UseCases\Line\FollowAction;
 use App\Services\LineBotService;
 use DateTime;
@@ -87,7 +88,7 @@ class MockUpController extends Controller
                             // 保存
                             $condition = Condition::create([
                                 'user_uuid' => $user->uuid,
-                                'evaluation' => Condition::CONDITION_TYPE[$event->getText()],
+                                'evaluation' => Condition::EVALUATION[$event->getText()],
                                 'date' => $date_time->format('Y-m-d'),
                                 'time' => $date_time->format('H:i:s')
                             ]);
@@ -101,6 +102,12 @@ class MockUpController extends Controller
                             # code...
                         }
                     } else if ($question->order_number === 2) {
+                        if ($event->getText() === 'ある') {
+                            $this->bot->replyMessage($event->getReplyToken(), Question::pleaseWriteWhatHappened($question));
+                        } else if ($event->getText() === 'ない') {
+                            $this->bot->replyMessage($event->getReplyToken(), Question::askWhyYouAreInGoodCondition($question, $user));
+                        }
+                    } else if ($question->order_number === 3) {
                     }
                 }
 

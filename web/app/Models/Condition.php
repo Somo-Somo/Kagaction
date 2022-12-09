@@ -28,7 +28,9 @@ class Condition extends Model
         'created_at'
     ];
 
-    const CONDITION_TYPE = [
+    const CONDITION_TYPE = ['なし', '絶不調', '不調', 'まあまあ', '好調', '絶好調'];
+
+    const EVALUATION = [
         '絶不調' => 1,
         '不調' => 2,
         'まあまあ' => 3,
