@@ -13,14 +13,14 @@ class CreateProjectsTable extends Migration
      */
     public function up()
     {
-        Schema::create('projects', function (Blueprint $table) {
-            $table->id();
-            $table->string('user_uuid', 255);
-            $table->string('name', 100);
-            $table->string('uuid', 255)->unique();
-            $table->timestamps();
-            $table->foreign('user_uuid')->references('uuid')->on('users');
-        });
+        // Schema::create('projects', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('user_uuid', 255);
+        //     $table->string('name', 100);
+        //     $table->string('uuid', 255)->unique();
+        //     $table->timestamps();
+        //     $table->foreign('user_uuid')->references('uuid')->on('users');
+        // });
     }
 
     /**

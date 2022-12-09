@@ -13,10 +13,10 @@ class AddProjectColumn extends Migration
      */
     public function up()
     {
-        Schema::table('projects', function (Blueprint $table) {
-            // $table->string('user_uuid')->unique()->after('id');
-            // $table->foreign('user_uuid')->references('uuid')->on('users');
-        });
+        // Schema::table('projects', function (Blueprint $table) {
+        //     // $table->string('user_uuid')->unique()->after('id');
+        //     // $table->foreign('user_uuid')->references('uuid')->on('users');
+        // });
     }
 
     /**
