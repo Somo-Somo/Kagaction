@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use LINE\LINEBot\TemplateActionBuilder\PostbackTemplateActionBuilder;
@@ -12,6 +13,7 @@ use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\BubbleContainerBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\CarouselContainerBuilder;
 use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
+use Illuminate\Support\Facades\Log;
 
 class MockUp extends Model
 {
@@ -51,7 +53,16 @@ class MockUp extends Model
             ['text' => '不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/anq6g-ajo1o.png", "postback_data" => "絶好調"],
             ['text' => '絶不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/atlrf-sunis.png", "postback_data" => "絶好調"],
         ];
-        $text =  $user_name . 'さんの今の気分を教えて！';
+        $time = new DateTime();
+        $now_hour = $time->format('H');
+        if ($now_hour > 4 && $now_hour < 11) {
+            $greeting = 'おはよう！';
+        } else if ($now_hour >= 11 && $now_hour < 18) {
+            $greeting = 'こんにちは！';
+        } else {
+            $greeting = 'こんばんは！';
+        }
+        $text =  $user_name . 'さん、' . $greeting;
         $bubble_container_builders = [];
         foreach ($carousels as $key => $value) {
             $img_component_builders = new ImageComponentBuilder($value['image_url']);
