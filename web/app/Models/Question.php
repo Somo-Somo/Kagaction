@@ -58,9 +58,9 @@ class Question extends Model
      */
     public static function askWhyYouAreInGoodCondition(Question $question, User $user)
     {
-        $question->update(['order_number' => 3]);
+        $question->update(['order_number' => 4]);
         $condition = Condition::where('id', $question->condition_id)->first();
-        $message = 'そうなんだ。' . "\n" . 'そしたらどうして' . $user->name . 'さんは今' . Condition::CONDITION_TYPE[$condition->evaluation] . 'なの？';
+        $message = 'そうなんだ!' . "\n" . 'そしたらどうして' . $user->name . 'さんは今' . Condition::CONDITION_TYPE[$condition->evaluation] . 'なの？';
         $text_message_builder = new TextMessageBuilder($message);
         return $text_message_builder;
     }
@@ -74,9 +74,16 @@ class Question extends Model
     public static function thanksMessage(Question $question)
     {
         $condition = Condition::where('id', $question->condition_id)->first();
-        $message = 'だから' . Condition::CONDITION_TYPE[$condition->evaluation] . 'だったんだ！'
-            . "\n" . 'アガトンに教えてくれてありがとう！'
-            . "\n" . 'また何かあったらお話聞かせて！';
+        if ($question->order_number === 3) {
+            $message = 'そうだったんだ！'
+                . "\n" . 'アガトンに教えてくれてありがとう！'
+                . "\n" . 'また何かあったらお話聞かせて！';
+        } else if ($question->order_number === 4) {
+            $message = 'だから' . Condition::CONDITION_TYPE[$condition->evaluation] . 'だったんだ！'
+                . "\n" . 'アガトンに教えてくれてありがとう！'
+                . "\n" . 'また何かあったらお話聞かせて！';
+        }
+
         $text_message_builder = new TextMessageBuilder($message);
         $question->update([
             'condition_id' => null,
