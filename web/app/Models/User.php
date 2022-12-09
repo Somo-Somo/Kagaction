@@ -15,10 +15,11 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var array<string>
      */
     protected $fillable = [
         'name',
+        'nickname',
         'email',
         'password',
         'uuid',
@@ -51,16 +52,7 @@ class User extends Authenticatable
      */
     public function question()
     {
-        return $this->hasOne(LineUsersQuestion::class, 'line_user_id', 'line_user_id');
-    }
-
-    /**
-     * ユーザー(LINE)に紐づくプロジェクト全ての取得
-     *
-     */
-    public function project()
-    {
-        return $this->hasMany(Project::class, 'user_uuid', 'uuid');
+        return $this->hasOne(Question::class, 'user_uuid', 'uuid');
     }
 
     /**
@@ -91,20 +83,38 @@ class User extends Authenticatable
     }
 
     /**
-     * ユーザー(LINE)に紐づく習慣
-     *
-     */
-    public function habits()
-    {
-        return $this->hasMany(Habit::class, 'user_uuid', 'uuid');
-    }
-
-    /**
      * ユーザー(LINE)に紐づく問い合わせ
      *
      */
     public function contacts()
     {
         return $this->hasMany(Contact::class, 'user_uuid', 'uuid');
+    }
+
+    /**
+     * 調子に紐づく
+     *
+     */
+    public function conditions()
+    {
+        return $this->hasMany(Condition::class, 'user_uuid', 'uuid');
+    }
+
+    /**
+     * 気分に紐づく
+     *
+     */
+    public function feelings()
+    {
+        return $this->hasMany(Feeling::class, 'user_uuid', 'uuid');
+    }
+
+    /**
+     * 日記に紐づく
+     *
+     */
+    public function diaries()
+    {
+        return $this->hasMany(Diary::class, 'user_uuid', 'uuid');
     }
 }
