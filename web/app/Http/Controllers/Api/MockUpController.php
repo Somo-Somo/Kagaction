@@ -65,7 +65,7 @@ class MockUpController extends Controller
         foreach ($events as $event) {
             if ($event->getType() === 'follow') {
             } else if ($event->getType() === 'message') {
-                if ($event->getText() === '記録する') {
+                if ($event->getText() === '話す') {
                     $user_name = $this->bot->getProfile($event->getUserId())->getJSONDecodedBody()['displayName'];
                     $test = $this->bot->replyMessage(
                         $event->getReplyToken(),

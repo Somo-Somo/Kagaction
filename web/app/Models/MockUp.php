@@ -14,6 +14,9 @@ use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\CarouselContainerBuilder;
 use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use Illuminate\Support\Facades\Log;
+use LINE\LINEBot\QuickReplyBuilder\ButtonBuilder\QuickReplyButtonBuilder;
+use LINE\LINEBot\QuickReplyBuilder\QuickReplyMessageBuilder;
+use LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder;
 
 class MockUp extends Model
 {
@@ -62,40 +65,19 @@ class MockUp extends Model
         } else {
             $greeting = 'こんばんは！';
         }
-        $text =  $user_name . 'さん、' . $greeting;
-        $bubble_container_builders = [];
-        foreach ($carousels as $key => $value) {
-            $img_component_builders = new ImageComponentBuilder($value['image_url']);
-            $img_component_builders->setSize('xs');
-            $img_component_builders->setOffsetTop('8px');
-
-            $text_component_builders = new TextComponentBuilder($value['text']);
-            $text_component_builders->setSize('xs');
-            $text_component_builders->setWeight('bold');
-            $text_component_builders->setAlign('center');
-            $text_component_builders->setOffsetTop('20px');
-
-            $body_box = new BoxComponentBuilder(
-                'vertical',
-                [$img_component_builders, $text_component_builders]
-            );
-            $body_box->setHeight('120px');
-            $body_box->setWidth('120px');
-            $body_box->setBackgroundColor('#FFFFDB');
-
-            $bubble_container_builder = new BubbleContainerBuilder();
-            $bubble_container_builder->setBody($body_box);
-            $bubble_container_builder->setSize('nano');
-            $template_action_builder = new PostbackTemplateActionBuilder($value['text'], $value['postback_data'], null, 'openKeyboard', null);
-            $bubble_container_builder->setAction($template_action_builder);
-            $bubble_container_builders[] = $bubble_container_builder;
-        }
-        $carousel_container = new CarouselContainerBuilder($bubble_container_builders);
-        $ask_message = new TextMessageBuilder($text);
-        $flex_message = new FlexMessageBuilder($text, $carousel_container);
+        $first_message =  $user_name . 'さん、' . $greeting;
+        $ask_feeling_message = "今の調子はどうですか？";
+        $quick_reply_buttons = [
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😆絶好調', '絶好調')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🙂好調', '好調')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😐まあまあ', 'まあまあ')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🙁不調', '不調')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😣絶不調', '絶不調')),
+        ];
+        $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
-        $multi_message->add($ask_message);
-        $multi_message->add($flex_message);
+        $multi_message->add(new TextMessageBuilder($first_message));
+        $multi_message->add(new TextMessageBuilder($ask_feeling_message, $quick_reply_message_builder));
         return $multi_message;
     }
 }
