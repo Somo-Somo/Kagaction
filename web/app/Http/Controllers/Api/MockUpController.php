@@ -75,7 +75,7 @@ class MockUpController extends Controller
                 Log::debug((array)$question);
                 if ($event->getText() === '話す') {
                     $user_name = $this->bot->getProfile($event->getUserId())->getJSONDecodedBody()['displayName'];
-                    $question->update(['operation_type' => 1, 'order_number' => 1]);
+                    $question->update(['condition_id' => null, 'operation_type' => 1, 'order_number' => 1]);
                     $this->bot->replyMessage(
                         $event->getReplyToken(),
                         Condition::askCondition($user_name)
@@ -83,19 +83,20 @@ class MockUpController extends Controller
                 }
                 if ($question->operation_type === 1) {
                     if ($question->order_number === 1) {
+                        $date_time = new DateTime();
+                        Log::debug(Condition::EVALUATION[$event->getText()]);
+                        // 保存
+                        $condition = Condition::create([
+                            'user_uuid' => $user->uuid,
+                            'evaluation' => Condition::EVALUATION[$event->getText()],
+                            'date' => $date_time->format('Y-m-d'),
+                            'time' => $date_time->format('H:i:s')
+                        ]);
+                        $question->update(['condition_id' => $condition->id, 'order_number' => 2]);
                         if ($event->getText() === '絶好調' || $event->getText() === '好調') {
-                            $date_time = new DateTime();
-                            // 保存
-                            $condition = Condition::create([
-                                'user_uuid' => $user->uuid,
-                                'evaluation' => Condition::EVALUATION[$event->getText()],
-                                'date' => $date_time->format('Y-m-d'),
-                                'time' => $date_time->format('H:i:s')
-                            ]);
-                            $this->bot->replyMessage($event->getReplyToken(), Condition::askWhatIsHappened($user, $event->getText()));
-                            $question->update(['condition_id' => $condition->id, 'order_number' => 2]);
+                            $this->bot->replyMessage($event->getReplyToken(), Question::askWhatIsHappened($user, $event->getText()));
                         } else if ($event->getText() === 'まあまあ') {
-                            # code...
+                            $this->bot->replyMessage($event->getReplyToken(), Question::pleaseWriteWhatHappened($question, $user));
                         } else if ($event->getText() === '不調') {
                             # code...
                         } else if ($event->getText() === '絶不調') {
@@ -103,7 +104,7 @@ class MockUpController extends Controller
                         }
                     } else if ($question->order_number === 2) {
                         if ($event->getText() === 'ある') {
-                            $this->bot->replyMessage($event->getReplyToken(), Question::pleaseWriteWhatHappened($question));
+                            $this->bot->replyMessage($event->getReplyToken(), Question::pleaseWriteWhatHappened($question, $user));
                         } else if ($event->getText() === 'ない') {
                             $this->bot->replyMessage($event->getReplyToken(), Question::askWhyYouAreInGoodCondition($question, $user));
                         }

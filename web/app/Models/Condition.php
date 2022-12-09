@@ -28,6 +28,15 @@ class Condition extends Model
         'created_at'
     ];
 
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'evaluation' => 'integer',
+    ];
+
     const CONDITION_TYPE = ['なし', '絶不調', '不調', 'まあまあ', '好調', '絶好調'];
 
     const EVALUATION = [
@@ -110,30 +119,6 @@ class Condition extends Model
     }
 
     /**
-     * なにが起きたのかきく
-     *
-     * @param User $user
-     * @param string $condition
-     * @return
-     */
-    public static function askWhatIsHappened(User $user, string $condition)
-    {
-        if ($condition === '絶好調') {
-            $ask_what_is_happened = Condition::askWhatIsHappenedWhenUserIsGreat();
-        } else if ($condition === '好調') {
-            $ask_what_is_happened = Condition::askWhatIsHappenedWhenUserIsGood();
-        }
-
-        $quick_reply_buttons = [
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('ある', 'ある')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('ない', 'ない')),
-        ];
-        $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
-        $text_message_builder = new TextMessageBuilder($ask_what_is_happened, $quick_reply_message_builder);
-        return $text_message_builder;
-    }
-
-    /**
      * 絶好調
      */
 
@@ -159,5 +144,31 @@ class Condition extends Model
     public static function askWhatIsHappenedWhenUserIsGood()
     {
         return 'それは最高だね！何かいいことでもあった？？';
+    }
+
+    /**
+     * If Good or Great
+     * second message
+     * function askWhatIsHappened
+     * @return string
+     */
+    public static function pleaseWriteWhatHappenedIsGoodOrGreat()
+    {
+        return 'どんなことがあったの？？' . "\n" . 'アガトンにも教えて！';
+    }
+
+
+    /**
+     * まあまあ
+     */
+    /**
+     * first message
+     * function pleaseWriteWhatHappened
+     * @param User $user
+     * @return string
+     */
+    public static function pleaseWriteWhatHappenedIsNormal($user)
+    {
+        return 'まあまあだったんだね！' . "\n" . $user->name . '今どんなことしてたの？？';
     }
 }
