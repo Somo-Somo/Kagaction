@@ -108,6 +108,12 @@ class MockUpController extends Controller
                             $this->bot->replyMessage($event->getReplyToken(), Question::askWhyYouAreInGoodCondition($question, $user));
                         }
                     } else if ($question->order_number === 3) {
+                        Diary::create([
+                            'user_uuid' => $user->uuid,
+                            'condition_id' => $question->condition_id,
+                            'detail' => $event->getText()
+                        ]);
+                        $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question));
                     }
                 }
 

@@ -64,4 +64,26 @@ class Question extends Model
         $text_message_builder = new TextMessageBuilder($message);
         return $text_message_builder;
     }
+
+    /**
+     * なにが起きたのかきく
+     *
+     * @param Question $question
+     * @return
+     */
+    public static function thanksMessage(Question $question)
+    {
+        $condition = Condition::where('id', $question->condition_id)->first();
+        $message = 'だから' . Condition::CONDITION_TYPE[$condition->evaluation] . 'だったんだ！'
+            . "\n" . 'アガトンに教えてくれてありがとう！'
+            . "\n" . 'また何かあったらお話聞かせて！';
+        $text_message_builder = new TextMessageBuilder($message);
+        $question->update([
+            'condition_id' => null,
+            'feeling_id' => null,
+            'operation_type' => null,
+            'order_number' => null
+        ]);
+        return $text_message_builder;
+    }
 }
