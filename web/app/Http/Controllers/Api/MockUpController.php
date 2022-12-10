@@ -130,10 +130,9 @@ class MockUpController extends Controller
                                 'condition_id' => $question->condition_id,
                                 'detail' => $event->getText()
                             ]);
-                            $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question, $user, $event->getText()));
+                            $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question, $event->getText()));
                         } elseif ($question->condition->evaluation < 3) {
-                            Log::debug((array)$question);
-                            $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question, $user, $event->getText()));
+                            $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question, $event->getText()));
                         }
                     }
                 }

@@ -427,7 +427,7 @@ class Feeling extends Model
     {
         return [
             new TextMessageBuilder('「' . $reply . '」ことが悔しかったんですね。'),
-            new TextMessageBuilder('悔しいと感じるということはもっと頑張りたいってこと。'
+            new TextMessageBuilder('悔しいと感じるということはもっと頑張りたいってことですね！'
                 . "\n" . 'この気持ちを忘れずに頑張ってください！'),
         ];
     }
@@ -441,7 +441,7 @@ class Feeling extends Model
     {
         return [
             new TextMessageBuilder('もやもやしてるんですね'),
-            new TextMessageBuilder('どんなことでもやもやしてますか？')
+            new TextMessageBuilder('どんなことで今もやもやしてますか？')
         ];
     }
 

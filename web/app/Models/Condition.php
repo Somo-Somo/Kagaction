@@ -192,11 +192,9 @@ class Condition extends Model
     public static function thanksMessageWhenSomothingGoodHappens()
     {
         return
-            [
-                new TextMessageBuilder('そうだったんだ！'
-                    . "\n" . 'アガトンに教えてくれてありがとう！'
-                    . "\n" . 'また気が向いたらお話聞かせて！')
-            ];
+            new TextMessageBuilder('そうだったんですね！'
+                . "\n" . 'アガトンに教えてくれてありがとう！'
+                . "\n" . 'また気が向いたらお話聞かせてください！');
     }
 
     /**
@@ -208,10 +206,8 @@ class Condition extends Model
     public static function thanksMessageWhenNothingGoodHappens($question)
     {
         return
-            [
-                new TextMessageBuilder('だから' . Condition::CONDITION_TYPE[$question->condition->evaluation] . 'だったんだ！'
-                    . "\n" . 'アガトンに教えてくれてありがとう！'
-                    . "\n" . 'また気が向いたらお話聞かせて！')
-            ];
+            new TextMessageBuilder('だから' . Condition::CONDITION_TYPE[$question->condition->evaluation] . 'だったんですね！'
+                . "\n" . 'アガトンに教えてくれてありがとう！'
+                . "\n" . 'また気が向いたらお話聞かせてください！');
     }
 }

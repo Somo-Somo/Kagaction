@@ -112,7 +112,7 @@ class Question extends Model
     {
         $question->update(['order_number' => 4]);
         $condition = Condition::where('id', $question->condition_id)->first();
-        $message = 'そうなんだ!' . "\n" . 'そしたらどうして' . $user->name . 'さんは今' . Condition::CONDITION_TYPE[$condition->evaluation] . 'なの？';
+        $message = 'そうだったんですね!' . "\n" . 'そしたらどうして' . $user->name . 'さんは今' . Condition::CONDITION_TYPE[$condition->evaluation] . 'なのですか？';
         $text_message_builder = new TextMessageBuilder($message);
         return $text_message_builder;
     }
@@ -148,7 +148,6 @@ class Question extends Model
      */
     public static function questionAfterAskAboutFeeling(Question $question, User $user, Feeling $feeling)
     {
-        Log::debug((array)$feeling);
         $multi_message = Feeling::questionAfterAskAboutFeelingMessage($feeling->feeling_type, $user);
         return $multi_message;
     }
@@ -159,11 +158,10 @@ class Question extends Model
      * ありがとうのメッセージ
      *
      * @param Question $question
-     * @param User $user
      * @param string $reply
-     * @return
+     * @return TextMessageBuilder
      */
-    public static function thanksMessage(Question $question, User $user, string $reply)
+    public static function thanksMessage(Question $question, string $reply)
     {
         if ($question->condition->evaluation > 2) {
             $message = $question->order_number === 3 ?
