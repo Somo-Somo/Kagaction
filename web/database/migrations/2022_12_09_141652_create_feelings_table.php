@@ -17,7 +17,7 @@ class CreateFeelingsTable extends Migration
             $table->id();
             $table->string('user_uuid', 255);
             $table->integer('condition_id');
-            $table->integer('feeling_type');
+            $table->string('feeling_type', 255);
             $table->timestamps();
             $table->foreign('user_uuid')->references('uuid')->on('users');
             $table->foreign('condition_id')->references('id')->on('conditions');

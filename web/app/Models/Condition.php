@@ -198,4 +198,28 @@ class Condition extends Model
     {
         return '何か心配だったり不安に思うことだったりすることがあるのかな？' . "\n" . '今の自分の気持ちを表すものがこの中にあったりするかな？';
     }
+
+    /**
+     * いいことがあった時（絶好調または好調かつ）
+     * @return string
+     */
+    public static function thanksMessageWhenSomothingGoodHappens()
+    {
+        return 'そうだったんだ！'
+            . "\n" . 'アガトンに教えてくれてありがとう！'
+            . "\n" . 'また気が向いたらお話聞かせて！';
+    }
+
+    /**
+     * いいことがなかった時（絶好調または好調かつ）
+     *
+     * @param Question $uquestion
+     * @return string
+     */
+    public static function thanksMessageWhenNothingGoodHappens($question)
+    {
+        return 'だから' . Condition::CONDITION_TYPE[$question->condition->evaluation] . 'だったんだ！'
+            . "\n" . 'アガトンに教えてくれてありがとう！'
+            . "\n" . 'また気が向いたらお話聞かせて！';
+    }
 }

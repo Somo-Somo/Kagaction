@@ -8,6 +8,7 @@ use App\Models\Question;
 use App\Models\Condition;
 use App\Http\Controllers\Controller;
 use App\Models\Diary;
+use App\Models\Feeling;
 use App\UseCases\Line\FollowAction;
 use App\Services\LineBotService;
 use DateTime;
@@ -101,18 +102,34 @@ class MockUpController extends Controller
                             $this->bot->replyMessage($event->getReplyToken(), Question::askAboutFeeling($question));
                         }
                     } else if ($question->order_number === 2) {
-                        if ($event->getText() === 'ある') {
-                            $this->bot->replyMessage($event->getReplyToken(), Question::pleaseWriteWhatHappened($question, $user));
-                        } else if ($event->getText() === 'ない') {
-                            $this->bot->replyMessage($event->getReplyToken(), Question::askWhyYouAreInGoodCondition($question, $user));
+                        if ($question->condition->evaluation > 3) {
+                            if ($event->getText() === 'ある') {
+                                $this->bot->replyMessage($event->getReplyToken(), Question::pleaseWriteWhatHappened($question, $user));
+                            } else if ($event->getText() === 'ない') {
+                                $this->bot->replyMessage($event->getReplyToken(), Question::askWhyYouAreInGoodCondition($question, $user));
+                            }
+                        } else if ($question->condition->evaluation < 3) {
+                            $feeling = Feeling::create([
+                                'user_uuid' => $user->uuid,
+                                'condition_id' => $question->condition_id,
+                                'feeling_type' => $event->getText()
+                            ]);
+                            $this->bot->replyMessage($event->getReplyToken(), Question::questionAfterAskAboutFeeling($question, $user, $feeling));
                         }
                     } else if ($question->order_number === 3 || $question->order_number === 4) {
-                        Diary::create([
-                            'user_uuid' => $user->uuid,
-                            'condition_id' => $question->condition_id,
-                            'detail' => $event->getText()
-                        ]);
-                        $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question));
+                        if ($question->condition->evaluation > 2) {
+                            Diary::create([
+                                'user_uuid' => $user->uuid,
+                                'condition_id' => $question->condition_id,
+                                'detail' => $event->getText()
+                            ]);
+                            $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question));
+                        } else if ($question->condition->evaluation < 3) {
+                            $feeling_type = $question->feeling->feeling_type;
+                            if (in_array($feeling_type, Feeling::NO_THIRD_QUESTION)) {
+                                # code...
+                            }
+                        }
                     }
                 }
 

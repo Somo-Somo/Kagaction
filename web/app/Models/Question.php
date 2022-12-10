@@ -49,6 +49,15 @@ class Question extends Model
     }
 
     /**
+     * 質問と該当する気分を紐付ける
+     *
+     */
+    public function feeling()
+    {
+        return $this->belongsTo(Feeling::class, 'feeling_id', 'id');
+    }
+
+    /**
      * なにが起きたのかきく
      *
      * @param User $user
@@ -82,7 +91,6 @@ class Question extends Model
     public static function pleaseWriteWhatHappened(Question $question, User $user)
     {
         $question->update(['order_number' => 3]);
-        Log::debug($question->condition->evaluation);
         if ($question->condition->evaluation > 3) {
             $message = Condition::pleaseWriteWhatHappenedIsGoodOrGreat();
         } else if ($question->condition->evaluation === 3) {
@@ -134,6 +142,23 @@ class Question extends Model
     }
 
     /**
+     * 今の気持ちを聞く
+     *
+     * @param Question $question
+     * @param User $user
+     * @param Feeling $feeling
+     * @return
+     */
+    public static function questionAfterAskAboutFeeling(Question $question, User $user, Feeling $feeling)
+    {
+        $question->update(['order_number' => 3, 'feeling_id' => $feeling->id]);
+        $multi_message = Feeling::questionAfterAskAboutFeelingMessage($feeling->feeling_type, $user);
+        return $multi_message;
+    }
+
+
+
+    /**
      * ありがとうのメッセージ
      *
      * @param Question $question
@@ -141,15 +166,11 @@ class Question extends Model
      */
     public static function thanksMessage(Question $question)
     {
-        $condition = Condition::where('id', $question->condition_id)->first();
-        if ($question->order_number === 3) {
-            $message = 'そうだったんだ！'
-                . "\n" . 'アガトンに教えてくれてありがとう！'
-                . "\n" . 'また気が向いたらお話聞かせて！';
-        } else if ($question->order_number === 4) {
-            $message = 'だから' . Condition::CONDITION_TYPE[$condition->evaluation] . 'だったんだ！'
-                . "\n" . 'アガトンに教えてくれてありがとう！'
-                . "\n" . 'また気が向いたらお話聞かせて！';
+        if ($question->condition->evaluation > 2) {
+            $message = $question->order_number === 3 ?
+                Condition::thanksMessageWhenSomothingGoodHappens()
+                : Condition::thanksMessageWhenNothingGoodHappens($question);
+        } else {
         }
 
         $text_message_builder = new TextMessageBuilder($message);
