@@ -31,8 +31,8 @@ use LINE\LINEBot;
 */
 
 // LINE Bot
-Route::post('/line-bot/reply', [LineBotController::class, 'reply']);
-Route::post('/line-bot/mockup', [MockUpController::class, 'reply']);
+// Route::post('/line-bot/reply', [LineBotController::class, 'reply']);
+Route::post('/line-bot/reply', [MockUpController::class, 'reply']);
 
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']);
