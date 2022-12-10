@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCheckedTodosTable extends Migration
+class CreateConditionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateCheckedTodosTable extends Migration
      */
     public function up()
     {
-        Schema::create('checked_todos', function (Blueprint $table) {
+        Schema::create('conditions', function (Blueprint $table) {
             $table->id();
             $table->string('user_uuid', 255);
-            $table->string('todo_uuid', 255);
+            $table->integer('evaluation');
+            $table->date('date');
+            $table->time('time');
             $table->timestamps();
             $table->foreign('user_uuid')->references('uuid')->on('users');
-            $table->foreign('todo_uuid')->references('uuid')->on('todos');
         });
     }
 
@@ -30,6 +31,6 @@ class CreateCheckedTodosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('checked_todos');
+        Schema::dropIfExists('conditions');
     }
 }

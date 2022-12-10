@@ -3,7 +3,7 @@
 namespace App\UseCases\Line;
 
 use App\Models\User;
-use App\Models\LineUsersQuestion;
+use App\Models\Question;
 use App\Models\Onboarding;
 use App\Models\TodoCheckNotificationDateTime;
 use App\Repositories\User\UserRepositoryInterface;
@@ -39,9 +39,9 @@ class FollowAction
     public function invoke(string $line_user_id)
     {
         // ユーザーが既に会員登録されているか確認する
-        $has_user_account = User::where('line_user_id', $line_user_id)->first();
+        $has_user_account = User::where('line_id', $line_user_id)->first();
         // Line上で登録済みか
-        $has_line_user_account = LineUsersQuestion::where('line_user_id', $line_user_id)->first();
+        $has_line_user_account = Question::where('line_user_id', $line_user_id)->first();
 
         if ($has_user_account === NULL) {
             $profile = $this->bot->getProfile($line_user_id)->getJSONDecodedBody();
@@ -50,29 +50,31 @@ class FollowAction
             $user = User::create([
                 'name' => $profile['displayName'],
                 'uuid' => (string) Str::uuid(),
-                'line_user_id' => $line_user_id,
-            ]);
-
-            // Lineユーザーへの質問テーブルにも新しくレコードを保存する
-            LineUsersQuestion::create([
-                'line_user_id' => $line_user_id,
-                'question_number' => LineUsersQuestion::PROJECT
+                'line_id' => $line_user_id,
             ]);
 
             Onboarding::create([
                 'user_uuid' => $user['uuid']
             ]);
 
-            TodoCheckNotificationDateTime::create([
-                'user_uuid' => $user['uuid'],
-                'notification_date' => 0,
-                'notification_time' => '21:00:00'
-            ]);
+            // TodoCheckNotificationDateTime::create([
+            //     'user_uuid' => $user['uuid'],
+            //     'notification_date' => 0,
+            //     'notification_time' => '21:00:00'
+            // ]);
 
             // userをneo4jのDBにも登録
-            if ($user) {
-                $this->user_repository->register($user);
-            }
+            // if ($user) {
+            //     $this->user_repository->register($user);
+            // }
+        }
+
+        if ($has_line_user_account === NULL) {
+            // Lineユーザーへの質問テーブルにも新しくレコードを保存する
+            Question::create([
+                'line_user_id' => $line_user_id,
+                'operation_type' => 0
+            ]);
         }
 
         return;

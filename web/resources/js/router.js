@@ -5,6 +5,7 @@ import store from "./store";
 // ページコンポーネントをインポートする
 import Setting from "./components/Views/Setting/Setting.vue";
 import Login from "./components/Views/Login/Login.vue";
+import Mock from "./components/Views/Mock/Mock.vue";
 import Onboarding from "./components/Views/Onboarding/Onboarding.vue";
 import TodoList from "./components/Views/TodoList/TodoList.vue";
 import TodoDetail from "./components/Views/TodoDetail/TodoDetail.vue";
@@ -18,6 +19,10 @@ Vue.use(VueRouter);
 
 // パスとコンポーネントのマッピング
 const routes = [
+    {
+        path: "/mock",
+        component: Mock,
+    },
     {
         path: "/login",
         component: Login,

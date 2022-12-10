@@ -12,6 +12,7 @@ use App\Http\Controllers\CauseController;
 use App\Http\Controllers\Initialize;
 use App\Http\Controllers\Onboarding;
 use App\Http\Controllers\Api\LineBotController;
+use App\Http\Controllers\Api\MockUpController;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -31,6 +32,7 @@ use LINE\LINEBot;
 
 // LINE Bot
 Route::post('/line-bot/reply', [LineBotController::class, 'reply']);
+Route::post('/line-bot/mockup', [MockUpController::class, 'reply']);
 
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']);
