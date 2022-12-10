@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Dotenv\Util\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
@@ -126,13 +127,9 @@ class Question extends Model
     public static function askAboutFeeling(Question $question)
     {
         $question->update(['order_number' => 2]);
-        if ($question->condition->evaluation === 2) {
-            $ask_message = Condition::askAboutFeelingIfWorse();
-        } else if ($question->condition->evaluation === 1) {
-            $ask_message = Condition::askAboutFeelingIfWorst();
-        }
+        $ask_message = Condition::askAboutFeelingIfWorse();
         $condition = Condition::where('id', $question->condition_id)->first();
-        $first_message = '今日は' . Condition::CONDITION_TYPE[$condition->evaluation] . 'だったんだね。' . "\n" . 'お疲れ様!';
+        $first_message = '今日は' . Condition::CONDITION_TYPE[$condition->evaluation] . 'だったんですね。';
         $quick_reply_buttons = Feeling::feelingQuickReplyBtn();
         $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
@@ -142,7 +139,7 @@ class Question extends Model
     }
 
     /**
-     * 今の気持ちを聞く
+     * 気持ちを聞いた後
      *
      * @param Question $question
      * @param User $user
@@ -151,7 +148,7 @@ class Question extends Model
      */
     public static function questionAfterAskAboutFeeling(Question $question, User $user, Feeling $feeling)
     {
-        $question->update(['order_number' => 3, 'feeling_id' => $feeling->id]);
+        Log::debug((array)$feeling);
         $multi_message = Feeling::questionAfterAskAboutFeelingMessage($feeling->feeling_type, $user);
         return $multi_message;
     }
@@ -162,24 +159,26 @@ class Question extends Model
      * ありがとうのメッセージ
      *
      * @param Question $question
+     * @param User $user
+     * @param string $reply
      * @return
      */
-    public static function thanksMessage(Question $question)
+    public static function thanksMessage(Question $question, User $user, string $reply)
     {
         if ($question->condition->evaluation > 2) {
             $message = $question->order_number === 3 ?
                 Condition::thanksMessageWhenSomothingGoodHappens()
                 : Condition::thanksMessageWhenNothingGoodHappens($question);
         } else {
+            $message = Feeling::sortThanksMessage($question->feeling->feeling_type, $reply);
         }
 
-        $text_message_builder = new TextMessageBuilder($message);
         $question->update([
             'condition_id' => null,
             'feeling_id' => null,
             'operation_type' => null,
             'order_number' => null
         ]);
-        return $text_message_builder;
+        return $message;
     }
 }

@@ -129,7 +129,7 @@ class Condition extends Model
      */
     public static function askWhatIsHappenedWhenUserIsGreat()
     {
-        return 'それはもう天才！何か特別いいことでもあったりした？';
+        return 'それはもう天才！何か特別いいことがあったりしましたか？';
     }
 
     /**
@@ -143,7 +143,7 @@ class Condition extends Model
      */
     public static function askWhatIsHappenedWhenUserIsGood()
     {
-        return 'それは最高だね！何かいいことでもあった？？';
+        return 'それは最高だね！何かいいことがあったりしましたか？？';
     }
 
     /**
@@ -154,7 +154,7 @@ class Condition extends Model
      */
     public static function pleaseWriteWhatHappenedIsGoodOrGreat()
     {
-        return 'どんなことがあったの？？' . "\n" . 'アガトンにも教えて！';
+        return 'どんなことがありましたか？？' . "\n" . 'アガトンにも教えて欲しいです！';
     }
 
 
@@ -169,7 +169,7 @@ class Condition extends Model
      */
     public static function pleaseWriteWhatHappenedIsNormal($user)
     {
-        return 'まあまあだったんだね！' . "\n" . $user->name . '今どんなことしてたの？？';
+        return 'まあまあだったんですね！' . "\n" . $user->name . '今日はどんなことしてましたか？？';
     }
 
     /**
@@ -182,21 +182,7 @@ class Condition extends Model
      */
     public static function askAboutFeelingIfWorse()
     {
-        return '今の自分の気持ちを表すものがこの中にあったりするかな？';
-    }
-
-    /**
-     * 絶不調
-     */
-    /**
-     * first message
-     * function askAboutFeeling
-     * @param User $user
-     * @return string
-     */
-    public static function askAboutFeelingIfWorst()
-    {
-        return '何か心配だったり不安に思うことだったりすることがあるのかな？' . "\n" . '今の自分の気持ちを表すものがこの中にあったりするかな？';
+        return '今の自分の気持ちを表すものがこの中にあったりしますか？';
     }
 
     /**
@@ -205,9 +191,12 @@ class Condition extends Model
      */
     public static function thanksMessageWhenSomothingGoodHappens()
     {
-        return 'そうだったんだ！'
-            . "\n" . 'アガトンに教えてくれてありがとう！'
-            . "\n" . 'また気が向いたらお話聞かせて！';
+        return
+            [
+                new TextMessageBuilder('そうだったんだ！'
+                    . "\n" . 'アガトンに教えてくれてありがとう！'
+                    . "\n" . 'また気が向いたらお話聞かせて！')
+            ];
     }
 
     /**
@@ -218,8 +207,11 @@ class Condition extends Model
      */
     public static function thanksMessageWhenNothingGoodHappens($question)
     {
-        return 'だから' . Condition::CONDITION_TYPE[$question->condition->evaluation] . 'だったんだ！'
-            . "\n" . 'アガトンに教えてくれてありがとう！'
-            . "\n" . 'また気が向いたらお話聞かせて！';
+        return
+            [
+                new TextMessageBuilder('だから' . Condition::CONDITION_TYPE[$question->condition->evaluation] . 'だったんだ！'
+                    . "\n" . 'アガトンに教えてくれてありがとう！'
+                    . "\n" . 'また気が向いたらお話聞かせて！')
+            ];
     }
 }
