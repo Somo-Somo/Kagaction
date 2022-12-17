@@ -86,6 +86,11 @@ class MockUpController extends Controller
                         Condition::askCondition($user_name)
                     );
                     return;
+                } else if ($event->getText() === '記録をみる') {
+                    $user = User::where('line_id', $event->getUserId())->first();
+                    $data = $user->name;
+                    $this->bot->replyText($event->getReplyToken(), $event->getText());
+                    return view('index', compact('data'));
                 }
                 if ($question->operation_type === 1) {
                     if ($question->order_number === 1) {
@@ -142,5 +147,13 @@ class MockUpController extends Controller
         Log::debug($status_code);
 
         return response('', $status_code, []);
+    }
+
+    public function debug()
+    {
+        // return view('weekly_report', compact('data'));
+        $data = 'test';
+        Log::debug('abc');
+        return view('index', compact('data'));
     }
 }
