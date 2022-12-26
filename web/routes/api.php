@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\MockUpController;
+use App\Http\Controllers\ImageReportController;
 use App\Http\Controllers\DebugController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -23,3 +24,4 @@ use LINE\LINEBot;
 Route::post('/line-bot/reply', [MockUpController::class, 'reply']);
 Route::get('/mockup', [MockUpController::class, 'debug']);
 Route::post('/debug', [DebugController::class, 'debug']);
+Route::get('/report/monthly/:id', [ImageReportController::class, 'index']);

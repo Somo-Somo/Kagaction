@@ -90,6 +90,7 @@ class MockUpController extends Controller
                     $user = User::where('line_id', $event->getUserId())->first();
                     $data = $user->name;
                     $this->bot->replyText($event->getReplyToken(), $event->getText());
+                    return redirect('report/monthly/' . $user->id, 301);
                     return view('index', compact('data'));
                 }
                 if ($question->operation_type === 1) {
