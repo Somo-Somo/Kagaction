@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
-use App\Models\MockUp;
 use App\Models\Question;
 use App\Models\Condition;
 use App\Http\Controllers\Controller;

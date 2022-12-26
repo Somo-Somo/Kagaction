@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\ImageReport;
 use Illuminate\Http\Request;
+use \Symfony\Component\HttpFoundation\Response;
 
 class ImageReportController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(int $id)
     {
-        //
+        $data = ['id' => $id];
+        return response()->json($data, Response::HTTP_OK);
     }
 
     /**
