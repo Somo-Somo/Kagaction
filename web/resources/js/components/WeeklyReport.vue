@@ -10,9 +10,11 @@
                 font-family="HiraginoSans-W5, Hiragino Sans"
                 letter-spacing="-0.002em"
             >
-                <tspan x="0" y="26">{{ user.id }}</tspan>
+                <tspan x="0" y="26">{{ id }}</tspan>
             </text>
         </svg>
+        <button>出力</button>
+        <div id="result"><img :src="dataURL" /></div>
     </div>
 </template>
 
@@ -35,30 +37,34 @@
 // const app = firebase.initializeApp(config);
 // const db = firebase.firestore();
 
-// function svg2imageData(svgElement, successCallback, errorCallback) {
-//     var canvas = document.createElement("canvas");
-//     canvas.width = 1200;
-//     canvas.height = 630;
-//     var ctx = canvas.getContext("2d");
-//     var image = new Image();
-//     image.onload = () => {
-//         ctx.drawImage(image, 0, 0, 1200, 630);
-//         successCallback(canvas.toDataURL());
-//     };
-//     image.onerror = (e) => {
-//         errorCallback(e);
-//     };
-//     var svgData = new XMLSerializer().serializeToString(svgElement);
-//     image.src =
-//         "data:image/svg+xml;charset=utf-8;base64," +
-//         btoa(unescape(encodeURIComponent(svgData)));
-// }
+function svg2imageData(svgElement, successCallback, errorCallback) {
+    var canvas = document.createElement("canvas");
+    canvas.width = 1200;
+    canvas.height = 630;
+    var ctx = canvas.getContext("2d");
+    var image = new Image();
+    image.onload = () => {
+        ctx.drawImage(image, 0, 0, 1200, 630);
+        ctx.font = "bold 32px MS PGothic";
+        ctx.fillStyle = "#ff0000";
+        ctx.fillText("テスト", 260, 240);
+        successCallback(canvas.toDataURL());
+    };
+    image.onerror = (e) => {
+        errorCallback(e);
+    };
+    var svgData = new XMLSerializer().serializeToString(svgElement);
+    image.src =
+        "data:image/svg+xml;charset=utf-8;base64," +
+        btoa(unescape(encodeURIComponent(svgData)));
+}
 
 export default {
     data() {
         return {
-            user: null,
+            id: null,
             error: null,
+            dataURL: null,
         };
     },
     props: {
@@ -101,11 +107,16 @@ export default {
         // },
     },
     created() {},
-    mounted() {
+    async mounted() {
         axios
             .get("/api/report/monthly/1")
             .then((res) => {
-                this.user = res.data;
+                this.id = res.data.id;
+                console.info(this.id);
+                this.dataURL = svg2imageData(this.$refs.svgCard, (data) => {
+                    this.dataURL = data;
+                    console.info(this.dataURL);
+                });
             })
             .catch((err) => {
                 this.error = err;
