@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\ImageReport;
 use Illuminate\Http\Request;
 use \Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
 
 class ImageReportController extends Controller
 {
@@ -16,8 +17,10 @@ class ImageReportController extends Controller
      */
     public function index(int $id)
     {
+        Log::debug(('aaa'));
         $data = ['id' => $id];
         return response()->json($data, Response::HTTP_OK);
+        // return view('index', compact('data'));
     }
 
     /**

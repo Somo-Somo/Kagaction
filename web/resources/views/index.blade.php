@@ -31,12 +31,54 @@
             flex: 1;
             overflow-x: hidden;
         }
+
+        /* 描画エリアの指定 */
+        .pie-container {
+            position: relative;
+            padding-bottom: 20rem;
+            width: 20rem;
+        }
+
+        .pie-svg {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        /* グラフ部分の指定 */
+        .pie {
+            fill: transparent;
+            cx: 32;
+            cy: 32;
+            r: 16;
+            stroke-width: 32;
+            stroke-dashoffset: 25;
+        }
+
+        .pieA {
+            stroke: #009cff;
+            stroke-dasharray: 65 35;
+        }
+
+        .pieB {
+            stroke: #4cbaff;
+            stroke-dasharray: 0 65 18 17;
+        }
+
+        .pieC {
+            stroke: #7fcdff;
+            stroke-dasharray: 0 83 17 0;
+        }
     </style>
 </head>
 
 <body>
     <div id="app">
-        <weekly-report :data="{{$data}}"></weekly-report>
+        <weekly-report></weekly-report>
     </div>
 </body>
 
@@ -44,5 +86,3 @@
 <?php
 
 use Illuminate\Support\Facades\Log;
-
-Log::debug($data);

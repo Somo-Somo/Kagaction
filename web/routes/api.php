@@ -24,4 +24,4 @@ use LINE\LINEBot;
 Route::post('/line-bot/reply', [MockUpController::class, 'reply']);
 Route::get('/mockup', [MockUpController::class, 'debug']);
 Route::post('/debug', [DebugController::class, 'debug']);
-Route::get('/report/monthly/:id', [ImageReportController::class, 'index']);
+Route::get('/report/monthly/{id}', [ImageReportController::class, 'index']);
