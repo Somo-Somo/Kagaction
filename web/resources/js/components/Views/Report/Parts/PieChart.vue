@@ -8,7 +8,7 @@
                 stroke-width="280"
                 stroke-dashoffset="220"
                 stroke="#FF5757"
-                stroke-dasharray="220 660"
+                :stroke-dasharray="conditionStrokeDasharray.great"
             />
             <circle
                 cx="332"
@@ -17,7 +17,7 @@
                 stroke-width="280"
                 stroke-dashoffset="220"
                 stroke="#FFC8C8"
-                stroke-dasharray="0 220 220 440"
+                :stroke-dasharray="conditionStrokeDasharray.good"
             />
             <circle
                 cx="332"
@@ -25,8 +25,8 @@
                 r="140"
                 stroke-width="280"
                 stroke-dashoffset="220"
-                stroke="#FFFFDB"
-                stroke-dasharray=" 0 440 220 220"
+                stroke="#D9D9D9"
+                :stroke-dasharray="conditionStrokeDasharray.normal"
             />
             <circle
                 cx="332"
@@ -35,7 +35,7 @@
                 stroke-width="280"
                 stroke-dashoffset="220"
                 stroke="#9B97FF"
-                stroke-dasharray=" 0 660 110 110"
+                :stroke-dasharray="conditionStrokeDasharray.bad"
             />
             <circle
                 cx="332"
@@ -44,7 +44,7 @@
                 stroke-width="280"
                 stroke-dashoffset="220"
                 stroke="#4B4989"
-                stroke-dasharray=" 0 770 110 0"
+                :stroke-dasharray="conditionStrokeDasharray.worse"
             />
         </g>
         <g id="Feeling Grapth">
@@ -104,10 +104,110 @@
 
 <script>
 export default {
-    data: () => ({}),
-    props: {},
+    data: () => ({
+        conditionStrokeDasharray: {
+            great: null,
+            good: null,
+            normal: null,
+            bad: null,
+            worse: null,
+            total: 880,
+        },
+        first: false,
+    }),
+    props: {
+        conditionNum: {
+            type: Object,
+        },
+    },
     computed: {},
-    methods: {},
-    watch: {},
+    methods: {
+        createGreatStrokeDasharray(conditionNum) {
+            const greatPercent =
+                this.conditionStrokeDasharray.total *
+                (conditionNum.great / conditionNum.total);
+            return [
+                greatPercent +
+                    " " +
+                    (this.conditionStrokeDasharray.total - greatPercent),
+                greatPercent,
+            ];
+        },
+        createGoodStrokeDasharray(conditionNum, totalToGreat) {
+            const goodPercent =
+                this.conditionStrokeDasharray.total *
+                (conditionNum.good / conditionNum.total);
+            return [
+                "0" +
+                    " " +
+                    totalToGreat +
+                    " " +
+                    goodPercent +
+                    " " +
+                    (this.conditionStrokeDasharray.total -
+                        (totalToGreat + goodPercent)),
+                totalToGreat + goodPercent,
+            ];
+        },
+        createNormalStrokeDasharray(conditionNum, totalToGood) {
+            const normalPercent =
+                this.conditionStrokeDasharray.total *
+                (conditionNum.normal / conditionNum.total);
+            return [
+                "0" +
+                    " " +
+                    totalToGood +
+                    " " +
+                    normalPercent +
+                    " " +
+                    (this.conditionStrokeDasharray.total -
+                        (totalToGood + normalPercent)),
+                totalToGood + normalPercent,
+            ];
+        },
+        createBadStrokeDasharray(conditionNum, totalToNormal) {
+            const badPercent =
+                this.conditionStrokeDasharray.total *
+                (conditionNum.bad / conditionNum.total);
+            return [
+                "0" +
+                    " " +
+                    totalToNormal +
+                    " " +
+                    badPercent +
+                    " " +
+                    (this.conditionStrokeDasharray.total -
+                        (totalToNormal + badPercent)),
+                totalToNormal + badPercent, // = totalToBad
+            ];
+        },
+        createWorseStrokeDasharray(conditionNum, totalToBad) {
+            const worsePercent =
+                this.conditionStrokeDasharray.total *
+                (conditionNum.worse / conditionNum.total);
+            return "0" + " " + totalToBad + " " + worsePercent + " " + "0";
+        },
+    },
+    async mounted() {
+        const [greatStrokeDasharray, totalToGreat] =
+            this.createGreatStrokeDasharray(this.conditionNum);
+        const [goodStrokeDasharray, totalToGood] =
+            this.createGoodStrokeDasharray(this.conditionNum, totalToGreat);
+        const [normalStrokeDasharray, totalToNormal] =
+            this.createNormalStrokeDasharray(this.conditionNum, totalToGood);
+        const [badStrokeDasharray, totalToBad] = this.createBadStrokeDasharray(
+            this.conditionNum,
+            totalToNormal
+        );
+        const worseStrokeDasharray = this.createWorseStrokeDasharray(
+            this.conditionNum,
+            totalToBad
+        );
+        this.conditionStrokeDasharray.great = greatStrokeDasharray;
+        this.conditionStrokeDasharray.good = goodStrokeDasharray;
+        this.conditionStrokeDasharray.normal = normalStrokeDasharray;
+        this.conditionStrokeDasharray.bad = badStrokeDasharray;
+        this.conditionStrokeDasharray.worse = worseStrokeDasharray;
+    },
 };
 </script>

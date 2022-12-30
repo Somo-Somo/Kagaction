@@ -45,9 +45,9 @@
                     id="Report Image"
                     width="1200"
                     height="800"
-                    fill="#4696BD"
+                    fill="white"
                 />
-                <PieChart />
+                <PieChart :conditionNum="conditionNum" />
                 <g id="Service Name">
                     <path
                         id="#Agathon"
@@ -568,8 +568,6 @@ import PieChart from "./Views/Report/Parts/PieChart.vue";
 // const db = firebase.firestore();
 
 function svg2imageData(svgElement, successCallback, errorCallback) {
-    console.info(svgElement.width.baseVal.value);
-    console.info(svgElement.height.baseVal.value);
     console.info(svgElement);
     var canvas = document.createElement("canvas");
     canvas.width = svgElement.width.baseVal.value;
@@ -598,6 +596,14 @@ export default {
             id: null,
             error: null,
             dataURL: null,
+            conditionNum: {
+                great: 2,
+                good: 3,
+                normal: 1,
+                bad: 3,
+                worse: 4,
+                total: 13,
+            },
         };
     },
     props: {
