@@ -7,7 +7,7 @@
                 r="140"
                 stroke-width="280"
                 stroke-dashoffset="220"
-                stroke="#009cff"
+                stroke="#FF5757"
                 stroke-dasharray="220 660"
             />
             <circle
@@ -16,7 +16,7 @@
                 r="140"
                 stroke-width="280"
                 stroke-dashoffset="220"
-                stroke="#4cbaff"
+                stroke="#FFC8C8"
                 stroke-dasharray="0 220 220 440"
             />
             <circle
@@ -25,7 +25,7 @@
                 r="140"
                 stroke-width="280"
                 stroke-dashoffset="220"
-                stroke="#7fcdff"
+                stroke="#FFFFDB"
                 stroke-dasharray=" 0 440 220 220"
             />
             <circle
@@ -34,14 +34,23 @@
                 r="140"
                 stroke-width="280"
                 stroke-dashoffset="220"
-                stroke="red"
-                stroke-dasharray=" 0 660 220 0"
+                stroke="#9B97FF"
+                stroke-dasharray=" 0 660 110 110"
+            />
+            <circle
+                cx="332"
+                cy="384"
+                r="140"
+                stroke-width="280"
+                stroke-dashoffset="220"
+                stroke="#4B4989"
+                stroke-dasharray=" 0 770 110 0"
             />
         </g>
         <g id="Feeling Grapth">
-            <circle id="Ellipse 16" cx="327" cy="384" r="180" fill="#FFFFDB" />
-            <circle id="Ellipse 17" cx="327" cy="384" r="180" fill="#FFFFDB" />
-            <circle id="Ellipse 18" cx="327" cy="384" r="180" fill="#FFFFDB" />
+            <circle id="Ellipse 16" cx="327" cy="384" r="180" fill="#EADCCF" />
+            <circle id="Ellipse 17" cx="327" cy="384" r="180" fill="#EADCCF" />
+            <circle id="Ellipse 18" cx="327" cy="384" r="180" fill="#EADCCF" />
         </g>
         <g id="Center">
             <circle id="Ellipse 13_2" cx="327" cy="384" r="80" fill="white" />
