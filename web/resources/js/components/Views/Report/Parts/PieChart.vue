@@ -48,9 +48,46 @@
             />
         </g>
         <g id="Feeling Grapth">
-            <circle id="Ellipse 16" cx="327" cy="384" r="180" fill="#EADCCF" />
-            <circle id="Ellipse 17" cx="327" cy="384" r="180" fill="#EADCCF" />
-            <circle id="Ellipse 18" cx="327" cy="384" r="180" fill="#EADCCF" />
+            <circle
+                id="Ellipse 16"
+                cx="327"
+                cy="384"
+                r="90"
+                stroke-width="180"
+                stroke-dashoffset="140"
+                stroke-dasharray="100 466"
+                stroke="#FF8C00"
+            />
+            <circle
+                id="Ellipse 16"
+                cx="327"
+                cy="384"
+                r="90"
+                stroke-width="180"
+                stroke-dashoffset="140"
+                stroke-dasharray="0 100 100 366"
+                stroke="#FCC801"
+            />
+            <circle
+                id="Ellipse 16"
+                cx="327"
+                cy="384"
+                r="90"
+                stroke-width="180"
+                stroke-dashoffset="140"
+                stroke-dasharray="0 200 100 266"
+                stroke="#439679"
+            />
+            <circle
+                id="Ellipse 16"
+                cx="327"
+                cy="384"
+                r="90"
+                stroke-width="180"
+                stroke-dashoffset="140"
+                stroke-dasharray="0 300 266 0"
+                stroke="#5891AD"
+            />
         </g>
         <g id="Center">
             <circle id="Ellipse 13_2" cx="327" cy="384" r="80" fill="white" />

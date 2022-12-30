@@ -45,7 +45,7 @@
                     id="Report Image"
                     width="1200"
                     height="800"
-                    fill="white"
+                    fill="#4696BD"
                 />
                 <PieChart />
                 <g id="Service Name">
