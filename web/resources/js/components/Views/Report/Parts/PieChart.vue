@@ -189,13 +189,9 @@ export default {
             const feelings = this.feeling.type;
             var lineTotalUpToNow = 0;
             for (let i = 0; i < feelings.length; i++) {
-                console.info(lineTotalUpToNow);
-                console.info(this.feeling.total);
-                console.info(feelings[i].num);
                 const feelingPercent =
                     this.feelingStrokeDasharrayLimit *
                     (feelings[i].num / this.feeling.total);
-                console.info(feelingPercent);
                 if (i === 0) {
                     this.feelingPieCharts.push({
                         color: feelings[i].color,
@@ -220,7 +216,6 @@ export default {
                 }
                 lineTotalUpToNow += feelingPercent;
             }
-            console.info(this.feelingPieCharts);
         },
     },
     async mounted() {
