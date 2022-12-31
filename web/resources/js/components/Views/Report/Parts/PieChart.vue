@@ -49,44 +49,15 @@
         </g>
         <g id="Feeling Grapth">
             <circle
-                id="Ellipse 16"
+                v-for="feeling in feelingPieCharts"
+                :key="feeling.strokeDashArray"
                 cx="327"
                 cy="384"
                 r="90"
                 stroke-width="180"
                 stroke-dashoffset="140"
-                stroke-dasharray="100 466"
-                stroke="#FF8C00"
-            />
-            <circle
-                id="Ellipse 16"
-                cx="327"
-                cy="384"
-                r="90"
-                stroke-width="180"
-                stroke-dashoffset="140"
-                stroke-dasharray="0 100 100 366"
-                stroke="#FCC801"
-            />
-            <circle
-                id="Ellipse 16"
-                cx="327"
-                cy="384"
-                r="90"
-                stroke-width="180"
-                stroke-dashoffset="140"
-                stroke-dasharray="0 200 100 266"
-                stroke="#439679"
-            />
-            <circle
-                id="Ellipse 16"
-                cx="327"
-                cy="384"
-                r="90"
-                stroke-width="180"
-                stroke-dashoffset="140"
-                stroke-dasharray="0 300 266 0"
-                stroke="#5891AD"
+                :stroke-dasharray="feeling.strokeDashArray"
+                :stroke="feeling.color"
             />
         </g>
         <g id="Center">
@@ -113,15 +84,42 @@ export default {
             worse: null,
             total: 880,
         },
+        feelingPieCharts: [],
+        feelingStrokeDasharrayLimit: 566,
         first: false,
     }),
     props: {
         conditionNum: {
             type: Object,
         },
+        feeling: {
+            type: Object,
+        },
     },
     computed: {},
     methods: {
+        createConditionStrokeDasharray() {
+            const [greatStrokeDasharray, totalToGreat] =
+                this.createGreatStrokeDasharray(this.conditionNum);
+            const [goodStrokeDasharray, totalToGood] =
+                this.createGoodStrokeDasharray(this.conditionNum, totalToGreat);
+            const [normalStrokeDasharray, totalToNormal] =
+                this.createNormalStrokeDasharray(
+                    this.conditionNum,
+                    totalToGood
+                );
+            const [badStrokeDasharray, totalToBad] =
+                this.createBadStrokeDasharray(this.conditionNum, totalToNormal);
+            const worseStrokeDasharray = this.createWorseStrokeDasharray(
+                this.conditionNum,
+                totalToBad
+            );
+            this.conditionStrokeDasharray.great = greatStrokeDasharray;
+            this.conditionStrokeDasharray.good = goodStrokeDasharray;
+            this.conditionStrokeDasharray.normal = normalStrokeDasharray;
+            this.conditionStrokeDasharray.bad = badStrokeDasharray;
+            this.conditionStrokeDasharray.worse = worseStrokeDasharray;
+        },
         createGreatStrokeDasharray(conditionNum) {
             const greatPercent =
                 this.conditionStrokeDasharray.total *
@@ -187,27 +185,47 @@ export default {
                 (conditionNum.worse / conditionNum.total);
             return "0" + " " + totalToBad + " " + worsePercent + " " + "0";
         },
+        createFeelingStorkeDasharray() {
+            const feelings = this.feeling.type;
+            var lineTotalUpToNow = 0;
+            for (let i = 0; i < feelings.length; i++) {
+                console.info(lineTotalUpToNow);
+                console.info(this.feeling.total);
+                console.info(feelings[i].num);
+                const feelingPercent =
+                    this.feelingStrokeDasharrayLimit *
+                    (feelings[i].num / this.feeling.total);
+                console.info(feelingPercent);
+                if (i === 0) {
+                    this.feelingPieCharts.push({
+                        color: feelings[i].color,
+                        strokeDashArray:
+                            feelingPercent +
+                            " " +
+                            (this.feelingStrokeDasharrayLimit - feelingPercent),
+                    });
+                } else {
+                    this.feelingPieCharts.push({
+                        color: feelings[i].color,
+                        strokeDashArray:
+                            "0" +
+                            " " +
+                            lineTotalUpToNow +
+                            " " +
+                            feelingPercent +
+                            " " +
+                            (this.feelingStrokeDasharrayLimit -
+                                (feelingPercent + lineTotalUpToNow)),
+                    });
+                }
+                lineTotalUpToNow += feelingPercent;
+            }
+            console.info(this.feelingPieCharts);
+        },
     },
     async mounted() {
-        const [greatStrokeDasharray, totalToGreat] =
-            this.createGreatStrokeDasharray(this.conditionNum);
-        const [goodStrokeDasharray, totalToGood] =
-            this.createGoodStrokeDasharray(this.conditionNum, totalToGreat);
-        const [normalStrokeDasharray, totalToNormal] =
-            this.createNormalStrokeDasharray(this.conditionNum, totalToGood);
-        const [badStrokeDasharray, totalToBad] = this.createBadStrokeDasharray(
-            this.conditionNum,
-            totalToNormal
-        );
-        const worseStrokeDasharray = this.createWorseStrokeDasharray(
-            this.conditionNum,
-            totalToBad
-        );
-        this.conditionStrokeDasharray.great = greatStrokeDasharray;
-        this.conditionStrokeDasharray.good = goodStrokeDasharray;
-        this.conditionStrokeDasharray.normal = normalStrokeDasharray;
-        this.conditionStrokeDasharray.bad = badStrokeDasharray;
-        this.conditionStrokeDasharray.worse = worseStrokeDasharray;
+        this.createConditionStrokeDasharray();
+        this.createFeelingStorkeDasharray();
     },
 };
 </script>

@@ -47,7 +47,7 @@
                     height="800"
                     fill="white"
                 />
-                <PieChart :conditionNum="conditionNum" />
+                <PieChart :conditionNum="conditionNum" :feeling="feeling" />
                 <g id="Service Name">
                     <path
                         id="#Agathon"
@@ -603,6 +603,31 @@ export default {
                 bad: 3,
                 worse: 4,
                 total: 13,
+            },
+            feeling: {
+                total: 10,
+                type: [
+                    {
+                        name: "楽しい",
+                        num: 2,
+                        color: "#FF8C00",
+                    },
+                    {
+                        name: "嬉しい",
+                        num: 1,
+                        color: "#FCC801",
+                    },
+                    {
+                        name: "穏やか",
+                        num: 2,
+                        color: "#439679",
+                    },
+                    {
+                        name: "不安",
+                        num: 5,
+                        color: "#5891AD",
+                    },
+                ],
             },
         };
     },
