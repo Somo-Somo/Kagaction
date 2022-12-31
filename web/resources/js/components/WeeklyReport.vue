@@ -1,37 +1,5 @@
 <template>
     <div class="hello">
-        <!-- <svg ref="svgCard">
-            <circle
-                fill="transparent"
-                cx="32"
-                cy="32"
-                r="16"
-                stroke-width="32"
-                stroke-dashoffset="25"
-                stroke="#009cff"
-                stroke-dasharray="65 35"
-            />
-            <circle
-                fill="transparent"
-                cx="32"
-                cy="32"
-                r="16"
-                stroke-width="32"
-                stroke-dashoffset="25"
-                stroke="#4cbaff"
-                stroke-dasharray="0 65 18 17"
-            />
-            <circle
-                fill="transparent"
-                cx="32"
-                cy="32"
-                r="16"
-                stroke-width="32"
-                stroke-dashoffset="25"
-                stroke="#7fcdff"
-                stroke-dasharray=" 0 83 17 0"
-            />
-        </svg> -->
         <svg
             ref="svgCard"
             width="1200"
