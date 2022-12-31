@@ -15,7 +15,7 @@
                     height="800"
                     fill="white"
                 />
-                <PieChart :conditionNum="conditionNum" :feeling="feeling" />
+                <PieChart :condition="condition" :feeling="feeling" />
                 <g id="Service Name">
                     <path
                         id="#Agathon"
@@ -369,13 +369,15 @@ export default {
             id: null,
             error: null,
             dataURL: null,
-            conditionNum: {
-                great: 2,
-                good: 3,
-                normal: 1,
-                bad: 3,
-                worse: 4,
+            condition: {
                 total: 13,
+                type: [
+                    { name: "絶好調", num: 2 },
+                    { name: "順調", num: 3 },
+                    { name: "普通", num: 1 },
+                    { name: "不調", num: 3 },
+                    { name: "絶不調", num: 4 },
+                ],
             },
             feeling: {
                 total: 10,
