@@ -21,7 +21,9 @@
                     font-size="24"
                     font-weight="bold"
                     letter-spacing="0em"
-                    ><tspan x="678.832" y="172.464">1st:</tspan></text
+                    ><tspan x="678.832" y="172.464">{{
+                        rankTable[0].rank
+                    }}</tspan></text
                 >
                 <text
                     id="40%_6"
@@ -33,7 +35,9 @@
                     font-weight="bold"
                     letter-spacing="0em"
                 >
-                    <tspan x="814.789" y="171.464">7%</tspan>
+                    <tspan x="814.789" y="171.464"
+                        >{{ rankTable[0].percent }} %</tspan
+                    >
                 </text>
                 <g id="twemoji:frowning-face_6" clip-path="url(#clip5_140_4)">
                     <path
@@ -68,7 +72,9 @@
                     font-size="24"
                     font-weight="bold"
                     letter-spacing="0em"
-                    ><tspan x="895.109" y="172.464">2nd:</tspan></text
+                    ><tspan x="895.109" y="172.464">{{
+                        rankTable[1].rank
+                    }}</tspan></text
                 >
                 <text
                     id="40%_7"
@@ -80,7 +86,9 @@
                     font-weight="bold"
                     letter-spacing="0em"
                 >
-                    <tspan x="1038.79" y="171.464">40%</tspan>
+                    <tspan x="1038.79" y="171.464"
+                        >{{ rankTable[1].percent }} %</tspan
+                    >
                 </text>
                 <g id="twemoji:frowning-face_7" clip-path="url(#clip6_140_4)">
                     <path
@@ -117,7 +125,9 @@
                     font-size="24"
                     font-weight="bold"
                     letter-spacing="0em"
-                    ><tspan x="678.832" y="256.464">3rd:</tspan></text
+                    ><tspan x="678.832" y="256.464">{{
+                        rankTable[2].rank
+                    }}</tspan></text
                 >
                 <text
                     id="40%_8"
@@ -129,7 +139,9 @@
                     font-weight="bold"
                     letter-spacing="0em"
                 >
-                    <tspan x="814.789" y="255.464">40%</tspan>
+                    <tspan x="814.789" y="255.464"
+                        >{{ rankTable[2].percent }} %</tspan
+                    >
                 </text>
                 <g id="twemoji:frowning-face_8" clip-path="url(#clip7_140_4)">
                     <path
@@ -164,7 +176,9 @@
                     font-size="24"
                     font-weight="bold"
                     letter-spacing="0em"
-                    ><tspan x="900.109" y="256.464">4th:</tspan></text
+                    ><tspan x="900.109" y="256.464">{{
+                        rankTable[3].rank
+                    }}</tspan></text
                 >
                 <text
                     id="40%_9"
@@ -176,7 +190,9 @@
                     font-weight="bold"
                     letter-spacing="0em"
                 >
-                    <tspan x="1038.79" y="255.464">40%</tspan>
+                    <tspan x="1038.79" y="255.464"
+                        >{{ rankTable[3].percent }} %</tspan
+                    >
                 </text>
                 <g id="twemoji:frowning-face_9" clip-path="url(#clip8_140_4)">
                     <path
@@ -213,7 +229,9 @@
                     font-size="24"
                     font-weight="bold"
                     letter-spacing="0em"
-                    ><tspan x="679.793" y="340.464">5th:</tspan></text
+                    ><tspan x="679.793" y="340.464">{{
+                        rankTable[4].rank
+                    }}</tspan></text
                 >
                 <text
                     id="40%_10"
@@ -225,7 +243,9 @@
                     font-weight="bold"
                     letter-spacing="0em"
                 >
-                    <tspan x="814.789" y="339.464">40%</tspan>
+                    <tspan x="814.789" y="339.464"
+                        >{{ rankTable[4].percent }} %</tspan
+                    >
                 </text>
                 <g id="twemoji:frowning-face_10" clip-path="url(#clip9_140_4)">
                     <path
@@ -256,14 +276,56 @@
 
 <script>
 export default {
-    data: () => ({}),
+    data: () => ({
+        rankTable: [],
+    }),
     props: {
-        conditionNum: {
+        condition: {
             type: Object,
         },
     },
     computed: {},
-    methods: {},
-    mounted() {},
+    methods: {
+        sortCondition() {
+            return this.condition.type.sort(function (a, b) {
+                if (a.num > b.num) return -1;
+                if (a.num < b.num) return 1;
+            });
+        },
+        putRank(sortCondition) {
+            let rank = 1;
+            let rank_string = "";
+            for (let i = 0; i < sortCondition.length; i++) {
+                if (i === 0) {
+                    rank_string = "1st:";
+                } else {
+                    rank =
+                        sortCondition[i].num === sortCondition[i - 1].num
+                            ? rank
+                            : i + 1;
+                    if (rank === 1) {
+                        rank_string = rank + "st:";
+                    } else if (rank === 2) {
+                        rank_string = rank + "nd:";
+                    } else if (rank === 3) {
+                        rank_string = rank + "rd:";
+                    } else {
+                        rank_string = rank + "th:";
+                    }
+                }
+                this.rankTable.push({
+                    rank: rank_string,
+                    percent: Math.round(
+                        (sortCondition[i].num / this.condition.total) * 100
+                    ),
+                });
+            }
+        },
+    },
+    mounted() {
+        const sortCondition = this.sortCondition();
+        console.info(sortCondition);
+        this.putRank(sortCondition);
+    },
 };
 </script>

@@ -228,7 +228,7 @@
                         </g>
                     </g>
                 </g>
-                <ConditionRank />
+                <ConditionRank :condition="condition" />
             </g>
             <defs>
                 <clipPath id="clip0_140_4">
@@ -370,13 +370,13 @@ export default {
             error: null,
             dataURL: null,
             condition: {
-                total: 13,
+                total: 15,
                 type: [
                     { name: "絶好調", num: 2 },
                     { name: "順調", num: 3 },
-                    { name: "普通", num: 1 },
+                    { name: "普通", num: 4 },
                     { name: "不調", num: 3 },
-                    { name: "絶不調", num: 4 },
+                    { name: "絶不調", num: 3 },
                 ],
             },
             feeling: {
