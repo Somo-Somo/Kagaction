@@ -319,7 +319,6 @@ export default {
     },
     mounted() {
         const sortCondition = this.sortCondition();
-        console.info(sortCondition);
         this.putRank(sortCondition);
     },
 };
