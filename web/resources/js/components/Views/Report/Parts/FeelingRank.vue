@@ -315,7 +315,6 @@ export default {
     },
     mounted() {
         const sortFeeling = this.sortFeeling();
-        console.info(sortFeeling);
         this.putRank(sortFeeling);
     },
 };
