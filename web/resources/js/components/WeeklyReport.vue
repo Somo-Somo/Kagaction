@@ -122,9 +122,9 @@
 </template>
 
 <script>
-import PieChart from "./Views/Report/Parts/PieChart.vue";
-import ConditionRank from "./Views/Report/Parts/ConditionRank.vue";
-import FeelingRank from "./Views/Report/Parts/FeelingRank.vue";
+import PieChart from "./Views/Report/Template/PieChart.vue";
+import ConditionRank from "./Views/Report/Template/ConditionRank.vue";
+import FeelingRank from "./Views/Report/Template/FeelingRank.vue";
 // Import the functions you need from the SDKs you need
 // import firebase from "firebase";
 // import { v4 as uuidv4 } from "uuid";
