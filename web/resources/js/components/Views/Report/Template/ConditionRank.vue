@@ -34,7 +34,9 @@
                         >{{ rankTable[0].percent }} %</tspan
                     >
                 </text>
-                <WorseFace :rankPlace="0" />
+                <g id="twemoji:frowning-face_6" clip-path="url(#clip5_140_4)">
+                    <Twimoji :rankPlace="0" :twimojiType="'worse'" />
+                </g>
                 <!-- <g id="twemoji:frowning-face_6" clip-path="url(#clip5_140_4)">
                     <path
                         id="Vector_21"
@@ -86,7 +88,9 @@
                         >{{ rankTable[1].percent }} %</tspan
                     >
                 </text>
-                <g id="twemoji:frowning-face_7" clip-path="url(#clip6_140_4)">
+                <Twimoji :rankPlace="1" :twimojiType="'worse'" />
+
+                <!-- <g id="twemoji:frowning-face_7" clip-path="url(#clip6_140_4)">
                     <path
                         id="Vector_25"
                         d="M1022 161C1022 176.464 1009.46 189 994 189C978.538 189 966 176.464 966 161C966 145.538 978.538 133 994 133C1009.46 133 1022 145.538 1022 161Z"
@@ -107,7 +111,7 @@
                         d="M979.479 176.355C979.613 176.475 979.785 176.546 979.965 176.554C980.145 176.562 980.322 176.508 980.467 176.4C980.527 176.355 986.568 171.889 994 171.889C1001.41 171.889 1007.47 176.355 1007.53 176.4C1007.68 176.508 1007.85 176.563 1008.04 176.555C1008.22 176.547 1008.39 176.476 1008.52 176.356C1008.65 176.235 1008.74 176.071 1008.77 175.893C1008.8 175.715 1008.76 175.533 1008.67 175.378C1008.47 175.045 1003.66 167.222 994 167.222C984.337 167.222 979.532 175.044 979.333 175.378C979.24 175.532 979.204 175.714 979.23 175.893C979.257 176.071 979.345 176.234 979.479 176.355V176.355Z"
                         fill="#664500"
                     />
-                </g>
+                </g> -->
             </g>
         </g>
         <g id="Middle_2">
@@ -272,9 +276,11 @@
 
 <script>
 import WorseFace from "../Parts/WorseFace.vue";
+import Twimoji from "../Parts/Twimoji.vue";
 export default {
     components: {
         WorseFace,
+        Twimoji,
     },
     data: () => ({
         rankTable: [],
