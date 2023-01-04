@@ -11,14 +11,33 @@
 </template>
 
 <script>
+import Great from "./TwimojiDraw/Great.vue";
+import Good from "./TwimojiDraw/Good.vue";
+import OK from "./TwimojiDraw/OK.vue";
+import Bad from "./TwimojiDraw/Bad.vue";
 import Worse from "./TwimojiDraw/Worse.vue";
 export default {
     data: () => ({
         twimoji: {
+            great: {
+                path: Great.draw,
+                fill: ["#FFCC4D", "#664500", "white"],
+            },
+            good: {
+                path: Good.draw,
+                fill: ["#FFCC4D", "#664500", "#664500", "#664500"],
+            },
+            ok: {
+                path: OK.draw,
+                fill: ["#FFCC4D", "#664500", "#664500", "#664500"],
+            },
+            bad: {
+                path: Bad.draw,
+                fill: ["#FFCC4D", "#664500", "#664500", "#664500"],
+            },
             worse: {
                 path: Worse.draw,
-                repeat: [13, 13, 13, 13, 37],
-                fill: ["#FFCC4D", "#664500", "#664500", "#664500"],
+                fill: ["#FFCC4D", "#664500"],
             },
         },
         isDiff: [
@@ -77,10 +96,7 @@ export default {
                             connectedD = draw[i];
                         }
                     } else if (this.rankPlace === 5) {
-                        if (
-                            numOfPath !== 0 &&
-                            i === 4 * this.twimoji[twimojiType].repeat[i] + 2
-                        ) {
+                        if (numOfPath !== 0 && i === draw.length) {
                             connectedD += this.diffColumn * 2 + draw[i];
                         } else {
                             connectedD +=
