@@ -175,11 +175,9 @@
 </template>
 
 <script>
-import WorseFace from "../Parts/WorseFace.vue";
-import Twimoji from "../Parts/Twimoji.vue";
+import Twimoji from "../Parts/TwimojiDraw/Twimoji.vue";
 export default {
     components: {
-        WorseFace,
         Twimoji,
     },
     data: () => ({

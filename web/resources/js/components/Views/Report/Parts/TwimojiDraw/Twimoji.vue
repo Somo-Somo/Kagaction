@@ -11,11 +11,12 @@
 </template>
 
 <script>
-import Great from "./TwimojiDraw/Great.vue";
-import Good from "./TwimojiDraw/Good.vue";
-import OK from "./TwimojiDraw/OK.vue";
-import Bad from "./TwimojiDraw/Bad.vue";
-import Worse from "./TwimojiDraw/Worse.vue";
+import Great from "./Condition/Great.vue";
+import Good from "./Condition/Good.vue";
+import OK from "./Condition/OK.vue";
+import Bad from "./Condition/Bad.vue";
+import Worse from "./Condition/Worse.vue";
+import Anxious from "./Feeling/Anxious.vue";
 export default {
     data: () => ({
         twimoji: {
@@ -38,6 +39,10 @@ export default {
             worse: {
                 draw: Worse.draw,
                 fill: Worse.fill,
+            },
+            anxious: {
+                draw: Anxious.draw,
+                fill: Anxious.fill,
             },
         },
     }),
