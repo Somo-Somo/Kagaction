@@ -2,10 +2,10 @@
     <g>
         <path
             id="Vector_21"
-            v-for="(draw, index) in connectedDraws"
+            v-for="(draw, index) in twimoji[twimojiType].draw[rankPlace]"
             :key="index"
             :fill="twimoji[twimojiType].fill[index]"
-            :d="draw.d"
+            :d="draw"
         />
     </g>
 </template>
@@ -20,40 +20,39 @@ export default {
     data: () => ({
         twimoji: {
             great: {
-                path: Great.draw,
-                fill: ["#FFCC4D", "#664500", "white"],
+                draw: Great.draw,
+                fill: Great.fill,
             },
             good: {
-                path: Good.draw,
-                fill: ["#FFCC4D", "#664500", "#664500", "#664500"],
+                draw: Good.draw,
+                fill: Good.fill,
             },
             ok: {
-                path: OK.draw,
-                fill: ["#FFCC4D", "#664500", "#664500", "#664500"],
+                draw: OK.draw,
+                fill: OK.fill,
             },
             bad: {
-                path: Bad.draw,
-                fill: ["#FFCC4D", "#664500", "#664500", "#664500"],
+                draw: Bad.draw,
+                fill: Bad.fill,
             },
             worse: {
-                path: Worse.draw,
-                fill: ["#FFCC4D", "#664500"],
+                draw: Worse.draw,
+                fill: Worse.fill,
             },
         },
         isDiff: [
-            [
-                // 全て1個目がfalse,２個目からこれらのループ
-                // 5つ目だけループが終わった後に追加で
-                // 1個目false,false
-                // 2個目true,false,
-                // 3個目true,false,
-                // 4個目true,false になる
-                [false, false, false, false],
-                [true, false, false, false],
-                [false, false, true, false],
-                [true, false, true, false],
-                [false, false, true, false],
-            ],
+            // 全て1個目がfalse,２個目からこれらのループ
+            // 5つ目だけループが終わった後に追加で
+            // 1個目false,false
+            // 2個目true,false,
+            // 3個目true,false,
+            // 4個目true,false になる
+            [false, false, false, false],
+            [true, false, false, false],
+            [false, false, true, false],
+            [true, false, true, false],
+            [false, false, true, false],
+            ,
         ],
         diffRow: 224,
         diffColumn: 84,
@@ -71,6 +70,8 @@ export default {
     methods: {
         connectedD(draw, numOfPath) {
             let connectedD = "";
+            let isDiff = this.isDiff[this.rankPlace];
+            console.info(draw);
             for (let i = 0; i < draw.length; i++) {
                 if (i === 0) {
                     connectedD += draw[i];
@@ -78,31 +79,49 @@ export default {
                     if (this.rankPlace === 0) {
                         connectedD += draw[i];
                     } else if (this.rankPlace === 1) {
-                        connectedD +=
-                            (i + 3) % 4 === 0
+                        if (draw[i - 3] === "H") {
+                            connectedD += this.diffRow + draw[i];
+                            isDiff = [false, false, true, false];
+                            draw = draw.slice[i - 1];
+                        } else {
+                            connectedD += isDiff[(i + 3) % 4]
                                 ? this.diffRow + draw[i]
                                 : draw[i];
-                    } else if (this.rankPlace === 2 || this.rankPlace === 3) {
-                        connectedD +=
-                            (i + 3) % 4 === 2
+                        }
+
+                        if (numOfPath === 3) {
+                            console.info([i]);
+                            console.info(isDiff[(i + 3) % 4]);
+                            console.info(connectedD);
+                        }
+                    } else if (this.rankPlace === 2) {
+                        if (draw[i - 3] === "H") {
+                            connectedD += draw[i];
+                            isDiff = [true, false, false, false];
+                        } else {
+                            connectedD += isDiff[(i + 3) % 4]
                                 ? this.diffColumn + draw[i]
                                 : draw[i];
-                    } else if (this.rankPlace === 4) {
-                        if ((i + 3) % 4 === 0) {
-                            connectedD += this.diffRow + draw[i];
-                        } else if ((i + 3) % 4 === 2) {
-                            connectedD += this.diffColumn + draw[i];
-                        } else {
-                            connectedD = draw[i];
                         }
-                    } else if (this.rankPlace === 5) {
-                        if (numOfPath !== 0 && i === draw.length) {
+                    } else if (this.rankPlace === 3) {
+                        if (isDiff[(i + 3) % 4]) {
+                            connectedD +=
+                                (i + 3) % 4 === 0
+                                    ? this.diffRow + draw[i]
+                                    : this.diffColumn + draw[i];
+                        } else {
+                            connectedD += draw[i];
+                        }
+                    } else if (this.rankPlace === 4) {
+                        if (draw[i - 3] === "H") {
+                            connectedD += draw[i];
+                            isDiff = [false, false, true, false];
+                        } else if (numOfPath !== 0 && i === draw.length) {
                             connectedD += this.diffColumn * 2 + draw[i];
                         } else {
-                            connectedD +=
-                                (i + 3) % 4 === 2
-                                    ? this.diffColumn * 2 + draw[i]
-                                    : draw[i];
+                            connectedD += isDiff[(i + 3) % 4]
+                                ? this.diffColumn * 2 + draw[i]
+                                : draw[i];
                         }
                     }
                 }
