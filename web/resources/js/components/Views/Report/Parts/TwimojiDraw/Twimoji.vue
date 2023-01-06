@@ -17,6 +17,8 @@ import OK from "./Condition/OK.vue";
 import Bad from "./Condition/Bad.vue";
 import Worse from "./Condition/Worse.vue";
 import Anxious from "./Feeling/Anxious.vue";
+import Hard from "./Feeling/Hard.vue";
+import Sadness from "./Feeling/Sadness.vue";
 export default {
     data: () => ({
         twimoji: {
@@ -43,6 +45,14 @@ export default {
             anxious: {
                 draw: Anxious.draw,
                 fill: Anxious.fill,
+            },
+            hard: {
+                draw: Hard.draw,
+                fill: Hard.fill,
+            },
+            sadness: {
+                draw: Sadness.draw,
+                fill: Sadness.fill,
             },
         },
     }),
