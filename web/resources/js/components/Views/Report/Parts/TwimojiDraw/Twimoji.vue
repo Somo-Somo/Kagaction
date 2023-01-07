@@ -21,6 +21,8 @@ import Hard from "./Feeling/Hard.vue";
 import Sadness from "./Feeling/Sadness.vue";
 import Tired from "./Feeling/Tired.vue";
 import Anger from "./Feeling/Anger.vue";
+import Kuyashi from "./Feeling/Kuyashi.vue";
+import Lethargic from "./Feeling/Lethargic.vue";
 
 export default {
     data: () => ({
@@ -64,6 +66,14 @@ export default {
             anger: {
                 draw: Anger.draw,
                 fill: Anger.fill,
+            },
+            kuyashi: {
+                draw: Kuyashi.draw,
+                fill: Kuyashi.fill,
+            },
+            lethargic: {
+                draw: Lethargic.draw,
+                fill: Lethargic.fill,
             },
         },
     }),
