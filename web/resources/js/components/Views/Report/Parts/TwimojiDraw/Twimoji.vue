@@ -19,6 +19,9 @@ import Worse from "./Condition/Worse.vue";
 import Anxious from "./Feeling/Anxious.vue";
 import Hard from "./Feeling/Hard.vue";
 import Sadness from "./Feeling/Sadness.vue";
+import Tired from "./Feeling/Tired.vue";
+import Anger from "./Feeling/Anger.vue";
+
 export default {
     data: () => ({
         twimoji: {
@@ -53,6 +56,14 @@ export default {
             sadness: {
                 draw: Sadness.draw,
                 fill: Sadness.fill,
+            },
+            tired: {
+                draw: Tired.draw,
+                fill: Tired.fill,
+            },
+            anger: {
+                draw: Anger.draw,
+                fill: Anger.fill,
             },
         },
     }),
