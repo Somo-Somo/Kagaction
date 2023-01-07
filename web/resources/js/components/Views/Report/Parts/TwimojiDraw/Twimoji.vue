@@ -23,6 +23,11 @@ import Tired from "./Feeling/Tired.vue";
 import Anger from "./Feeling/Anger.vue";
 import Kuyashi from "./Feeling/Kuyashi.vue";
 import Lethargic from "./Feeling/Lethargic.vue";
+import Glad from "./Feeling/Glad.vue";
+import Fun from "./Feeling/Fun.vue";
+import Calm from "./Feeling/Calm.vue";
+import Happy from "./Feeling/Happy.vue";
+import Wakuwaku from "./Feeling/Wakuwaku.vue";
 
 export default {
     data: () => ({
@@ -74,6 +79,26 @@ export default {
             lethargic: {
                 draw: Lethargic.draw,
                 fill: Lethargic.fill,
+            },
+            glad: {
+                draw: Glad.draw,
+                fill: Glad.fill,
+            },
+            fun: {
+                draw: Fun.draw,
+                fill: Fun.fill,
+            },
+            calm: {
+                draw: Calm.draw,
+                fill: Calm.fill,
+            },
+            happy: {
+                draw: Happy.draw,
+                fill: Happy.fill,
+            },
+            wakuwaku: {
+                draw: Wakuwaku.draw,
+                fill: Wakuwaku.fill,
             },
         },
     }),
