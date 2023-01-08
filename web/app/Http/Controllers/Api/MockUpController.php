@@ -10,8 +10,11 @@ use App\Models\Diary;
 use App\Models\Feeling;
 use App\UseCases\Line\FollowAction;
 use App\Services\LineBotService;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
@@ -87,10 +90,39 @@ class MockUpController extends Controller
                     return;
                 } else if ($event->getText() === '記録をみる') {
                     $user = User::where('line_id', $event->getUserId())->first();
-                    $data = $user->name;
+                    $today = Carbon::today();
+                    $eightDays = Carbon::today()->subDay(8);
+                    $condition = Condition::select(DB::raw('evaluation, COUNT(evaluation) AS count_evaluation'))
+                        ->where('user_uuid', $user->uuid)
+                        ->whereDate('date', '>=', $eightDays)
+                        ->whereDate('date', '<', $today)
+                        ->groupBy('evaluation')
+                        ->orderBy('evaluation', "desc")
+                        ->get();
+                    $sortCondition = [['num' => 0], ['num' => 0], ['num' => 0], ['num' => 0], ['num' => 0]];
+                    foreach ($condition as $value) {
+                        $key = abs(intval($value->evaluation) - 5);
+                        $sortCondition[$key] = ['num' => intval($value->count_evaluation)];
+                    }
+                    $feeling =  Feeling::select(DB::raw('feeling_type, COUNT(feeling_type) AS count_feeling_type'))
+                        ->where('user_uuid', $user->uuid)
+                        ->groupBy('feeling_type')
+                        ->whereDate('date', '>=', $eightDays)
+                        ->whereDate('date', '<', $today)
+                        ->orderBy('count_feeling_type', 'desc')
+                        ->get();
+                    $sortFeeling = [];
+                    foreach ($feeling as $value) {
+                        $sortFeeling[] = [
+                            'name' => $value->feeling_type,
+                            'num' => intval($value->count_feeling_type)
+                        ];
+                    }
+                    Log::debug($sortCondition);
+                    Log::debug($sortFeeling);
                     $this->bot->replyText($event->getReplyToken(), $event->getText());
                     // return redirect('report/monthly/' . $user->id, 301);
-                    return view('index', compact('data'));
+                    // return view('index', compact('data'));
                 }
                 if ($question->operation_type === 1) {
                     if ($question->order_number === 1) {
@@ -118,14 +150,16 @@ class MockUpController extends Controller
                                 $this->bot->replyMessage($event->getReplyToken(), Question::askWhyYouAreInGoodCondition($question, $user));
                             }
                         } elseif ($question->condition->evaluation < 3) {
+                            $condition = Condition::where('id', $question->condition_id)->first();
                             $feeling = Feeling::create([
                                 'user_uuid' => $user->uuid,
-                                'condition_id' => $question->condition_id,
-                                'feeling_type' => $event->getText()
+                                'condition_id' => $condition->id,
+                                'feeling_type' => Feeling::JA_EN[$event->getText()],
+                                'date' => $condition->date,
+                                'time' => $condition->time
                             ]);
 
                             $question->update(['order_number' => 3, 'feeling_id' => $feeling->id]);
-                            Log::debug((array)$question);
                             $this->bot->replyMessage($event->getReplyToken(), Question::questionAfterAskAboutFeeling($question, $user, $feeling));
                         }
                     } elseif ($question->order_number === 3 || $question->order_number === 4) {

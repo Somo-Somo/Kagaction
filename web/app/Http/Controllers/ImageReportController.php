@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Condition;
+use App\Models\Feeling;
 use App\Models\ImageReport;
 use Illuminate\Http\Request;
 use \Symfony\Component\HttpFoundation\Response;
@@ -13,12 +15,27 @@ class ImageReportController extends Controller
     /**
      * Display a listing of the resource.
      * @param  int  $id
+     * @param string $uuid
      * @return \Illuminate\Http\Response
      */
-    public function index(int $id)
+    public function index(int $id, string $uuid)
     {
-        Log::debug(('aaa'));
+        $condition = Condition::where('user_uuid', $uuid)->get();
+        Log::debug((array)$condition);
         $data = ['id' => $id];
+        [
+            'user' => [
+                'id' => $id,
+            ],
+            'condition' => [
+                'total' => 'aa',
+                'type' => [],
+            ],
+            'feeling' => [
+                'total' => 'aa',
+                'type' => [],
+            ]
+        ];
         return response()->json($data, Response::HTTP_OK);
         // return view('index', compact('data'));
     }

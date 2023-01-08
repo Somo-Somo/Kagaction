@@ -25,11 +25,45 @@ class Feeling extends Model
         'user_uuid',
         'condition_id',
         'feeling_type',
+        'date',
+        'time',
         'created_at'
     ];
 
     const NO_THIRD_QUESTION = [
         '不安', '辛い', 'いらいら', '悲しい', '眠い', 'イライラ', '悔しい'
+    ];
+
+    const JA_EN = [
+        '不安' => 'anxious',
+        '辛い' => 'hard',
+        '疲れた' => 'tired',
+        '悲しい' => 'sad',
+        'イライラ' => 'angry',
+        '悔しい' => 'kuyashi',
+        '無気力' => 'lethargic',
+        'もやもや' => 'moyamoya',
+        '嬉しい' => 'glad',
+        '楽しい' => 'fun',
+        '穏やか' => 'calm',
+        '幸せ' => 'happy',
+        'ワクワク' => 'wakuwaku'
+    ];
+
+    const EN_JA = [
+        'anxious' => '不安',
+        'hard' => '辛い',
+        'tired' => '疲れた',
+        'sad' => '悲しい',
+        'angry' => 'イライラ',
+        'kuyashi' => '悔しい',
+        'lethargic' => '無気力',
+        'moyamoya' => 'もやもや',
+        'glad' => '嬉しい',
+        'fun' => '楽しい',
+        'calm' => '穏やか',
+        'happy' => '幸せ',
+        'wakuwaku' => 'ワクワク',
     ];
 
     /**
@@ -54,7 +88,7 @@ class Feeling extends Model
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😣辛い', '辛い')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😭悲しい', '悲しい')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😫疲れた', '疲れた')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😪眠い', '眠い')),
+            // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😪眠い', '眠い')),
             // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😑無気力', '無気力')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😠イライラ', 'イライラ')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😤悔しい', '悔しい')),
@@ -72,27 +106,27 @@ class Feeling extends Model
      */
     public static function questionAfterAskAboutFeelingMessage(string $feeling_type, User $user)
     {
-        if ($feeling_type === '不安') {
+        if (Feeling::EN_JA[$feeling_type] === '不安') {
             $messages = Feeling::questionAfterAskAboutFeelingIfAnxious($user);
-        } else if ($feeling_type === '心配') {
+        } else if (Feeling::EN_JA[$feeling_type] === '心配') {
             $messages = Feeling::questionAfterAskAboutFeelingIfWorry();
-        } else if ($feeling_type === '辛い') {
+        } else if (Feeling::EN_JA[$feeling_type] === '辛い') {
             $messages = Feeling::questionAfterAskAboutFeelingIfHard();
-        } else if ($feeling_type === '悲しい') {
+        } else if (Feeling::EN_JA[$feeling_type] === '悲しい') {
             $messages = Feeling::questionAfterAskAboutFeelingIfSadness($user);
-        } else if ($feeling_type === '疲れた') {
+        } else if (Feeling::EN_JA[$feeling_type] === '疲れた') {
             $messages = Feeling::questionAfterAskAboutFeelingIfTired();
-        } else if ($feeling_type === '眠い') {
+        } else if (Feeling::EN_JA[$feeling_type] === '眠い') {
             $messages = Feeling::questionAfterAskAboutFeelingIfSleepy();
-        } else if ($feeling_type === '無気力') {
+        } else if (Feeling::EN_JA[$feeling_type] === '無気力') {
             $messages = Feeling::questionAfterAskAboutFeelingIfLethargic();
-        } else if ($feeling_type === 'イライラ') {
+        } else if (Feeling::EN_JA[$feeling_type] === 'イライラ') {
             $messages = Feeling::questionAfterAskAboutFeelingIfAnger();
-        } else if ($feeling_type === '悔しい') {
+        } else if (Feeling::EN_JA[$feeling_type] === '悔しい') {
             $messages = Feeling::questionAfterAskAboutFeelingIfKuyashi();
-        } else if ($feeling_type === 'もやもや') {
+        } else if (Feeling::EN_JA[$feeling_type] === 'もやもや') {
             $messages = Feeling::questionAfterAskAboutFeelingIfMoyamoya();
-        } else if ($feeling_type === 'ない') {
+        } else if (Feeling::EN_JA[$feeling_type] === 'ない') {
             $messages = Feeling::questionAfterAskAboutFeelingIfNotApplicable();
         }
         $multi_message = new MultiMessageBuilder();
@@ -112,25 +146,25 @@ class Feeling extends Model
      */
     public static function sortThanksMessage(string $feeling_type, string $reply)
     {
-        if ($feeling_type === '不安') {
+        if (Feeling::EN_JA[$feeling_type] === '不安') {
             $messages = Feeling::thanksMessageWhenAnxious();
-        } else if ($feeling_type === '心配') {
+        } else if (Feeling::EN_JA[$feeling_type] === '心配') {
             $messages = Feeling::thanksMessageWhenWorry($reply);
-        } else if ($feeling_type === '辛い') {
+        } else if (Feeling::EN_JA[$feeling_type] === '辛い') {
             $messages = Feeling::thanksMessageWhenHard();
-        } else if ($feeling_type === '悲しい') {
+        } else if (Feeling::EN_JA[$feeling_type] === '悲しい') {
             $messages = Feeling::thanksMessageWhenSadness();
-        } else if ($feeling_type === '疲れた') {
+        } else if (Feeling::EN_JA[$feeling_type] === '疲れた') {
             $messages = Feeling::thanksMessageWhenTired($reply);
-        } else if ($feeling_type === '眠い') {
+        } else if (Feeling::EN_JA[$feeling_type] === '眠い') {
             $messages = Feeling::thanksMessageWhenSleepy();
-        } else if ($feeling_type === '無気力') {
-        } else if ($feeling_type === 'イライラ') {
+        } else if (Feeling::EN_JA[$feeling_type] === '無気力') {
+        } else if (Feeling::EN_JA[$feeling_type] === 'イライラ') {
             $messages = Feeling::thanksMessageWhenAnger();
-        } else if ($feeling_type === '悔しい') {
+        } else if (Feeling::EN_JA[$feeling_type] === '悔しい') {
             $messages = Feeling::thanksMessageWhenKuyashi($reply);
-        } else if ($feeling_type === 'もやもや') {
-        } else if ($feeling_type === 'ない') {
+        } else if (Feeling::EN_JA[$feeling_type] === 'もやもや') {
+        } else if (Feeling::EN_JA[$feeling_type] === 'ない') {
             $messages = Feeling::thanksMessageWhenNotApplicable($reply);
         }
         $multi_message = new MultiMessageBuilder();
