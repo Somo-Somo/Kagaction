@@ -34,7 +34,7 @@
                     ></text
                 >
                 <g id="twemoji:frowning-face" clip-path="url(#clip0_140_4)">
-                    <Twimoji :rankPlace="0" :twimojiType="'wakuwaku'" />
+                    <Twimoji :rankPlace="0" :twimojiType="'anxious'" />
                 </g>
             </g>
             <g id="second" v-if="rankTable.length > 1">
@@ -65,7 +65,7 @@
                     ></text
                 >
                 <g id="twemoji:frowning-face_2" clip-path="url(#clip1_140_4)">
-                    <Twimoji :rankPlace="1" :twimojiType="'wakuwaku'" />
+                    <Twimoji :rankPlace="1" :twimojiType="'fun'" />
                 </g>
             </g>
         </g>
@@ -98,7 +98,7 @@
                     ></text
                 >
                 <g id="twemoji:frowning-face_3" clip-path="url(#clip2_140_4)">
-                    <Twimoji :rankPlace="2" :twimojiType="'wakuwaku'" />
+                    <Twimoji :rankPlace="2" :twimojiType="'calm'" />
                 </g>
             </g>
             <g id="fourth" v-if="rankTable.length > 3">
@@ -162,7 +162,7 @@
                     ></text
                 >
                 <g id="twemoji:frowning-face_5" clip-path="url(#clip4_140_4)">
-                    <Twimoji :rankPlace="4" :twimojiType="'wakuwaku'" />
+                    <Twimoji :rankPlace="4" :twimojiType="'sadness'" />
                 </g>
             </g>
         </g>

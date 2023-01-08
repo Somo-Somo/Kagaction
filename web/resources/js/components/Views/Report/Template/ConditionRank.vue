@@ -35,7 +35,7 @@
                     >
                 </text>
                 <g id="twemoji:frowning-face_6" clip-path="url(#clip5_140_4)">
-                    <Twimoji :rankPlace="0" :twimojiType="'worse'" />
+                    <Twimoji :rankPlace="0" :twimojiType="'ok'" />
                 </g>
             </g>
             <g id="second_2">
@@ -67,7 +67,7 @@
                     >
                 </text>
                 <g id="twemoji:frowning-face_7" clip-path="url(#clip6_140_4)">
-                    <Twimoji :rankPlace="1" :twimojiType="'worse'" />
+                    <Twimoji :rankPlace="1" :twimojiType="'good'" />
                 </g>
             </g>
         </g>
@@ -101,7 +101,7 @@
                     >
                 </text>
                 <g id="twemoji:frowning-face_8" clip-path="url(#clip7_140_4)">
-                    <Twimoji :rankPlace="2" :twimojiType="'worse'" />
+                    <Twimoji :rankPlace="2" :twimojiType="'bad'" />
                 </g>
             </g>
             <g id="fourth_2">
@@ -167,7 +167,7 @@
                     >
                 </text>
                 <g id="twemoji:frowning-face_10" clip-path="url(#clip9_140_4)">
-                    <Twimoji :rankPlace="4" :twimojiType="'worse'" />
+                    <Twimoji :rankPlace="4" :twimojiType="'great'" />
                 </g>
             </g>
         </g>

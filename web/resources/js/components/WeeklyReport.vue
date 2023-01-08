@@ -126,8 +126,14 @@ import PieChart from "./Views/Report/Template/PieChart.vue";
 import ConditionRank from "./Views/Report/Template/ConditionRank.vue";
 import FeelingRank from "./Views/Report/Template/FeelingRank.vue";
 // Import the functions you need from the SDKs you need
-// import firebase from "firebase";
-// import { v4 as uuidv4 } from "uuid";
+import { initializeApp } from "firebase/app";
+import {
+    getStorage,
+    ref,
+    uploadString,
+    getDownloadURL,
+} from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
 
 // const config = {
 //     apiKey: propcess.env.FIREBASE_API_KEY,
@@ -139,12 +145,21 @@ import FeelingRank from "./Views/Report/Template/FeelingRank.vue";
 //     measurementId: propcess.env.FIREBASE_MEASUREMENT_ID,
 // };
 
+const firebaseConfig = {
+    apiKey: "AIzaSyCWFF-fxzg4yBMO7nc51V_y73XscSMY7ZY",
+    authDomain: "agathon-2022-12.firebaseapp.com",
+    projectId: "agathon-2022-12",
+    storageBucket: "agathon-2022-12.appspot.com",
+    messagingSenderId: "715234137429",
+    appId: "1:715234137429:web:a0c46e601550795fd24bdc",
+    measurementId: "G-8MJG0PWKYM",
+};
+
 // Initialize Firebase
-// const app = firebase.initializeApp(config);
-// const db = firebase.firestore();
+const firebase = initializeApp(firebaseConfig);
+const firestorage = getStorage(firebase);
 
 function svg2imageData(svgElement, successCallback, errorCallback) {
-    console.info(svgElement);
     var canvas = document.createElement("canvas");
     canvas.width = svgElement.width.baseVal.value;
     canvas.height = svgElement.height.baseVal.value;
@@ -221,54 +236,37 @@ export default {
             type: Array,
         },
     },
-    computed: {
-        // data: function () {
-        //     return axios.post("/api/debug", "abc");
-        // },
-    },
-    methods: {
-        // create() {
-        //     // refでsvgCardをsvgに設定しているのでthis.$refs.svgCardで要素を取れます
-        //     svg2imageData(this.$refs.svgCard, (data) => {
-        //         const sRef = firebase.storage().ref();
-        //         const fileRef = sRef.child(`${uuid}.png`);
-        //         const uuid = uuidv4();
-        //         // Cloud Storageにアップロード
-        //         fileRef
-        //             .putString(data, "data_url")
-        //             .then((snapshot) => {
-        //                 // Firestoreに保存しておく
-        //                 const card = db.collection("cards").doc(uuid);
-        //                 return card.set(
-        //                     {
-        //                         message: this.description,
-        //                     },
-        //                     { merge: false }
-        //                 );
-        //             })
-        //             .then((docRef) => {
-        //                 console.log(docRef);
-        //             })
-        //             .catch((err) => {
-        //                 console.error(err);
-        //             });
-        //     });
-        // },
-    },
+    computed: {},
+    methods: {},
     created() {},
     async mounted() {
         axios
             .get("/api/report/monthly/1")
             .then((res) => {
+                console.info(getStorage);
                 this.id = res.data.id;
-                console.info(this.id);
                 this.dataURL = svg2imageData(this.$refs.svgCard, (data) => {
                     this.dataURL = data;
-                    console.info(this.dataURL);
+                    const uuid = uuidv4();
+                    console.info(data);
+                    const storageRef = ref(
+                        firestorage,
+                        "users/" + this.id + "/images/" + uuid + ".png"
+                    );
+                    console.info(storageRef);
+                    uploadString(storageRef, data, "data_url").then(() => {
+                        console.log("Uploaded a file!");
+                        getDownloadURL(storageRef)
+                            .then((url) => {
+                                console.log(url);
+                            })
+                            .catch((err) => console.log(err));
+                    });
                 });
             })
             .catch((err) => {
                 this.error = err;
+                console.log(err);
             });
     },
 };
