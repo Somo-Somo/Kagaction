@@ -18,7 +18,7 @@ import Bad from "./Condition/Bad.vue";
 import Worse from "./Condition/Worse.vue";
 import Anxious from "./Feeling/Anxious.vue";
 import Hard from "./Feeling/Hard.vue";
-import Sadness from "./Feeling/Sadness.vue";
+import Sad from "./Feeling/Sadness.vue";
 import Tired from "./Feeling/Tired.vue";
 import Anger from "./Feeling/Anger.vue";
 import Kuyashi from "./Feeling/Kuyashi.vue";
@@ -60,9 +60,9 @@ export default {
                 draw: Hard.draw,
                 fill: Hard.fill,
             },
-            sadness: {
-                draw: Sadness.draw,
-                fill: Sadness.fill,
+            sad: {
+                draw: Sad.draw,
+                fill: Sad.fill,
             },
             tired: {
                 draw: Tired.draw,

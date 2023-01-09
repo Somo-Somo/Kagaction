@@ -49,6 +49,21 @@ export default {
             "#9B97FF", // bad
             "#4B4989", // worse
         ],
+        feelingChartColor: {
+            anxious: "#6666CC",
+            hard: "#6B6C99",
+            tired: "#63ADF7",
+            sad: "#B3DAFF",
+            angry: "#C30D34",
+            kuyashi: "#AD63F7",
+            lethargic: "#899AAB",
+            moyamoya: "#8989AB",
+            glad: "#F7F763",
+            fun: "#F7AD63",
+            calm: "#52CC8F",
+            happy: "#FFB3B4",
+            wakuwaku: "#F763AD",
+        },
         conditionPieCharts: [],
         conditionStrokeDasharrayLimit: 880,
         feelingPieCharts: [],
@@ -107,7 +122,7 @@ export default {
                     (feelings[i].num / this.feeling.total);
                 if (i === 0) {
                     this.feelingPieCharts.push({
-                        color: feelings[i].color,
+                        color: this.feelingChartColor[feelings[i].name],
                         strokeDashArray:
                             feelingPercent +
                             " " +
@@ -115,7 +130,7 @@ export default {
                     });
                 } else {
                     this.feelingPieCharts.push({
-                        color: feelings[i].color,
+                        color: this.feelingChartColor[feelings[i].name],
                         strokeDashArray:
                             "0" +
                             " " +

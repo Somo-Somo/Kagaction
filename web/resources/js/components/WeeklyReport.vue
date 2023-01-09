@@ -200,30 +200,45 @@ export default {
                 ],
             },
             feeling: {
-                total: 11,
+                total: 14,
                 type: [
                     {
-                        name: "楽しい",
+                        name: "happy",
                         num: 2,
                         color: "#FF8C00",
                     },
                     {
-                        name: "嬉しい",
+                        name: "glad",
                         num: 1,
                         color: "#FCC801",
                     },
                     {
-                        name: "穏やか",
+                        name: "wakuwaku",
                         num: 2,
                         color: "#439679",
                     },
                     {
-                        name: "不安",
+                        name: "anxious",
                         num: 5,
                         color: "#5891AD",
                     },
                     {
-                        name: "悲しい",
+                        name: "kuyashi",
+                        num: 1,
+                        color: "#2291AD",
+                    },
+                    {
+                        name: "moyamoya",
+                        num: 1,
+                        color: "#2291AD",
+                    },
+                    {
+                        name: "lethargic",
+                        num: 1,
+                        color: "#2291AD",
+                    },
+                    {
+                        name: "tired",
                         num: 1,
                         color: "#2291AD",
                     },
