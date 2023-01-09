@@ -260,24 +260,24 @@ export default {
             .then((res) => {
                 console.info(getStorage);
                 this.id = res.data.id;
-                this.dataURL = svg2imageData(this.$refs.svgCard, (data) => {
-                    this.dataURL = data;
-                    const uuid = uuidv4();
-                    console.info(data);
-                    const storageRef = ref(
-                        firestorage,
-                        "users/" + this.id + "/images/" + uuid + ".png"
-                    );
-                    console.info(storageRef);
-                    uploadString(storageRef, data, "data_url").then(() => {
-                        console.log("Uploaded a file!");
-                        getDownloadURL(storageRef)
-                            .then((url) => {
-                                console.log(url);
-                            })
-                            .catch((err) => console.log(err));
-                    });
-                });
+                // this.dataURL = svg2imageData(this.$refs.svgCard, (data) => {
+                //     this.dataURL = data;
+                //     const uuid = uuidv4();
+                //     console.info(data);
+                //     const storageRef = ref(
+                //         firestorage,
+                //         "users/" + this.id + "/images/" + uuid + ".png"
+                //     );
+                //     console.info(storageRef);
+                //     uploadString(storageRef, data, "data_url").then(() => {
+                //         console.log("Uploaded a file!");
+                //         getDownloadURL(storageRef)
+                //             .then((url) => {
+                //                 console.log(url);
+                //             })
+                //             .catch((err) => console.log(err));
+                //     });
+                // });
             })
             .catch((err) => {
                 this.error = err;

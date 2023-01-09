@@ -15,7 +15,7 @@
 
 <body>
     <div id="app">
-        <weekly-report :data="{{ $data }}"></weekly-report>
+        <weekly-report></weekly-report>
         <p>ccc</p>
     </div>
 </body>

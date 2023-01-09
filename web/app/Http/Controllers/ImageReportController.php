@@ -23,19 +23,19 @@ class ImageReportController extends Controller
         $condition = Condition::where('user_uuid', $uuid)->get();
         Log::debug((array)$condition);
         $data = ['id' => $id];
-        [
-            'user' => [
-                'id' => $id,
-            ],
-            'condition' => [
-                'total' => 'aa',
-                'type' => [],
-            ],
-            'feeling' => [
-                'total' => 'aa',
-                'type' => [],
-            ]
-        ];
+        // [
+        //     'user' => [
+        //         'id' => $id,
+        //     ],
+        //     'condition' => [
+        //         'total' => 'aa',
+        //         'type' => [],
+        //     ],
+        //     'feeling' => [
+        //         'total' => 'aa',
+        //         'type' => [],
+        //     ]
+        // ];
         return response()->json($data, Response::HTTP_OK);
         // return view('index', compact('data'));
     }

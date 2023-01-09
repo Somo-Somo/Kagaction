@@ -20,10 +20,10 @@ Vue.use(VueRouter);
 
 // パスとコンポーネントのマッピング
 const routes = [
-    // {
-    //     path: "/report/monthly/:id",
-    //     component: WeeklyReport,
-    // },
+    {
+        path: "/report/weekly",
+        component: WeeklyReport,
+    },
     {
         path: "/login",
         component: Login,
