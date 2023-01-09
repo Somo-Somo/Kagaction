@@ -15,7 +15,11 @@
                     height="800"
                     fill="white"
                 />
-                <PieChart :condition="condition" :feeling="feeling" />
+                <PieChart
+                    :condition="condition"
+                    :feeling="feeling"
+                    v-if="ready"
+                />
                 <g id="Service Name">
                     <path
                         id="#Agathon"
@@ -30,8 +34,8 @@
                         fill="black"
                     />
                 </g>
-                <ConditionRank :condition="condition" />
-                <FeelingRank :feeling="feeling" />
+                <ConditionRank :condition="condition" v-if="ready" />
+                <FeelingRank :feeling="feeling" v-if="ready" />
             </g>
             <defs>
                 <clipPath id="clip0_140_4">
@@ -189,61 +193,84 @@ export default {
             id: null,
             error: null,
             dataURL: null,
+            ready: false,
             condition: {
-                total: 15,
-                type: [
-                    { name: "絶好調", num: 2 },
-                    { name: "順調", num: 3 },
-                    { name: "普通", num: 4 },
-                    { name: "不調", num: 3 },
-                    { name: "絶不調", num: 3 },
-                ],
+                total: null,
+                num: [],
             },
+            // condition: {
+            //     total: 15,
+            //     type: [
+            //         { name: "絶好調", num: 2 },
+            //         { name: "順調", num: 3 },
+            //         { name: "普通", num: 4 },
+            //         { name: "不調", num: 3 },
+            //         { name: "絶不調", num: 3 },
+            //     ],
+            // },
             feeling: {
-                total: 14,
-                type: [
-                    {
-                        name: "happy",
-                        num: 2,
-                        color: "#FF8C00",
-                    },
-                    {
-                        name: "glad",
-                        num: 1,
-                        color: "#FCC801",
-                    },
-                    {
-                        name: "wakuwaku",
-                        num: 2,
-                        color: "#439679",
-                    },
-                    {
-                        name: "anxious",
-                        num: 5,
-                        color: "#5891AD",
-                    },
-                    {
-                        name: "kuyashi",
-                        num: 1,
-                        color: "#2291AD",
-                    },
-                    {
-                        name: "moyamoya",
-                        num: 1,
-                        color: "#2291AD",
-                    },
-                    {
-                        name: "lethargic",
-                        num: 1,
-                        color: "#2291AD",
-                    },
-                    {
-                        name: "tired",
-                        num: 1,
-                        color: "#2291AD",
-                    },
-                ],
+                total: null,
+                type: {
+                    wakuwaku: 0,
+                    happy: 0,
+                    glad: 0,
+                    fun: 0,
+                    calm: 0,
+                    angry: 0,
+                    kuyashi: 0,
+                    moyamoya: 0,
+                    lethargic: 0,
+                    tired: 0,
+                    anxious: 0,
+                    sad: 0,
+                    hard: 0,
+                },
             },
+            // feeling: {
+            //     total: 14,
+            //     type: [
+            //         {
+            //             name: "happy",
+            //             num: 2,
+            //             color: "#FF8C00",
+            //         },
+            //         {
+            //             name: "glad",
+            //             num: 1,
+            //             color: "#FCC801",
+            //         },
+            //         {
+            //             name: "wakuwaku",
+            //             num: 2,
+            //             color: "#439679",
+            //         },
+            //         {
+            //             name: "anxious",
+            //             num: 5,
+            //             color: "#5891AD",
+            //         },
+            //         {
+            //             name: "kuyashi",
+            //             num: 1,
+            //             color: "#2291AD",
+            //         },
+            //         {
+            //             name: "moyamoya",
+            //             num: 1,
+            //             color: "#2291AD",
+            //         },
+            //         {
+            //             name: "lethargic",
+            //             num: 1,
+            //             color: "#2291AD",
+            //         },
+            //         {
+            //             name: "tired",
+            //             num: 1,
+            //             color: "#2291AD",
+            //         },
+            //     ],
+            // },
         };
     },
     props: {
@@ -258,8 +285,79 @@ export default {
         axios
             .get("/api/report/monthly/1")
             .then((res) => {
-                console.info(getStorage);
-                this.id = res.data.id;
+                console.info(res);
+                const conditions = res.data.conditions;
+                const feelings = res.data.feelings;
+                const mergedReport = [];
+                const userUuidKeys = Object.keys(conditions);
+
+                for (let i = 0; i < userUuidKeys.length; i++) {
+                    const weeklyConditions = conditions[userUuidKeys[i]];
+                    const weeklyFeelings = feelings[userUuidKeys[i]];
+                    const calcConditions = {
+                        total: weeklyConditions.length,
+                        type: [
+                            { name: "great", num: 0 },
+                            { name: "good", num: 0 },
+                            { name: "ok", num: 0 },
+                            { name: "bad", num: 0 },
+                            { name: "worse", num: 0 },
+                        ],
+                    };
+                    for (
+                        let conditionKey = 0;
+                        conditionKey < weeklyConditions.length;
+                        conditionKey++
+                    ) {
+                        calcConditions.type[
+                            5 - weeklyConditions[conditionKey].evaluation
+                        ].num += 1;
+                    }
+                    const calcFeelings = {
+                        total: weeklyFeelings.length,
+                        type: {
+                            wakuwaku: 0,
+                            happy: 0,
+                            glad: 0,
+                            fun: 0,
+                            calm: 0,
+                            angry: 0,
+                            kuyashi: 0,
+                            moyamoya: 0,
+                            lethargic: 0,
+                            tired: 0,
+                            anxious: 0,
+                            sad: 0,
+                            hard: 0,
+                        },
+                    };
+                    for (
+                        let feelingKey = 0;
+                        feelingKey < weeklyFeelings.length;
+                        feelingKey++
+                    ) {
+                        calcFeelings.type[
+                            weeklyFeelings[feelingKey].feeling_type
+                        ] += 1;
+                    }
+                    for (const feelingType in calcFeelings.type) {
+                        if (calcFeelings.type[feelingType] === 0) {
+                            delete calcFeelings.type[feelingType];
+                        }
+                    }
+                    this.condition = Object.assign(
+                        {},
+                        this.condition,
+                        calcConditions
+                    );
+                    this.feeling = Object.assign(
+                        {},
+                        this.feeling,
+                        calcFeelings
+                    );
+                    this.ready = true;
+                }
+                // this.id = res.data.id;
                 // this.dataURL = svg2imageData(this.$refs.svgCard, (data) => {
                 //     this.dataURL = data;
                 //     const uuid = uuidv4();

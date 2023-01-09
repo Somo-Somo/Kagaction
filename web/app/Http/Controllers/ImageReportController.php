@@ -6,7 +6,9 @@ use App\Models\User;
 use App\Models\Condition;
 use App\Models\Feeling;
 use App\Models\ImageReport;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use \Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Log;
 
@@ -18,11 +20,11 @@ class ImageReportController extends Controller
      * @param string $uuid
      * @return \Illuminate\Http\Response
      */
-    public function index(int $id, string $uuid)
+    public function index(int $id)
     {
-        $condition = Condition::where('user_uuid', $uuid)->get();
-        Log::debug((array)$condition);
-        $data = ['id' => $id];
+        // $condition = Condition::where('user_uuid', $uuid)->get();
+        // Log::debug((array)$condition);
+        // $data = ['id' => $id];
         // [
         //     'user' => [
         //         'id' => $id,
@@ -36,6 +38,23 @@ class ImageReportController extends Controller
         //         'type' => [],
         //     ]
         // ];
+        // $user_weekly_report = User::whereHas('conditions', function ($query) {
+        //     $query->where('date', '>=', Carbon::today()->subDay(8))->get();
+        // })->get();
+        $today = Carbon::today();
+        $eightDays = Carbon::today()->subDay(8);
+        $thisWeekConditions = Condition::whereDate('date', '>=', $eightDays)
+            ->whereDate('date', '<', $today)
+            ->get();
+        $userConditions = $thisWeekConditions->groupBy('user_uuid')->toArray();
+        $thisWeekFeelings = Feeling::whereDate('date', '>=', $eightDays)
+            ->whereDate('date', '<', $today)
+            ->get();
+        $userFeelings = $thisWeekFeelings->groupBy('user_uuid')->toArray();
+        $data = [
+            'conditions' => $userConditions,
+            'feelings' => $userFeelings,
+        ];
         return response()->json($data, Response::HTTP_OK);
         // return view('index', compact('data'));
     }

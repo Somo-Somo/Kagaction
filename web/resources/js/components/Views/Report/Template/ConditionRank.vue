@@ -227,8 +227,16 @@ export default {
         },
     },
     mounted() {
+        console.info(this.condition);
         const sortCondition = this.sortCondition();
         this.putRank(sortCondition);
+    },
+    watch: {
+        condition(newCondition) {
+            console.info(this.condition);
+            console.info(newCondition);
+            this.condition = newCondition;
+        },
     },
 };
 </script>

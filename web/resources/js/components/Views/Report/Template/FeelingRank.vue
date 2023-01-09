@@ -162,7 +162,7 @@
                     ></text
                 >
                 <g id="twemoji:frowning-face_5" clip-path="url(#clip4_140_4)">
-                    <Twimoji :rankPlace="4" :twimojiType="'sadness'" />
+                    <Twimoji :rankPlace="4" :twimojiType="'sad'" />
                 </g>
             </g>
         </g>
@@ -186,7 +186,14 @@ export default {
     computed: {},
     methods: {
         sortFeeling() {
-            return this.feeling.type.sort(function (a, b) {
+            const feelingArray = [];
+            for (const feelingName in this.feeling.type) {
+                feelingArray.push({
+                    name: feelingName,
+                    num: this.feeling.type[feelingName],
+                });
+            }
+            return feelingArray.sort(function (a, b) {
                 if (a.num > b.num) return -1;
                 if (a.num < b.num) return 1;
             });
@@ -225,6 +232,13 @@ export default {
     mounted() {
         const sortFeeling = this.sortFeeling();
         this.putRank(sortFeeling);
+    },
+    watch: {
+        feeling(newFeeling) {
+            console.info(this.feeling);
+            console.info(newFeeling);
+            this.feeling = newFeeling;
+        },
     },
 };
 </script>

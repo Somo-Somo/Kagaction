@@ -68,7 +68,7 @@ export default {
         conditionStrokeDasharrayLimit: 880,
         feelingPieCharts: [],
         feelingStrokeDasharrayLimit: 566,
-        first: false,
+        first: true,
     }),
     props: {
         condition: {
@@ -115,22 +115,25 @@ export default {
         },
         createFeelingStorkeDasharray() {
             const feelings = this.feeling.type;
-            var lineTotalUpToNow = 0;
-            for (let i = 0; i < feelings.length; i++) {
+            let lineTotalUpToNow = 0;
+            for (const feelingName in feelings) {
+                console.info(this.first);
                 const feelingPercent =
                     this.feelingStrokeDasharrayLimit *
-                    (feelings[i].num / this.feeling.total);
-                if (i === 0) {
+                    (feelings[feelingName] / this.feeling.total);
+
+                if (this.first) {
                     this.feelingPieCharts.push({
-                        color: this.feelingChartColor[feelings[i].name],
+                        color: this.feelingChartColor[feelingName],
                         strokeDashArray:
                             feelingPercent +
                             " " +
                             (this.feelingStrokeDasharrayLimit - feelingPercent),
                     });
+                    this.first = false;
                 } else {
                     this.feelingPieCharts.push({
-                        color: this.feelingChartColor[feelings[i].name],
+                        color: this.feelingChartColor[feelingName],
                         strokeDashArray:
                             "0" +
                             " " +
@@ -144,6 +147,7 @@ export default {
                 }
                 lineTotalUpToNow += feelingPercent;
             }
+            console.info(this.feelingPieCharts);
         },
     },
     async mounted() {
