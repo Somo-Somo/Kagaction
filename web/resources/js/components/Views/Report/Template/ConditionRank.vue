@@ -17,7 +17,7 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="678.832" y="172.464">{{
-                        rankTable[0].rank
+                        rankTables[$route.params.id][0].rank
                     }}</tspan></text
                 >
                 <text
@@ -31,7 +31,7 @@
                     letter-spacing="0em"
                 >
                     <tspan x="814.789" y="171.464"
-                        >{{ rankTable[0].percent }} %</tspan
+                        >{{ rankTables[$route.params.id][0].percent }} %</tspan
                     >
                 </text>
                 <g id="twemoji:frowning-face_6" clip-path="url(#clip5_140_4)">
@@ -49,7 +49,7 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="895.109" y="172.464">{{
-                        rankTable[1].rank
+                        rankTables[$route.params.id][1].rank
                     }}</tspan></text
                 >
                 <text
@@ -63,7 +63,7 @@
                     letter-spacing="0em"
                 >
                     <tspan x="1038.79" y="171.464"
-                        >{{ rankTable[1].percent }} %</tspan
+                        >{{ rankTables[$route.params.id][1].percent }} %</tspan
                     >
                 </text>
                 <g id="twemoji:frowning-face_7" clip-path="url(#clip6_140_4)">
@@ -83,7 +83,7 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="678.832" y="256.464">{{
-                        rankTable[2].rank
+                        rankTables[$route.params.id][2].rank
                     }}</tspan></text
                 >
                 <text
@@ -97,7 +97,7 @@
                     letter-spacing="0em"
                 >
                     <tspan x="814.789" y="255.464"
-                        >{{ rankTable[2].percent }} %</tspan
+                        >{{ rankTables[$route.params.id][2].percent }} %</tspan
                     >
                 </text>
                 <g id="twemoji:frowning-face_8" clip-path="url(#clip7_140_4)">
@@ -115,7 +115,7 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="900.109" y="256.464">{{
-                        rankTable[3].rank
+                        rankTables[$route.params.id][3].rank
                     }}</tspan></text
                 >
                 <text
@@ -129,7 +129,7 @@
                     letter-spacing="0em"
                 >
                     <tspan x="1038.79" y="255.464"
-                        >{{ rankTable[3].percent }} %</tspan
+                        >{{ rankTables[$route.params.id][3].percent }} %</tspan
                     >
                 </text>
                 <g id="twemoji:frowning-face_9" clip-path="url(#clip8_140_4)">
@@ -149,7 +149,7 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="679.793" y="340.464">{{
-                        rankTable[4].rank
+                        rankTables[$route.params.id][4].rank
                     }}</tspan></text
                 >
                 <text
@@ -163,7 +163,7 @@
                     letter-spacing="0em"
                 >
                     <tspan x="814.789" y="339.464"
-                        >{{ rankTable[4].percent }} %</tspan
+                        >{{ rankTables[$route.params.id][4].percent }} %</tspan
                     >
                 </text>
                 <g id="twemoji:frowning-face_10" clip-path="url(#clip9_140_4)">
@@ -181,24 +181,25 @@ export default {
         Twimoji,
     },
     data: () => ({
-        rankTable: [],
+        rankTables: [],
     }),
     props: {
-        condition: {
-            type: Object,
+        conditions: {
+            type: Array,
         },
     },
     computed: {},
     methods: {
-        sortCondition() {
-            return this.condition.type.sort(function (a, b) {
+        sortCondition(condition) {
+            return condition.type.sort(function (a, b) {
                 if (a.num > b.num) return -1;
                 if (a.num < b.num) return 1;
             });
         },
-        putRank(sortCondition) {
+        putRank(sortCondition, total) {
             let rank = 1;
             let rank_string = "";
+            const rankTable = [];
             for (let i = 0; i < sortCondition.length; i++) {
                 if (i === 0) {
                     rank_string = "1st:";
@@ -217,26 +218,26 @@ export default {
                         rank_string = rank + "th:";
                     }
                 }
-                this.rankTable.push({
+                rankTable.push({
                     rank: rank_string,
-                    percent: Math.round(
-                        (sortCondition[i].num / this.condition.total) * 100
-                    ),
+                    percent: Math.round((sortCondition[i].num / total) * 100),
                 });
             }
+            return rankTable;
         },
     },
     mounted() {
-        console.info(this.condition);
-        const sortCondition = this.sortCondition();
-        this.putRank(sortCondition);
-    },
-    watch: {
-        condition(newCondition) {
-            console.info(this.condition);
-            console.info(newCondition);
-            this.condition = newCondition;
-        },
+        const rankTables = [];
+        for (const condition in this.conditions) {
+            const sortCondition = this.sortCondition(
+                this.conditions[condition]
+            );
+            rankTables[condition] = this.putRank(
+                sortCondition,
+                this.conditions[condition].total
+            );
+        }
+        this.rankTables = rankTables;
     },
 };
 </script>

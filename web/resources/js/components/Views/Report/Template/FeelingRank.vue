@@ -6,7 +6,7 @@
             fill="#91C5BE"
         />
         <g id="Upper">
-            <g id="first" v-if="rankTable.length > 0">
+            <g id="first" v-if="rankTables[$route.params.id].length > 0">
                 <text
                     id="1st:"
                     fill="#91C5BE"
@@ -17,7 +17,7 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="681.832" y="486.464">{{
-                        rankTable[0].rank
+                        rankTables[$route.params.id][0].rank
                     }}</tspan></text
                 >
                 <text
@@ -30,14 +30,17 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="812.789" y="485.464"
-                        >{{ rankTable[0].percent }} %</tspan
+                        >{{ rankTables[$route.params.id][0].percent }} %</tspan
                     ></text
                 >
                 <g id="twemoji:frowning-face" clip-path="url(#clip0_140_4)">
-                    <Twimoji :rankPlace="0" :twimojiType="'anxious'" />
+                    <Twimoji
+                        :rankPlace="0"
+                        :twimojiType="rankTables[$route.params.id][0].name"
+                    />
                 </g>
             </g>
-            <g id="second" v-if="rankTable.length > 1">
+            <g id="second" v-if="rankTables[$route.params.id].length > 1">
                 <text
                     id="2nd:"
                     fill="#91C5BE"
@@ -48,7 +51,7 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="901.109" y="486.464">{{
-                        rankTable[1].rank
+                        rankTables[$route.params.id][1].rank
                     }}</tspan></text
                 >
                 <text
@@ -61,16 +64,19 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="1036.79" y="485.464"
-                        >{{ rankTable[1].percent }} %</tspan
+                        >{{ rankTables[$route.params.id][1].percent }} %</tspan
                     ></text
                 >
                 <g id="twemoji:frowning-face_2" clip-path="url(#clip1_140_4)">
-                    <Twimoji :rankPlace="1" :twimojiType="'fun'" />
+                    <Twimoji
+                        :rankPlace="1"
+                        :twimojiType="rankTables[$route.params.id][1].name"
+                    />
                 </g>
             </g>
         </g>
         <g id="Middle">
-            <g id="third" v-if="rankTable.length > 2">
+            <g id="third" v-if="rankTables[$route.params.id].length > 2">
                 <text
                     id="3rd:"
                     fill="#91C5BE"
@@ -81,7 +87,7 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="679.758" y="570.464">{{
-                        rankTable[2].rank
+                        rankTables[$route.params.id][2].rank
                     }}</tspan></text
                 >
                 <text
@@ -94,14 +100,17 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="812.789" y="569.464"
-                        >{{ rankTable[2].percent }} %</tspan
+                        >{{ rankTables[$route.params.id][2].percent }} %</tspan
                     ></text
                 >
                 <g id="twemoji:frowning-face_3" clip-path="url(#clip2_140_4)">
-                    <Twimoji :rankPlace="2" :twimojiType="'calm'" />
+                    <Twimoji
+                        :rankPlace="2"
+                        :twimojiType="rankTables[$route.params.id][2].name"
+                    />
                 </g>
             </g>
-            <g id="fourth" v-if="rankTable.length > 3">
+            <g id="fourth" v-if="rankTables[$route.params.id].length > 3">
                 <text
                     id="4th:"
                     fill="#91C5BE"
@@ -112,7 +121,7 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="903.793" y="570.464">{{
-                        rankTable[3].rank
+                        rankTables[$route.params.id][3].rank
                     }}</tspan></text
                 >
                 <text
@@ -125,16 +134,19 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="1036.79" y="569.464"
-                        >{{ rankTable[3].percent }} %</tspan
+                        >{{ rankTables[$route.params.id][3].percent }} %</tspan
                     ></text
                 >
                 <g id="twemoji:frowning-face_4" clip-path="url(#clip3_140_4)">
-                    <Twimoji :rankPlace="3" :twimojiType="'wakuwaku'" />
+                    <Twimoji
+                        :rankPlace="3"
+                        :twimojiType="rankTables[$route.params.id][3].name"
+                    />
                 </g>
             </g>
         </g>
         <g id="Bottom">
-            <g id="fifth" v-if="rankTable.length > 4">
+            <g id="fifth" v-if="rankTables[$route.params.id].length > 4">
                 <text
                     id="5th:"
                     fill="#91C5BE"
@@ -145,7 +157,7 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="679.793" y="654.464">{{
-                        rankTable[4].rank
+                        rankTables[$route.params.id][4].rank
                     }}</tspan></text
                 >
                 <text
@@ -158,11 +170,14 @@
                     font-weight="bold"
                     letter-spacing="0em"
                     ><tspan x="812.789" y="653.464"
-                        >{{ rankTable[4].percent }} %</tspan
+                        >{{ rankTables[$route.params.id][4].percent }} %</tspan
                     ></text
                 >
                 <g id="twemoji:frowning-face_5" clip-path="url(#clip4_140_4)">
-                    <Twimoji :rankPlace="4" :twimojiType="'sad'" />
+                    <Twimoji
+                        :rankPlace="4"
+                        :twimojiType="rankTables[$route.params.id][4].name"
+                    />
                 </g>
             </g>
         </g>
@@ -176,21 +191,21 @@ export default {
         Twimoji,
     },
     data: () => ({
-        rankTable: [],
+        rankTables: [],
     }),
     props: {
-        feeling: {
-            type: Object,
+        feelings: {
+            type: Array,
         },
     },
     computed: {},
     methods: {
-        sortFeeling() {
+        sortFeeling(feeling) {
             const feelingArray = [];
-            for (const feelingName in this.feeling.type) {
+            for (const feelingName in feeling.type) {
                 feelingArray.push({
                     name: feelingName,
-                    num: this.feeling.type[feelingName],
+                    num: feeling.type[feelingName],
                 });
             }
             return feelingArray.sort(function (a, b) {
@@ -198,9 +213,10 @@ export default {
                 if (a.num < b.num) return 1;
             });
         },
-        putRank(sortFeeling) {
+        putRank(sortFeeling, total) {
             let rank = 1;
             let rank_string = "";
+            const rankTable = [];
             const limit = sortFeeling.length > 5 ? 5 : sortFeeling.length;
             for (let i = 0; i < limit; i++) {
                 if (i === 0) {
@@ -220,25 +236,26 @@ export default {
                         rank_string = rank + "th:";
                     }
                 }
-                this.rankTable.push({
+                rankTable.push({
                     rank: rank_string,
-                    percent: Math.round(
-                        (sortFeeling[i].num / this.feeling.total) * 100
-                    ),
+                    percent: Math.round((sortFeeling[i].num / total) * 100),
+                    name: sortFeeling[i].name,
                 });
             }
+            return rankTable;
         },
     },
     mounted() {
-        const sortFeeling = this.sortFeeling();
-        this.putRank(sortFeeling);
+        const rankTables = [];
+        for (const feeling in this.feelings) {
+            const sortFeeling = this.sortFeeling(this.feelings[feeling]);
+            rankTables[feeling] = this.putRank(
+                sortFeeling,
+                this.feelings[feeling].total
+            );
+        }
+        this.rankTables = rankTables;
     },
-    watch: {
-        feeling(newFeeling) {
-            console.info(this.feeling);
-            console.info(newFeeling);
-            this.feeling = newFeeling;
-        },
-    },
+    watch: {},
 };
 </script>

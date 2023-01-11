@@ -20,7 +20,7 @@ import Anxious from "./Feeling/Anxious.vue";
 import Hard from "./Feeling/Hard.vue";
 import Sad from "./Feeling/Sadness.vue";
 import Tired from "./Feeling/Tired.vue";
-import Anger from "./Feeling/Anger.vue";
+import Angry from "./Feeling/Anger.vue";
 import Kuyashi from "./Feeling/Kuyashi.vue";
 import Lethargic from "./Feeling/Lethargic.vue";
 import Glad from "./Feeling/Glad.vue";
@@ -28,6 +28,7 @@ import Fun from "./Feeling/Fun.vue";
 import Calm from "./Feeling/Calm.vue";
 import Happy from "./Feeling/Happy.vue";
 import Wakuwaku from "./Feeling/Wakuwaku.vue";
+import Moyamoya from "./Feeling/Moyamoya.vue";
 
 export default {
     data: () => ({
@@ -68,9 +69,9 @@ export default {
                 draw: Tired.draw,
                 fill: Tired.fill,
             },
-            anger: {
-                draw: Anger.draw,
-                fill: Anger.fill,
+            angry: {
+                draw: Angry.draw,
+                fill: Angry.fill,
             },
             kuyashi: {
                 draw: Kuyashi.draw,
@@ -99,6 +100,10 @@ export default {
             wakuwaku: {
                 draw: Wakuwaku.draw,
                 fill: Wakuwaku.fill,
+            },
+            moyamoya: {
+                draw: Moyamoya.draw,
+                fill: Moyamoya.fill,
             },
         },
     }),

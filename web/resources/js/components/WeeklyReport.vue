@@ -16,8 +16,8 @@
                     fill="white"
                 />
                 <PieChart
-                    :condition="condition"
-                    :feeling="feeling"
+                    :conditions="conditions"
+                    :feelings="feelings"
                     v-if="ready"
                 />
                 <g id="Service Name">
@@ -34,8 +34,8 @@
                         fill="black"
                     />
                 </g>
-                <ConditionRank :condition="condition" v-if="ready" />
-                <FeelingRank :feeling="feeling" v-if="ready" />
+                <ConditionRank :conditions="conditions" v-if="ready" />
+                <FeelingRank :feelings="feelings" v-if="ready" />
             </g>
             <defs>
                 <clipPath id="clip0_140_4">
@@ -120,7 +120,8 @@
                 </clipPath>
             </defs>
         </svg>
-        <button>出力</button>
+        <!--  updateに検知されるため -->
+        <div>{{ $route.params.id }}</div>
         <div id="result"><img :src="dataURL" /></div>
     </div>
 </template>
@@ -163,25 +164,6 @@ const firebaseConfig = {
 const firebase = initializeApp(firebaseConfig);
 const firestorage = getStorage(firebase);
 
-function svg2imageData(svgElement, successCallback, errorCallback) {
-    var canvas = document.createElement("canvas");
-    canvas.width = svgElement.width.baseVal.value;
-    canvas.height = svgElement.height.baseVal.value;
-    var ctx = canvas.getContext("2d");
-    var image = new Image();
-    image.onload = () => {
-        ctx.drawImage(image, 0, 0, image.width, image.height);
-        successCallback(canvas.toDataURL());
-    };
-    image.onerror = (e) => {
-        errorCallback(e);
-    };
-    var svgData = new XMLSerializer().serializeToString(svgElement);
-    image.src =
-        "data:image/svg+xml;charset=utf-8;base64," +
-        btoa(unescape(encodeURIComponent(svgData)));
-}
-
 export default {
     components: {
         PieChart,
@@ -194,83 +176,12 @@ export default {
             error: null,
             dataURL: null,
             ready: false,
-            condition: {
-                total: null,
-                num: [],
-            },
-            // condition: {
-            //     total: 15,
-            //     type: [
-            //         { name: "絶好調", num: 2 },
-            //         { name: "順調", num: 3 },
-            //         { name: "普通", num: 4 },
-            //         { name: "不調", num: 3 },
-            //         { name: "絶不調", num: 3 },
-            //     ],
-            // },
-            feeling: {
-                total: null,
-                type: {
-                    wakuwaku: 0,
-                    happy: 0,
-                    glad: 0,
-                    fun: 0,
-                    calm: 0,
-                    angry: 0,
-                    kuyashi: 0,
-                    moyamoya: 0,
-                    lethargic: 0,
-                    tired: 0,
-                    anxious: 0,
-                    sad: 0,
-                    hard: 0,
-                },
-            },
-            // feeling: {
-            //     total: 14,
-            //     type: [
-            //         {
-            //             name: "happy",
-            //             num: 2,
-            //             color: "#FF8C00",
-            //         },
-            //         {
-            //             name: "glad",
-            //             num: 1,
-            //             color: "#FCC801",
-            //         },
-            //         {
-            //             name: "wakuwaku",
-            //             num: 2,
-            //             color: "#439679",
-            //         },
-            //         {
-            //             name: "anxious",
-            //             num: 5,
-            //             color: "#5891AD",
-            //         },
-            //         {
-            //             name: "kuyashi",
-            //             num: 1,
-            //             color: "#2291AD",
-            //         },
-            //         {
-            //             name: "moyamoya",
-            //             num: 1,
-            //             color: "#2291AD",
-            //         },
-            //         {
-            //             name: "lethargic",
-            //             num: 1,
-            //             color: "#2291AD",
-            //         },
-            //         {
-            //             name: "tired",
-            //             num: 1,
-            //             color: "#2291AD",
-            //         },
-            //     ],
-            // },
+            conditions: null,
+            feelings: null,
+            userUuids: [],
+            uploadUserLimitNum: 0,
+            uploadUserCountNum: 0,
+            testFill: ["black", "red", "#6B6C99"],
         };
     },
     props: {
@@ -279,108 +190,154 @@ export default {
         },
     },
     computed: {},
-    methods: {},
-    created() {},
-    async mounted() {
+    methods: {
+        svg2imageData(svgElement, successCallback, errorCallback) {
+            var canvas = document.createElement("canvas");
+            canvas.width = svgElement.width.baseVal.value;
+            canvas.height = svgElement.height.baseVal.value;
+            var ctx = canvas.getContext("2d");
+            var image = new Image();
+            image.onload = () => {
+                ctx.drawImage(image, 0, 0, image.width, image.height);
+                successCallback(canvas.toDataURL());
+            };
+            image.onerror = (e) => {
+                errorCallback(e);
+            };
+            var svgData = new XMLSerializer().serializeToString(svgElement);
+            image.src =
+                "data:image/svg+xml;charset=utf-8;base64," +
+                btoa(unescape(encodeURIComponent(svgData)));
+        },
+        calcData(data, userUuidKeys) {
+            const conditions = data.conditions;
+            const feelings = data.feelings;
+            const calcConditions = [];
+            const calcFeelings = [];
+            for (let i = 0; i < userUuidKeys.length; i++) {
+                const weeklyConditions = conditions[userUuidKeys[i]];
+                const weeklyFeelings = feelings[userUuidKeys[i]];
+                const calcCondition = {
+                    total: weeklyConditions.length,
+                    type: [
+                        { name: "great", num: 0 },
+                        { name: "good", num: 0 },
+                        { name: "ok", num: 0 },
+                        { name: "bad", num: 0 },
+                        { name: "worse", num: 0 },
+                    ],
+                };
+                for (
+                    let conditionKey = 0;
+                    conditionKey < weeklyConditions.length;
+                    conditionKey++
+                ) {
+                    calcCondition.type[
+                        5 - weeklyConditions[conditionKey].evaluation
+                    ].num += 1;
+                }
+                const calcFeeling = {
+                    total: weeklyFeelings.length,
+                    type: {
+                        wakuwaku: 0,
+                        happy: 0,
+                        glad: 0,
+                        fun: 0,
+                        calm: 0,
+                        angry: 0,
+                        kuyashi: 0,
+                        moyamoya: 0,
+                        lethargic: 0,
+                        tired: 0,
+                        anxious: 0,
+                        sad: 0,
+                        hard: 0,
+                    },
+                };
+                for (
+                    let feelingKey = 0;
+                    feelingKey < weeklyFeelings.length;
+                    feelingKey++
+                ) {
+                    calcFeeling.type[
+                        weeklyFeelings[feelingKey].feeling_type
+                    ] += 1;
+                }
+                for (const feelingType in calcFeeling.type) {
+                    if (calcFeeling.type[feelingType] === 0) {
+                        delete calcFeeling.type[feelingType];
+                    }
+                }
+                calcConditions[userUuidKeys[i]] = calcCondition;
+                calcFeelings[userUuidKeys[i]] = calcFeeling;
+            }
+            return {
+                calcConditions: calcConditions,
+                calcFeelings: calcFeelings,
+            };
+        },
+    },
+    created() {
         axios
             .get("/api/report/monthly/1")
             .then((res) => {
                 console.info(res);
-                const conditions = res.data.conditions;
-                const feelings = res.data.feelings;
-                const mergedReport = [];
-                const userUuidKeys = Object.keys(conditions);
+                const userUuidKeys = Object.keys(res.data.conditions);
+                const { calcConditions, calcFeelings } = this.calcData(
+                    res.data,
+                    userUuidKeys
+                );
+                this.conditions = calcConditions;
+                this.feelings = calcFeelings;
+                this.userUuidKeys = userUuidKeys;
+                this.uploadUserLimitNum = userUuidKeys.length;
 
-                for (let i = 0; i < userUuidKeys.length; i++) {
-                    const weeklyConditions = conditions[userUuidKeys[i]];
-                    const weeklyFeelings = feelings[userUuidKeys[i]];
-                    const calcConditions = {
-                        total: weeklyConditions.length,
-                        type: [
-                            { name: "great", num: 0 },
-                            { name: "good", num: 0 },
-                            { name: "ok", num: 0 },
-                            { name: "bad", num: 0 },
-                            { name: "worse", num: 0 },
-                        ],
-                    };
-                    for (
-                        let conditionKey = 0;
-                        conditionKey < weeklyConditions.length;
-                        conditionKey++
-                    ) {
-                        calcConditions.type[
-                            5 - weeklyConditions[conditionKey].evaluation
-                        ].num += 1;
-                    }
-                    const calcFeelings = {
-                        total: weeklyFeelings.length,
-                        type: {
-                            wakuwaku: 0,
-                            happy: 0,
-                            glad: 0,
-                            fun: 0,
-                            calm: 0,
-                            angry: 0,
-                            kuyashi: 0,
-                            moyamoya: 0,
-                            lethargic: 0,
-                            tired: 0,
-                            anxious: 0,
-                            sad: 0,
-                            hard: 0,
-                        },
-                    };
-                    for (
-                        let feelingKey = 0;
-                        feelingKey < weeklyFeelings.length;
-                        feelingKey++
-                    ) {
-                        calcFeelings.type[
-                            weeklyFeelings[feelingKey].feeling_type
-                        ] += 1;
-                    }
-                    for (const feelingType in calcFeelings.type) {
-                        if (calcFeelings.type[feelingType] === 0) {
-                            delete calcFeelings.type[feelingType];
-                        }
-                    }
-                    this.condition = Object.assign(
-                        {},
-                        this.condition,
-                        calcConditions
-                    );
-                    this.feeling = Object.assign(
-                        {},
-                        this.feeling,
-                        calcFeelings
-                    );
-                    this.ready = true;
-                }
-                // this.id = res.data.id;
-                // this.dataURL = svg2imageData(this.$refs.svgCard, (data) => {
-                //     this.dataURL = data;
-                //     const uuid = uuidv4();
-                //     console.info(data);
-                //     const storageRef = ref(
-                //         firestorage,
-                //         "users/" + this.id + "/images/" + uuid + ".png"
-                //     );
-                //     console.info(storageRef);
-                //     uploadString(storageRef, data, "data_url").then(() => {
-                //         console.log("Uploaded a file!");
-                //         getDownloadURL(storageRef)
-                //             .then((url) => {
-                //                 console.log(url);
-                //             })
-                //             .catch((err) => console.log(err));
-                //     });
-                // });
+                this.ready = true;
+                this.$router.push({
+                    name: "weekly-report",
+                    params: { id: this.userUuidKeys[this.uploadUserCountNum] },
+                });
             })
             .catch((err) => {
                 this.error = err;
                 console.log(err);
             });
+    },
+    async mounted() {},
+    async updated() {
+        if (this.ready) {
+            if (this.uploadUserCountNum !== this.uploadUserLimitNum) {
+                await this.$nextTick();
+                this.svg2imageData(this.$refs.svgCard, (data) => {
+                    const storageRef = ref(
+                        firestorage,
+                        "users/" + "/images/" + this.$route.params.id + ".png"
+                    );
+                    uploadString(storageRef, data, "data_url").then(() => {
+                        console.log("Uploaded a file!");
+                        getDownloadURL(storageRef)
+                            .then((url) => {
+                                console.log(url);
+                                this.uploadUserCountNum += 1;
+                                if (
+                                    this.uploadUserCountNum <
+                                    this.uploadUserLimitNum
+                                ) {
+                                    this.$router.push({
+                                        name: "weekly-report",
+                                        params: {
+                                            id: this.userUuidKeys[
+                                                this.uploadUserCountNum
+                                            ],
+                                        },
+                                    });
+                                }
+                            })
+                            .catch((err) => console.log(err));
+                    });
+                });
+            }
+        }
     },
 };
 </script>

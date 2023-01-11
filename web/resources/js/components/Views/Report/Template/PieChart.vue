@@ -2,7 +2,7 @@
     <g id="Circle Grapth">
         <g id="Condition Grapth">
             <circle
-                v-for="condition in conditionPieCharts"
+                v-for="condition in conditionPieCharts[$route.params.id]"
                 :key="condition.strokeDashArray"
                 cx="332"
                 cy="384"
@@ -15,7 +15,7 @@
         </g>
         <g id="Feeling Grapth">
             <circle
-                v-for="feeling in feelingPieCharts"
+                v-for="feeling in feelingPieCharts[$route.params.id]"
                 :key="feeling.strokeDashArray"
                 cx="327"
                 cy="384"
@@ -71,59 +71,62 @@ export default {
         first: true,
     }),
     props: {
-        condition: {
-            type: Object,
+        conditions: {
+            type: Array,
         },
-        feeling: {
-            type: Object,
+        feelings: {
+            type: Array,
         },
     },
     computed: {},
     methods: {
-        createConditionStrokeDasharray() {
-            const conditions = this.condition.type;
+        createConditionStrokeDasharray(conditions) {
             let lineTotalUpToNow = 0;
-            for (let i = 0; i < conditions.length; i++) {
+            const conditionPieChart = [];
+            for (let i = 0; i < conditions.type.length; i++) {
                 const conditionPercent =
                     this.conditionStrokeDasharrayLimit *
-                    (conditions[i].num / this.condition.total);
-                if (i === 0) {
-                    this.conditionPieCharts.push({
-                        color: this.conditionChartColor[i],
-                        strokeDashArray:
-                            conditionPercent +
-                            " " +
-                            (this.conditionStrokeDasharrayLimit -
-                                conditionPercent),
-                    });
-                } else {
-                    this.conditionPieCharts.push({
-                        color: this.conditionChartColor[i],
-                        strokeDashArray:
-                            "0" +
-                            " " +
-                            lineTotalUpToNow +
-                            " " +
-                            conditionPercent +
-                            " " +
-                            (this.conditionStrokeDasharrayLimit -
-                                (lineTotalUpToNow + conditionPercent)),
-                    });
+                    (conditions.type[i].num / conditions.total);
+                if (conditions.type[i].num > 0) {
+                    if (i === 0) {
+                        conditionPieChart.push({
+                            color: this.conditionChartColor[i],
+                            strokeDashArray:
+                                conditionPercent +
+                                " " +
+                                (this.conditionStrokeDasharrayLimit -
+                                    conditionPercent),
+                        });
+                    } else {
+                        conditionPieChart.push({
+                            color: this.conditionChartColor[i],
+                            strokeDashArray:
+                                "0" +
+                                " " +
+                                lineTotalUpToNow +
+                                " " +
+                                conditionPercent +
+                                " " +
+                                (this.conditionStrokeDasharrayLimit -
+                                    (lineTotalUpToNow + conditionPercent)),
+                        });
+                    }
                 }
                 lineTotalUpToNow += conditionPercent;
             }
+            console.info(conditionPieChart);
+            return conditionPieChart;
         },
-        createFeelingStorkeDasharray() {
-            const feelings = this.feeling.type;
+        createFeelingStorkeDasharray(feelings) {
             let lineTotalUpToNow = 0;
-            for (const feelingName in feelings) {
-                console.info(this.first);
+            const feelingPieChart = [];
+            for (const feelingName in feelings.type) {
                 const feelingPercent =
                     this.feelingStrokeDasharrayLimit *
-                    (feelings[feelingName] / this.feeling.total);
+                    (feelings.type[feelingName] / feelings.total);
 
                 if (this.first) {
-                    this.feelingPieCharts.push({
+                    feelingPieChart.push({
                         color: this.feelingChartColor[feelingName],
                         strokeDashArray:
                             feelingPercent +
@@ -132,7 +135,7 @@ export default {
                     });
                     this.first = false;
                 } else {
-                    this.feelingPieCharts.push({
+                    feelingPieChart.push({
                         color: this.feelingChartColor[feelingName],
                         strokeDashArray:
                             "0" +
@@ -147,11 +150,23 @@ export default {
                 }
                 lineTotalUpToNow += feelingPercent;
             }
+            return feelingPieChart;
         },
     },
     async mounted() {
-        this.createConditionStrokeDasharray();
-        this.createFeelingStorkeDasharray();
+        const conditionChartArray = [];
+        const feelingChartArray = [];
+
+        for (const key in this.conditions) {
+            conditionChartArray[key] = this.createConditionStrokeDasharray(
+                this.conditions[key]
+            );
+            feelingChartArray[key] = this.createFeelingStorkeDasharray(
+                this.feelings[key]
+            );
+        }
+        this.conditionPieCharts = conditionChartArray;
+        this.feelingPieCharts = feelingChartArray;
     },
 };
 </script>
