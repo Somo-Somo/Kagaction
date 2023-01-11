@@ -147,7 +147,6 @@ export default {
                 }
                 lineTotalUpToNow += feelingPercent;
             }
-            console.info(this.feelingPieCharts);
         },
     },
     async mounted() {
