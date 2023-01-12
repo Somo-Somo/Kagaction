@@ -8,6 +8,7 @@ use App\Models\Condition;
 use App\Http\Controllers\Controller;
 use App\Models\Diary;
 use App\Models\Feeling;
+use App\Models\ImageReport;
 use App\UseCases\Line\FollowAction;
 use App\Services\LineBotService;
 use Carbon\Carbon;
@@ -90,39 +91,37 @@ class MockUpController extends Controller
                     return;
                 } else if ($event->getText() === '記録をみる') {
                     $user = User::where('line_id', $event->getUserId())->first();
-                    $today = Carbon::today();
-                    $eightDays = Carbon::today()->subDay(8);
-                    $condition = Condition::select(DB::raw('evaluation, COUNT(evaluation) AS count_evaluation'))
-                        ->where('user_uuid', $user->uuid)
-                        ->whereDate('date', '>=', $eightDays)
-                        ->whereDate('date', '<', $today)
-                        ->groupBy('evaluation')
-                        ->orderBy('evaluation', "desc")
-                        ->get();
-                    $sortCondition = [['num' => 0], ['num' => 0], ['num' => 0], ['num' => 0], ['num' => 0]];
-                    foreach ($condition as $value) {
-                        $key = abs(intval($value->evaluation) - 5);
-                        $sortCondition[$key] = ['num' => intval($value->count_evaluation)];
-                    }
-                    $feeling =  Feeling::select(DB::raw('feeling_type, COUNT(feeling_type) AS count_feeling_type'))
-                        ->where('user_uuid', $user->uuid)
-                        ->groupBy('feeling_type')
-                        ->whereDate('date', '>=', $eightDays)
-                        ->whereDate('date', '<', $today)
-                        ->orderBy('count_feeling_type', 'desc')
-                        ->get();
-                    $sortFeeling = [];
-                    foreach ($feeling as $value) {
-                        $sortFeeling[] = [
-                            'name' => $value->feeling_type,
-                            'num' => intval($value->count_feeling_type)
-                        ];
-                    }
-                    Log::debug($sortCondition);
-                    Log::debug($sortFeeling);
-                    $this->bot->replyText($event->getReplyToken(), $event->getText());
-                    return response()->redirectTo('report/monthly/' . $user->id, 301);
-                    // return view('index', compact('data'));
+                    // $today = Carbon::today();
+                    // $eightDays = Carbon::today()->subDay(8);
+                    // $condition = Condition::select(DB::raw('evaluation, COUNT(evaluation) AS count_evaluation'))
+                    //     ->where('user_uuid', $user->uuid)
+                    //     ->whereDate('date', '>=', $eightDays)
+                    //     ->whereDate('date', '<', $today)
+                    //     ->groupBy('evaluation')
+                    //     ->orderBy('evaluation', "desc")
+                    //     ->get();
+                    // $sortCondition = [['num' => 0], ['num' => 0], ['num' => 0], ['num' => 0], ['num' => 0]];
+                    // foreach ($condition as $value) {
+                    //     $key = abs(intval($value->evaluation) - 5);
+                    //     $sortCondition[$key] = ['num' => intval($value->count_evaluation)];
+                    // }
+                    // $feeling =  Feeling::select(DB::raw('feeling_type, COUNT(feeling_type) AS count_feeling_type'))
+                    //     ->where('user_uuid', $user->uuid)
+                    //     ->groupBy('feeling_type')
+                    //     ->whereDate('date', '>=', $eightDays)
+                    //     ->whereDate('date', '<', $today)
+                    //     ->orderBy('count_feeling_type', 'desc')
+                    //     ->get();
+                    // $sortFeeling = [];
+                    // foreach ($feeling as $value) {
+                    //     $sortFeeling[] = [
+                    //         'name' => $value->feeling_type,
+                    //         'num' => intval($value->count_feeling_type)
+                    //     ];
+                    // }
+                    $imageReport = ImageReport::setWeeklyImageReport();
+                    $this->bot->replyMessage($event->getReplyToken(), $imageReport);
+                    return response('', $status_code, []);
                 }
                 if ($question->operation_type === 1) {
                     if ($question->order_number === 1) {
