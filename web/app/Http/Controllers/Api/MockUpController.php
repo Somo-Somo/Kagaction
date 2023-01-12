@@ -11,6 +11,7 @@ use App\Models\Feeling;
 use App\Models\ImageReport;
 use App\UseCases\Line\FollowAction;
 use App\Services\LineBotService;
+use App\Services\CarouselContainerBuilder\OtherMenuCarouselContainerBuilder;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
+use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ButtonTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
@@ -91,37 +93,14 @@ class MockUpController extends Controller
                     return;
                 } else if ($event->getText() === '記録をみる') {
                     $user = User::where('line_id', $event->getUserId())->first();
-                    // $today = Carbon::today();
-                    // $eightDays = Carbon::today()->subDay(8);
-                    // $condition = Condition::select(DB::raw('evaluation, COUNT(evaluation) AS count_evaluation'))
-                    //     ->where('user_uuid', $user->uuid)
-                    //     ->whereDate('date', '>=', $eightDays)
-                    //     ->whereDate('date', '<', $today)
-                    //     ->groupBy('evaluation')
-                    //     ->orderBy('evaluation', "desc")
-                    //     ->get();
-                    // $sortCondition = [['num' => 0], ['num' => 0], ['num' => 0], ['num' => 0], ['num' => 0]];
-                    // foreach ($condition as $value) {
-                    //     $key = abs(intval($value->evaluation) - 5);
-                    //     $sortCondition[$key] = ['num' => intval($value->count_evaluation)];
-                    // }
-                    // $feeling =  Feeling::select(DB::raw('feeling_type, COUNT(feeling_type) AS count_feeling_type'))
-                    //     ->where('user_uuid', $user->uuid)
-                    //     ->groupBy('feeling_type')
-                    //     ->whereDate('date', '>=', $eightDays)
-                    //     ->whereDate('date', '<', $today)
-                    //     ->orderBy('count_feeling_type', 'desc')
-                    //     ->get();
-                    // $sortFeeling = [];
-                    // foreach ($feeling as $value) {
-                    //     $sortFeeling[] = [
-                    //         'name' => $value->feeling_type,
-                    //         'num' => intval($value->count_feeling_type)
-                    //     ];
-                    // }
-                    $imageReport = ImageReport::setWeeklyImageReport();
+                    $imageReport = ImageReport::setWeeklyImageReport($user->uuid);
                     $this->bot->replyMessage($event->getReplyToken(), $imageReport);
                     return response('', $status_code, []);
+                } else if ($event->getText() === '設定') {
+                    $this->bot->replyMessage(
+                        $event->getReplyToken(),
+                        new FlexMessageBuilder('メニュー: その他', OtherMenuCarouselContainerBuilder::createCarouselContainerBuilder())
+                    );
                 }
                 if ($question->operation_type === 1) {
                     if ($question->order_number === 1) {
