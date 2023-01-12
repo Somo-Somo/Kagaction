@@ -22,25 +22,8 @@ class ImageReportController extends Controller
      */
     public function index(int $id)
     {
-        // $condition = Condition::where('user_uuid', $uuid)->get();
-        // Log::debug((array)$condition);
-        // $data = ['id' => $id];
-        // [
-        //     'user' => [
-        //         'id' => $id,
-        //     ],
-        //     'condition' => [
-        //         'total' => 'aa',
-        //         'type' => [],
-        //     ],
-        //     'feeling' => [
-        //         'total' => 'aa',
-        //         'type' => [],
-        //     ]
-        // ];
-        // $user_weekly_report = User::whereHas('conditions', function ($query) {
-        //     $query->where('date', '>=', Carbon::today()->subDay(8))->get();
-        // })->get();
+        Carbon::setWeekStartsAt(Carbon::SUNDAY); // 週の最初を日曜日に設定
+        Carbon::setWeekEndsAt(Carbon::SATURDAY); // 週の最後を土曜日に設定
         $today = Carbon::today();
         $eightDays = Carbon::today()->subDay(8);
         $thisWeekConditions = Condition::whereDate('date', '>=', $eightDays)
@@ -51,12 +34,19 @@ class ImageReportController extends Controller
             ->whereDate('date', '<', $today)
             ->get();
         $userFeelings = $thisWeekFeelings->groupBy('user_uuid')->toArray();
+
+        $weekStartDay = $today->startOfWeek()->toDateString();
+        $weekEndDay = $today->endOfWeek()->toDateString();
+
         $data = [
             'conditions' => $userConditions,
             'feelings' => $userFeelings,
+            'period' => [
+                'start' => $weekStartDay,
+                'end' => $weekEndDay,
+            ]
         ];
         return response()->json($data, Response::HTTP_OK);
-        // return view('index', compact('data'));
     }
 
     /**
