@@ -41,6 +41,17 @@ class Question extends Model
     ];
 
     /**
+     *
+     * operation_type = 1
+     * Order Number
+     *
+     * 1 リッチメニュー: 話す
+     * 2 絶好調~普通: 何かあったあるorない？, 不調・絶不調: 感情を聞く
+     * 3 絶好調~絶不調(普通のぞく): 何かあった詳しく教えて
+     * 4 Thanks Message
+     */
+
+    /**
      * 質問と該当する調子を紐付ける
      *
      */

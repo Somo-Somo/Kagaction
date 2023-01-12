@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
 use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
+use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ButtonTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
@@ -73,11 +74,11 @@ class MockUpController extends Controller
         $events = $this->bot->parseEventRequest($request->getContent(), $request->header('x-line-signature'));
 
         foreach ($events as $event) {
+            $user = User::where('line_id', $event->getUserId())->first();
+            $question = Question::where('line_user_id', $event->getUserId())->first();
             if ($event->getType() === 'follow') {
                 $follow_action->invoke($event->getUserId());
             } elseif ($event->getType() === 'message') {
-                $user = User::where('line_id', $event->getUserId())->first();
-                $question = Question::where('line_user_id', $event->getUserId())->first();
                 if ($event->getText() === '話す') {
                     $user_name = $this->bot->getProfile($event->getUserId())->getJSONDecodedBody()['displayName'];
                     $question->update([
@@ -152,6 +153,32 @@ class MockUpController extends Controller
                             $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question, $event->getText()));
                         }
                     }
+                }
+            } else if ($event->getType() === 'postback') {
+                //postbackのデータをactionとuuidで分割
+                list($action_data, $uuid_data) = explode("&", $event->getPostbackData());
+                [$action_key, $action_type] = explode("=", $action_data);
+                [$second_key, $second_value] = explode("=", $uuid_data);
+                if ($action_type === 'SETTING_UP_NOTIFICATION') {
+                    $quick_reply_message_builder = new QuickReplyMessageBuilder(
+                        [
+                            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('❤セルフチェックの通知の変更', 'セルフチェックの通知の変更')),
+                            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊週間レポートの通知の変更', '📊週間レポートの通知の変更')),
+                        ]
+                    );
+                    $this->bot->replyMessage(
+                        $event->getReplyToken(),
+                        new TextMessageBuilder(
+                            '通知設定' . "\n" . 'セルフチェック:未設定' . "\n" . '週間レポート:未設定',
+                            $quick_reply_message_builder
+                        )
+                    );
+                    $question->update([
+                        'condition_id' => null,
+                        'feeling_id' => null,
+                        'operation_type' => 1,
+                        'order_number' => 3, // 通知の設定
+                    ]);
                 }
             }
         }
