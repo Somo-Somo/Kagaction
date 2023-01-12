@@ -349,7 +349,12 @@ export default {
                     this.dataURL = data;
                     const storageRef = ref(
                         firestorage,
-                        "users/" + "/images/" + this.$route.params.id + ".png"
+                        "users/" +
+                            this.$route.params.id +
+                            "/images/weekly_report/" +
+                            this.period.start +
+                            this.period.end +
+                            ".png"
                     );
                     uploadString(storageRef, data, "data_url").then(() => {
                         console.log("Uploaded a file!");
