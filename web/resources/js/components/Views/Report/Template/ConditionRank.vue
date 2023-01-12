@@ -35,7 +35,10 @@
                     >
                 </text>
                 <g id="twemoji:frowning-face_6" clip-path="url(#clip5_140_4)">
-                    <Twimoji :rankPlace="0" :twimojiType="'ok'" />
+                    <Twimoji
+                        :rankPlace="0"
+                        :twimojiType="rankTables[$route.params.id][0].name"
+                    />
                 </g>
             </g>
             <g id="second_2">
@@ -67,7 +70,10 @@
                     >
                 </text>
                 <g id="twemoji:frowning-face_7" clip-path="url(#clip6_140_4)">
-                    <Twimoji :rankPlace="1" :twimojiType="'good'" />
+                    <Twimoji
+                        :rankPlace="1"
+                        :twimojiType="rankTables[$route.params.id][1].name"
+                    />
                 </g>
             </g>
         </g>
@@ -101,7 +107,10 @@
                     >
                 </text>
                 <g id="twemoji:frowning-face_8" clip-path="url(#clip7_140_4)">
-                    <Twimoji :rankPlace="2" :twimojiType="'bad'" />
+                    <Twimoji
+                        :rankPlace="2"
+                        :twimojiType="rankTables[$route.params.id][2].name"
+                    />
                 </g>
             </g>
             <g id="fourth_2">
@@ -133,7 +142,10 @@
                     >
                 </text>
                 <g id="twemoji:frowning-face_9" clip-path="url(#clip8_140_4)">
-                    <Twimoji :rankPlace="3" :twimojiType="'worse'" />
+                    <Twimoji
+                        :rankPlace="3"
+                        :twimojiType="rankTables[$route.params.id][3].name"
+                    />
                 </g>
             </g>
         </g>
@@ -167,7 +179,10 @@
                     >
                 </text>
                 <g id="twemoji:frowning-face_10" clip-path="url(#clip9_140_4)">
-                    <Twimoji :rankPlace="4" :twimojiType="'great'" />
+                    <Twimoji
+                        :rankPlace="4"
+                        :twimojiType="rankTables[$route.params.id][4].name"
+                    />
                 </g>
             </g>
         </g>
@@ -219,6 +234,7 @@ export default {
                     }
                 }
                 rankTable.push({
+                    name: sortCondition[i].name,
                     rank: rank_string,
                     percent: Math.round((sortCondition[i].num / total) * 100),
                 });

@@ -114,7 +114,6 @@ export default {
                 }
                 lineTotalUpToNow += conditionPercent;
             }
-            console.info(conditionPieChart);
             return conditionPieChart;
         },
         createFeelingStorkeDasharray(feelings) {
