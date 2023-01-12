@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Diary;
 use App\Models\Feeling;
 use App\Models\ImageReport;
+use App\Models\SelfCheckNotification;
 use App\UseCases\Line\FollowAction;
 use App\Services\LineBotService;
 use App\Services\CarouselContainerBuilder\OtherMenuCarouselContainerBuilder;
@@ -102,6 +103,10 @@ class MockUpController extends Controller
                         $event->getReplyToken(),
                         new FlexMessageBuilder('メニュー: その他', OtherMenuCarouselContainerBuilder::createCarouselContainerBuilder())
                     );
+                    $question->update([
+                        'operation_type' => null,
+                        'order_number' => null,
+                    ]);
                 }
                 if ($question->operation_type === 1) {
                     if ($question->order_number === 1) {
@@ -153,6 +158,43 @@ class MockUpController extends Controller
                             $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question, $event->getText()));
                         }
                     }
+                } else if ($question->operation_type === 3) {
+                    if ($question->order_number === 1) {
+                        if ($event->getText() === 'セルフチェックの通知の変更') {
+                            $quick_reply_message_builder = new QuickReplyMessageBuilder(
+                                [
+                                    new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('⏰時間の変更', '時間の変更')),
+                                    new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🔔通知の追加', '通知の追加')),
+                                    new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🔕通知の停止', '通知の停止')),
+                                ]
+                            );
+                            $this->bot->replyMessage(
+                                $event->getReplyToken(),
+                                new TextMessageBuilder(
+                                    'こちらから選択してください！',
+                                    $quick_reply_message_builder
+                                )
+                            );
+                            $question->update(['order_number' => 2,]);
+                        } else if ($event->getText() === '週間レポートの通知の変更') {
+                        }
+                    } else if ($question->order_number === 2) {
+                        if ($event->getText() === '時間の変更') {
+                        } else if ($event->getText() === '通知の追加') {
+                            $flex_message = SelfCheckNotification::selectDateTimeFlexMessageBuilder(
+                                [
+                                    SelfCheckNotification::createSettingTimeMessageBuilder('AM'),
+                                    SelfCheckNotification::createSettingTimeMessageBuilder('PM'),
+                                ]
+                            );
+                            $multi_message = new MultiMessageBuilder();
+                            $multi_message->add(new TextMessageBuilder('時間を選択してください！'));
+                            $multi_message->add($flex_message);
+                            $this->bot->replyMessage($event->getReplyToken(), $multi_message);
+                            $question->update(['order_number' => null]);
+                        } else if ($event->getText() === '通知の停止') {
+                        }
+                    }
                 }
             } else if ($event->getType() === 'postback') {
                 //postbackのデータをactionとuuidで分割
@@ -163,7 +205,7 @@ class MockUpController extends Controller
                     $quick_reply_message_builder = new QuickReplyMessageBuilder(
                         [
                             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('❤セルフチェックの通知の変更', 'セルフチェックの通知の変更')),
-                            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊週間レポートの通知の変更', '📊週間レポートの通知の変更')),
+                            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊週間レポートの通知の変更', '週間レポートの通知の変更')),
                         ]
                     );
                     $this->bot->replyMessage(
@@ -176,8 +218,8 @@ class MockUpController extends Controller
                     $question->update([
                         'condition_id' => null,
                         'feeling_id' => null,
-                        'operation_type' => 1,
-                        'order_number' => 3, // 通知の設定
+                        'operation_type' => 3, // 通知の設定
+                        'order_number' => 1,
                     ]);
                 }
             }
