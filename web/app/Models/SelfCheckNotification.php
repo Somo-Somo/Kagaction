@@ -32,6 +32,16 @@ class SelfCheckNotification extends Model
     ];
 
     /**
+     * ユーザーに紐づく
+     *
+     * @return
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_uuid', 'uuid');
+    }
+
+    /**
      *
      * 時間設定するときのメッセージ
      *
