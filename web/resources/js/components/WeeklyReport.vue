@@ -170,24 +170,14 @@ import {
 } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 
-// const config = {
-//     apiKey: propcess.env.FIREBASE_API_KEY,
-//     authDomain: propcess.env.FIREBASE_AUTH_DOMAIN,
-//     projectId: propcess.env.FIREBASE_PROJECT_ID,
-//     storageBucket: propcess.env.FIREBASE_STORAGE_BUCKET,
-//     messagingSenderId: propcess.env.FIREBASE_MESSAGING_SENDER_ID,
-//     appId: propcess.env.FIREBASE_APP_ID,
-//     measurementId: propcess.env.FIREBASE_MEASUREMENT_ID,
-// };
-
 const firebaseConfig = {
-    apiKey: "AIzaSyCWFF-fxzg4yBMO7nc51V_y73XscSMY7ZY",
-    authDomain: "agathon-2022-12.firebaseapp.com",
-    projectId: "agathon-2022-12",
-    storageBucket: "agathon-2022-12.appspot.com",
-    messagingSenderId: "715234137429",
-    appId: "1:715234137429:web:a0c46e601550795fd24bdc",
-    measurementId: "G-8MJG0PWKYM",
+    apiKey: process.env.MIX_FIREBASE_API_KEY,
+    authDomain: process.env.MIX_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.MIX_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.MIX_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.MIX_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.MIX_FIREBASE_APP_ID,
+    measurementId: process.env.MIX_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
@@ -312,7 +302,7 @@ export default {
     },
     created() {
         axios
-            .get("/api/report/monthly/1")
+            .get("/api/report/weekly")
             .then((res) => {
                 const userUuidKeys = Object.keys(res.data.conditions);
                 const period = res.data.period;

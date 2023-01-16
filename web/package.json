@@ -33,6 +33,7 @@
         "@line/liff": "^2.21.3",
         "@mapbox/node-pre-gyp": "^1.0.10",
         "canvas": "^2.11.0",
+        "dotenv": "^16.0.3",
         "firebase": "^9.15.0",
         "g": "^2.0.1",
         "grpc": "^1.24.11",

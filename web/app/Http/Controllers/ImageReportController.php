@@ -16,11 +16,10 @@ class ImageReportController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * @param  int  $id
-     * @param string $uuid
+     *
      * @return \Illuminate\Http\Response
      */
-    public function index(int $id)
+    public function index()
     {
         Carbon::setWeekStartsAt(Carbon::SUNDAY); // 週の最初を日曜日に設定
         Carbon::setWeekEndsAt(Carbon::SATURDAY); // 週の最後を土曜日に設定
