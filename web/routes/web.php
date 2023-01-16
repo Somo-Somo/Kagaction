@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\MockUpController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,5 +16,6 @@ use Illuminate\Support\Facades\Route;
 
 // APIのURL以外のリクエストに対してはindexテンプレートを返す
 // 画面遷移はフロントエンドのVueRouterが制御する
-Route::get('/report/weekly/{any?}', fn () => view('index'))->where('any', '.+');
+Route::get('/api/{any?}', fn () => view('index'))->where('any', '.+');
 Route::get('/weekly_report', fn () => view('index'));
+// Route::post('/line-bot/reply', [MockUpController::class, 'reply']);

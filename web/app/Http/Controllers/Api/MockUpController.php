@@ -115,21 +115,22 @@ class MockUpController extends Controller
                             'time' => $date_time->format('H:i:s')
                         ]);
                         $question->update(['condition_id' => $condition->id, 'order_number' => 2]);
-                        if ($event->getText() === '絶好調' || $event->getText() === '好調') {
+                        if ($event->getText() === '絶好調' || $event->getText() === '好調' || $event->getText() === 'まあまあ') {
                             $this->bot->replyMessage($event->getReplyToken(), Question::askWhatIsHappened($user, $event->getText()));
-                        } elseif ($event->getText() === 'まあまあ') {
-                            $this->bot->replyMessage($event->getReplyToken(), Question::pleaseWriteWhatHappened($question, $user));
                         } elseif ($event->getText() === '不調' || $event->getText() === '絶不調') {
-                            $this->bot->replyMessage($event->getReplyToken(), Question::askAboutFeeling($question));
+                            $this->bot->replyMessage($event->getReplyToken(), Question::askAboutFeeling($question, $event->getText()));
                         }
+                        $question->update(['order_number' => 2, 'condition_id' => $condition->id]);
                     } elseif ($question->order_number === 2) {
-                        if ($question->condition->evaluation > 3) {
-                            if ($event->getText() === 'ある') {
-                                $this->bot->replyMessage($event->getReplyToken(), Question::pleaseWriteWhatHappened($question, $user));
-                            } elseif ($event->getText() === 'ない') {
-                                $this->bot->replyMessage($event->getReplyToken(), Question::askWhyYouAreInGoodCondition($question, $user));
-                            }
-                        } elseif ($question->condition->evaluation < 3) {
+                        if ($question->condition->evaluation > 2) {
+                            Diary::create([
+                                'user_uuid' => $user->uuid,
+                                'condition_id' => $question->condition_id,
+                                'detail' => $event->getText()
+                            ]);
+                            $this->bot->replyMessage($event->getReplyToken(), Question::askAboutFeeling($question, $event->getText()));
+                            $question->update(['order_number' => 3]);
+                        } else {
                             $condition = Condition::where('id', $question->condition_id)->first();
                             $feeling = Feeling::create([
                                 'user_uuid' => $user->uuid,
@@ -138,21 +139,37 @@ class MockUpController extends Controller
                                 'date' => $condition->date,
                                 'time' => $condition->time
                             ]);
-
+                            $this->bot->replyMessage($event->getReplyToken(), Question::questionAfterAskAboutFeeling($user, $feeling));
                             $question->update(['order_number' => 3, 'feeling_id' => $feeling->id]);
-                            $this->bot->replyMessage($event->getReplyToken(), Question::questionAfterAskAboutFeeling($question, $user, $feeling));
                         }
-                    } elseif ($question->order_number === 3 || $question->order_number === 4) {
+                    } elseif ($question->order_number === 3) {
                         if ($question->condition->evaluation > 2) {
+                            $feeling = Feeling::create([
+                                'user_uuid' => $user->uuid,
+                                'condition_id' => $question->condition->id,
+                                'feeling_type' => Feeling::JA_EN[$event->getText()],
+                                'date' => $question->condition->date,
+                                'time' => $question->condition->time
+                            ]);
+                            $this->bot->replyMessage($event->getReplyToken(),  Question::questionAfterAskAboutFeeling($user, $feeling));
+                            $question->update(['order_number' => 4, 'feeling_id' => $feeling->id]);
+                        } else {
                             Diary::create([
                                 'user_uuid' => $user->uuid,
                                 'condition_id' => $question->condition_id,
                                 'detail' => $event->getText()
                             ]);
-                            $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question, $event->getText()));
-                        } elseif ($question->condition->evaluation < 3) {
-                            $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question, $event->getText()));
+                            $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question, $event->getText(), $user));
+                            $question->update(['operation_type' => null, 'order_number' => null, 'condition_id' => null, 'feeling_id' => null]);
                         }
+                    } else if ($question->order_number === 4) {
+                        $diary = Diary::where('user_uuid', $user->uuid)
+                            ->where('condition_id', $question->condition->id)
+                            ->first();
+                        Log::debug((array)$diary);
+                        $diary->update(['detail' => $diary->detail . "\n" . $event->getText()]);
+                        $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question, $event->getText(), $user));
+                        $question->update(['operation_type' => null, 'order_number' => null, 'condition_id' => null, 'feeling_id' => null]);
                     }
                 } else if ($question->operation_type === 3) {
                     $self_check_notification = SelfCheckNotification::where('user_uuid', $user->uuid)->orderBy('time')->get();

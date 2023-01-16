@@ -79,36 +79,13 @@ class Question extends Model
     public static function askWhatIsHappened(User $user, string $condition)
     {
         if ($condition === '絶好調') {
-            $ask_what_is_happened = Condition::askWhatIsHappenedWhenUserIsGreat();
+            $ask_what_is_happened = 'それはもう天才だね！' . "\n" . 'どんなことをしていたんですか？' . "\n" . 'アガトンにも教えて欲しいです！';
         } else if ($condition === '好調') {
-            $ask_what_is_happened = Condition::askWhatIsHappenedWhenUserIsGood();
+            $ask_what_is_happened = 'それは最高だね！' . "\n" . 'どんなことをしていたんですか？' . "\n" . 'アガトンにも教えて欲しいです！';
+        } else if ($condition === 'まあまあ') {
+            $ask_what_is_happened = 'まあまあな調子なんですね！' . "\n" . 'ちなみに' .  'どのようなことを今していましたか？';
         }
-
-        $quick_reply_buttons = [
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('ある', 'ある')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('ない', 'ない')),
-        ];
-        $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
-        $text_message_builder = new TextMessageBuilder($ask_what_is_happened, $quick_reply_message_builder);
-        return $text_message_builder;
-    }
-
-    /**
-     * 起こったことを書いてもらうようお願いする
-     *
-     * @param Question $question
-     * @param User $user
-     * @return
-     */
-    public static function pleaseWriteWhatHappened(Question $question, User $user)
-    {
-        $question->update(['order_number' => 3]);
-        if ($question->condition->evaluation > 3) {
-            $message = Condition::pleaseWriteWhatHappenedIsGoodOrGreat();
-        } else if ($question->condition->evaluation === 3) {
-            $message = Condition::pleaseWriteWhatHappenedIsNormal($user);
-        }
-        $text_message_builder = new TextMessageBuilder($message);
+        $text_message_builder = new TextMessageBuilder($ask_what_is_happened);
         return $text_message_builder;
     }
 
@@ -132,15 +109,22 @@ class Question extends Model
      * 今の気持ちを聞く
      *
      * @param Question $question
-     * @param User $user
+     * @param string $get_text
      * @return
      */
-    public static function askAboutFeeling(Question $question)
+    public static function askAboutFeeling(Question $question, string $get_text)
     {
-        $question->update(['order_number' => 2]);
-        $ask_message = Condition::askAboutFeelingIfWorse();
         $condition = Condition::where('id', $question->condition_id)->first();
-        $first_message = '今日は' . Condition::CONDITION_TYPE[$condition->evaluation] . 'だったんですね。';
+        if ($condition->evaluation > 2) {
+            // $first_message = $get_text . 'のですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
+            $first_message = 'なるほど！そのようなことをしていたのですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
+            // $ask_message = $get_text . '時の気持ちを表すものがこの中にあったりしますか？';
+            $ask_message =  'その時の気持ちを表すものがこの中にあったりしますか？';
+        } else {
+            $first_message = '今日は' . $get_text . 'だったんですね。';
+            $ask_message = '今の自分の気持ちを表すものがこの中にあったりしますか？';
+        }
+
         $quick_reply_buttons = Feeling::feelingQuickReplyBtn();
         $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
@@ -157,7 +141,7 @@ class Question extends Model
      * @param Feeling $feeling
      * @return
      */
-    public static function questionAfterAskAboutFeeling(Question $question, User $user, Feeling $feeling)
+    public static function questionAfterAskAboutFeeling(User $user, Feeling $feeling)
     {
         $multi_message = Feeling::questionAfterAskAboutFeelingMessage($feeling->feeling_type, $user);
         return $multi_message;
@@ -170,18 +154,12 @@ class Question extends Model
      *
      * @param Question $question
      * @param string $reply
+     * @param User $user
      * @return TextMessageBuilder
      */
-    public static function thanksMessage(Question $question, string $reply)
+    public static function thanksMessage(Question $question, string $reply, User $user)
     {
-        if ($question->condition->evaluation > 2) {
-            $message = $question->order_number === 3 ?
-                Condition::thanksMessageWhenSomothingGoodHappens()
-                : Condition::thanksMessageWhenNothingGoodHappens($question);
-        } else {
-            $message = Feeling::sortThanksMessage($question->feeling->feeling_type, $reply);
-        }
-
+        $message = Feeling::sortThanksMessage($question->feeling->feeling_type, $reply, $user);
         $question->update([
             'condition_id' => null,
             'feeling_id' => null,

@@ -37,33 +37,33 @@ class Feeling extends Model
     const JA_EN = [
         '不安' => 'anxious',
         '辛い' => 'hard',
-        '疲れた' => 'tired',
         '悲しい' => 'sad',
+        '疲れた' => 'tired',
         'イライラ' => 'angry',
-        '悔しい' => 'kuyashi',
         '無気力' => 'lethargic',
-        'もやもや' => 'moyamoya',
         '嬉しい' => 'glad',
         '楽しい' => 'fun',
         '穏やか' => 'calm',
-        '幸せ' => 'happy',
-        'ワクワク' => 'wakuwaku'
+        'ワクワク' => 'wakuwaku',
+        // 'もやもや' => 'moyamoya',
+        // '悔しい' => 'kuyashi',
+        // '幸せ' => 'happy',
     ];
 
     const EN_JA = [
-        'anxious' => '不安',
-        'hard' => '辛い',
-        'tired' => '疲れた',
-        'sad' => '悲しい',
-        'angry' => 'イライラ',
-        'kuyashi' => '悔しい',
-        'lethargic' => '無気力',
-        'moyamoya' => 'もやもや',
         'glad' => '嬉しい',
         'fun' => '楽しい',
         'calm' => '穏やか',
-        'happy' => '幸せ',
         'wakuwaku' => 'ワクワク',
+        'anxious' => '不安',
+        'hard' => '辛い',
+        'sad' => '悲しい',
+        'tired' => '疲れた',
+        'angry' => 'イライラ',
+        'lethargic' => '無気力',
+        // 'moyamoya' => 'もやもや',
+        // 'kuyashi' => '悔しい',
+        // 'happy' => '幸せ',
     ];
 
     /**
@@ -83,16 +83,20 @@ class Feeling extends Model
     public static function feelingQuickReplyBtn()
     {
         return [
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🥰嬉しい', '嬉しい')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😆楽しい', '楽しい')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😌穏やか', '穏やか')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😎ワクワク', 'ワクワク')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😠イライラ', 'イライラ')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😔不安', '不安')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😢心配', '心配')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😣辛い', '辛い')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😭悲しい', '悲しい')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😫疲れた', '疲れた')),
-            // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😪眠い', '眠い')),
-            // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😑無気力', '無気力')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😠イライラ', 'イライラ')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😤悔しい', '悔しい')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😑無気力', '無気力')),
             // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🤔もやもや', 'もやもや')),
+            // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😪眠い', '眠い')),
+            // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😤悔しい', '悔しい')),
+            // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😢心配', '心配')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('ない', 'ない')),
         ];
     }
@@ -106,33 +110,47 @@ class Feeling extends Model
      */
     public static function questionAfterAskAboutFeelingMessage(string $feeling_type, User $user)
     {
-        if (Feeling::EN_JA[$feeling_type] === '不安') {
+        if (Feeling::EN_JA[$feeling_type] === '嬉しい') {
+            $messages = Feeling::questionAfterAskAboutFeelingIfGlad($user);
+        } elseif (Feeling::EN_JA[$feeling_type] === '楽しい') {
+            $messages = Feeling::questionAfterAskAboutFeelingIfFun();
+        } elseif (Feeling::EN_JA[$feeling_type] === '穏やか') {
+            $messages = Feeling::questionAfterAskAboutFeelingIfCalm($user);
+        } elseif (Feeling::EN_JA[$feeling_type] === 'ワクワク') {
+            $messages = Feeling::questionAfterAskAboutFeelingIfWakuwaku();
+        } else if (Feeling::EN_JA[$feeling_type] === '不安') {
             $messages = Feeling::questionAfterAskAboutFeelingIfAnxious($user);
-        } else if (Feeling::EN_JA[$feeling_type] === '心配') {
-            $messages = Feeling::questionAfterAskAboutFeelingIfWorry();
         } else if (Feeling::EN_JA[$feeling_type] === '辛い') {
             $messages = Feeling::questionAfterAskAboutFeelingIfHard();
         } else if (Feeling::EN_JA[$feeling_type] === '悲しい') {
             $messages = Feeling::questionAfterAskAboutFeelingIfSadness($user);
         } else if (Feeling::EN_JA[$feeling_type] === '疲れた') {
             $messages = Feeling::questionAfterAskAboutFeelingIfTired();
-        } else if (Feeling::EN_JA[$feeling_type] === '眠い') {
-            $messages = Feeling::questionAfterAskAboutFeelingIfSleepy();
         } else if (Feeling::EN_JA[$feeling_type] === '無気力') {
             $messages = Feeling::questionAfterAskAboutFeelingIfLethargic();
         } else if (Feeling::EN_JA[$feeling_type] === 'イライラ') {
             $messages = Feeling::questionAfterAskAboutFeelingIfAnger();
-        } else if (Feeling::EN_JA[$feeling_type] === '悔しい') {
-            $messages = Feeling::questionAfterAskAboutFeelingIfKuyashi();
-        } else if (Feeling::EN_JA[$feeling_type] === 'もやもや') {
-            $messages = Feeling::questionAfterAskAboutFeelingIfMoyamoya();
         } else if (Feeling::EN_JA[$feeling_type] === 'ない') {
             $messages = Feeling::questionAfterAskAboutFeelingIfNotApplicable();
         }
+        // else if (Feeling::EN_JA[$feeling_type] === '悔しい') {
+        //     $messages = Feeling::questionAfterAskAboutFeelingIfKuyashi();
+        // }
+        // else if (Feeling::EN_JA[$feeling_type] === '心配') {
+        //     $messages = Feeling::questionAfterAskAboutFeelingIfWorry();
+        // }
+        // else if (Feeling::EN_JA[$feeling_type] === '眠い') {
+        //     $messages = Feeling::questionAfterAskAboutFeelingIfSleepy();
+        // }
+        // else if (Feeling::EN_JA[$feeling_type] === 'もやもや') {
+        //     $messages = Feeling::questionAfterAskAboutFeelingIfMoyamoya();
+        // }
         $multi_message = new MultiMessageBuilder();
         $multi_message->add($messages[0]);
         if (count($messages) > 1) {
             $multi_message->add($messages[1]);
+        } else if (count($messages) > 2) {
+            $multi_message->add($messages[2]);
         }
         return $multi_message;
     }
@@ -142,31 +160,46 @@ class Feeling extends Model
      *
      * @param string $feeling_type
      * @param string $reply
+     * @param User $user
      * @return
      */
-    public static function sortThanksMessage(string $feeling_type, string $reply)
+    public static function sortThanksMessage(string $feeling_type, string $reply, User $user)
     {
-        if (Feeling::EN_JA[$feeling_type] === '不安') {
+        if (Feeling::EN_JA[$feeling_type] === '嬉しい') {
+            $messages = Feeling::thanksMessageWhenGlad();
+        } elseif (Feeling::EN_JA[$feeling_type] === '楽しい') {
+            $messages = Feeling::thanksMessageWhenFun();
+        } elseif (Feeling::EN_JA[$feeling_type] === '穏やか') {
+            $messages = Feeling::thanksMessageWhenCalm();
+        } elseif (Feeling::EN_JA[$feeling_type] === 'ワクワク') {
+            $messages = Feeling::thanksMessageWhenWakuwaku();
+        } else if (Feeling::EN_JA[$feeling_type] === '不安') {
             $messages = Feeling::thanksMessageWhenAnxious();
-        } else if (Feeling::EN_JA[$feeling_type] === '心配') {
-            $messages = Feeling::thanksMessageWhenWorry($reply);
         } else if (Feeling::EN_JA[$feeling_type] === '辛い') {
-            $messages = Feeling::thanksMessageWhenHard();
+            $messages = Feeling::thanksMessageWhenHard($user);
         } else if (Feeling::EN_JA[$feeling_type] === '悲しい') {
-            $messages = Feeling::thanksMessageWhenSadness();
+            $messages = Feeling::thanksMessageWhenSadness($reply);
         } else if (Feeling::EN_JA[$feeling_type] === '疲れた') {
             $messages = Feeling::thanksMessageWhenTired($reply);
-        } else if (Feeling::EN_JA[$feeling_type] === '眠い') {
-            $messages = Feeling::thanksMessageWhenSleepy();
         } else if (Feeling::EN_JA[$feeling_type] === '無気力') {
+            $messages = Feeling::thanksMessageWhenLethargic($reply);
         } else if (Feeling::EN_JA[$feeling_type] === 'イライラ') {
             $messages = Feeling::thanksMessageWhenAnger();
-        } else if (Feeling::EN_JA[$feeling_type] === '悔しい') {
-            $messages = Feeling::thanksMessageWhenKuyashi($reply);
-        } else if (Feeling::EN_JA[$feeling_type] === 'もやもや') {
         } else if (Feeling::EN_JA[$feeling_type] === 'ない') {
             $messages = Feeling::thanksMessageWhenNotApplicable($reply);
         }
+        // else if (Feeling::EN_JA[$feeling_type] === '心配') {
+        //     $messages = Feeling::thanksMessageWhenWorry($reply);
+        // }
+        // else if (Feeling::EN_JA[$feeling_type] === '悔しい') {
+        //     $messages = Feeling::thanksMessageWhenKuyashi($reply);
+        // }
+        // else if (Feeling::EN_JA[$feeling_type] === '眠い') {
+        //     $messages = Feeling::thanksMessageWhenSleepy();
+        // }
+        // else if (Feeling::EN_JA[$feeling_type] === 'もやもや') {
+        // }
+
         $multi_message = new MultiMessageBuilder();
         $multi_message->add($messages[0]);
         if (count($messages) > 1) {
@@ -175,6 +208,136 @@ class Feeling extends Model
             $multi_message->add($messages[2]);
         }
         return $multi_message;
+    }
+
+    /**
+     *
+     * 嬉しい
+     *
+     */
+
+    /**
+     * 嬉しいを吐き出せメッセージ
+     *
+     * @param User $user
+     * @return array
+     */
+    public static function questionAfterAskAboutFeelingIfGlad(User $user)
+    {
+        return [
+            new TextMessageBuilder('嬉しい気持ちなんですね！アガトンもなんだか嬉しいです！'),
+            new TextMessageBuilder('どんなところが' . $user->name . 'さんにとって嬉しかったですか？')
+        ];
+    }
+
+    /**
+     * 嬉しいの時のサンクスメッセージ
+     *
+     * @return array
+     */
+    public static function thanksMessageWhenGlad()
+    {
+        return [
+            new TextMessageBuilder('アガトンに共有してくれてありがとう！'),
+            new TextMessageBuilder('また嬉しいことなどがあったらアガトンに共有してみてください！')
+        ];
+    }
+
+    /**
+     *
+     * 楽しい
+     *
+     */
+
+    /**
+     * 楽しいを吐き出せメッセージ
+     *
+     * @return array
+     */
+    public static function questionAfterAskAboutFeelingIfFun()
+    {
+        return [
+            new TextMessageBuilder('楽しい気持ちなんですね！'),
+            new TextMessageBuilder('どんなところが楽しかったですか？')
+        ];
+    }
+
+    /**
+     * 楽しいの時のサンクスメッセージ
+     *
+     * @return array
+     */
+    public static function thanksMessageWhenFun()
+    {
+        return [
+            new TextMessageBuilder('アガトンに楽しかったことを教えてくれてありがとう！'),
+            new TextMessageBuilder('また楽しいことなどがあったらアガトンに教えて欲しいです！')
+        ];
+    }
+
+    /**
+     *
+     * 嬉しい
+     *
+     */
+
+    /**
+     * 嬉しいを吐き出せメッセージ
+     *
+     * @param User $user
+     * @return array
+     */
+    public static function questionAfterAskAboutFeelingIfCalm(User $user)
+    {
+        return [
+            new TextMessageBuilder('穏やかな気持ちなんですね！'),
+            new TextMessageBuilder('どんなことが' . $user->name . 'さんを穏やかな気持ちにさせていますか？')
+        ];
+    }
+
+    /**
+     * 嬉しいの時のサンクスメッセージ
+     *
+     * @return array
+     */
+    public static function thanksMessageWhenCalm()
+    {
+        return [
+            new TextMessageBuilder('だから穏やかな気持ちなんですね！' . "\n" . '教えてくれてありがとう！'),
+            new TextMessageBuilder('これからもアガトンに色々お話してくれると嬉しいです！')
+        ];
+    }
+
+    /**
+     *
+     * ワクワク
+     *
+     */
+
+    /**
+     * なぜワクワク質問メッセージ
+     *
+     * @return array
+     */
+    public static function questionAfterAskAboutFeelingIfWakuwaku()
+    {
+        return [
+            new TextMessageBuilder('ワクワクしている気持ちなんですね！'),
+            new TextMessageBuilder('どんなことに今ワクワクしているんですか!？')
+        ];
+    }
+
+    /**
+     * ワクワクの時のサンクスメッセージ
+     *
+     * @return array
+     */
+    public static function thanksMessageWhenWakuwaku()
+    {
+        return [
+            new TextMessageBuilder('だからワクワクしている気持ちなんですね！' . "\n" . 'アガトンにワクワクを共有してくれてありがとう！'),
+            new TextMessageBuilder('これからもアガトンに色々な気持ちを共有してくれると嬉しいです！')
+        ];
     }
 
     /**
@@ -210,40 +373,6 @@ class Feeling extends Model
         ];
     }
 
-
-    /**
-     *
-     * 心配
-     *
-     */
-
-    /**
-     * 心配していることを可視化させるメッセージ
-     *
-     * @return array
-     */
-    public static function questionAfterAskAboutFeelingIfWorry()
-    {
-        return [
-            new TextMessageBuilder('心配な気持ちなんですね。' . "\n" . 'これからどんなことが起きるのが心配ですか？')
-        ];
-    }
-
-    /**
-     * 心配の時のサンクスメッセージ
-     *
-     * @return array
-     */
-    public static function thanksMessageWhenWorry($reply)
-    {
-        return [
-            new TextMessageBuilder('「' . $reply . '」ことが心配なんですね。'),
-            new TextMessageBuilder('どうしたらうまくいくか考えるのもいいかもしれません！'),
-            new TextMessageBuilder('また気が向いたらアガトンに話してみてください！'),
-        ];
-    }
-
-
     /**
      *
      * 辛い
@@ -266,12 +395,14 @@ class Feeling extends Model
     /**
      * 辛いの時のサンクスメッセージ
      *
+     * @param User
      * @return array
      */
-    public static function thanksMessageWhenHard()
+    public static function thanksMessageWhenHard(User $user)
     {
         return [
-            new TextMessageBuilder('アガトンに喋ってくれてありがとう。' . "\n" . '今日はゆっくり休んでおいしいもの食べて寝てください！'),
+            new TextMessageBuilder('だから' . $user->name . 'さんは今辛い感情を抱いてるのですね。'),
+            new TextMessageBuilder('何もお答えはできないですが、話を聞くことはアガトンにもできます!' . "\n" . 'なので感情に蓋をせず、また辛いことがあったらアガトンに話しかけてみてください！'),
         ];
     }
 
@@ -290,26 +421,29 @@ class Feeling extends Model
     public static function questionAfterAskAboutFeelingIfSadness(User $user)
     {
         return [
-            new TextMessageBuilder('悲しいことがあったんですね。'),
-            new TextMessageBuilder('気が少しでも楽になるように、よかったら今' . $user->name . 'さんが思っていることを全部アガトンに吐き出してみてください。')
+            new TextMessageBuilder($user->name . 'さんは今悲しい気持ちなんですね。'),
+            new TextMessageBuilder('どんなことに悲しいと感じましたか？')
         ];
     }
 
     /**
      * 悲しいの時のサンクスメッセージ
      *
+     * @param string $reply
      * @return array
      */
-    public static function thanksMessageWhenSadness()
+    public static function thanksMessageWhenSadness(string $reply)
     {
         return [
-            new TextMessageBuilder('少し気持ちがスッキリしたりしましたか？'),
+            new TextMessageBuilder('「' . $reply . '」に悲しいと感じているんですね。'),
             new TextMessageBuilder(
-                'また何かあったらアガトンに頼ってみてください！'
-                    . "\n" . 'アドバイスはできないけどアガトン聞くことなら得意です！'
+                '悲しいことは悪いことではないです！'
+                    . "\n" . '悲しい気持ちを否定せずそのまま受け止めてみてください！'
             ),
+            new TextMessageBuilder('またいつでもアガトンに話しかけてくみてださい！' . "\n" . 'アガトンはいつでも待っています！！'),
         ];
     }
+
 
     /**
      *
@@ -325,8 +459,8 @@ class Feeling extends Model
     public static function questionAfterAskAboutFeelingIfTired()
     {
         return [
-            new TextMessageBuilder('疲れてるんですね。' . "\n" . 'お疲れ様です!'),
-            new TextMessageBuilder('今日はどんなことをしてたんですか？'),
+            new TextMessageBuilder('疲れているんですね。' . "\n" . 'お疲れ様です!'),
+            new TextMessageBuilder('どんなことが疲れましたか！？'),
         ];
     }
 
@@ -338,41 +472,11 @@ class Feeling extends Model
     public static function thanksMessageWhenTired($reply)
     {
         return [
-            new TextMessageBuilder('なるほど。「' . $reply . '」をしてたんですね！'),
+            new TextMessageBuilder('なるほど。「' . $reply . '」が疲れたのですね！'),
             new TextMessageBuilder('今日は明日に備えて早くゆっくり休んでください！'),
         ];
     }
 
-
-    /**
-     *
-     * 眠い
-     *
-     */
-
-    /**
-     * 眠い
-     *
-     * @return array
-     */
-    public static function questionAfterAskAboutFeelingIfSleepy()
-    {
-        return [
-            new TextMessageBuilder('今は眠いんですね。' . "\n" . 'どうして眠い感じですか？')
-        ];
-    }
-
-    /**
-     * 眠い時のサンクスメッセージ
-     *
-     * @return array
-     */
-    public static function thanksMessageWhenSleepy()
-    {
-        return [
-            new TextMessageBuilder('だから眠いんですね！' . "\n" . '明日に備えて今日はゆっくり寝るか、カフェイン取って目覚まして頑張ってください！'),
-        ];
-    }
 
     /**
      *
@@ -387,18 +491,37 @@ class Feeling extends Model
     public static function questionAfterAskAboutFeelingIfLethargic()
     {
         $quick_reply = new QuickReplyMessageBuilder([
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('やることが漠然', 'やることが漠然')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('やることが沢山', 'やることが沢山')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('未来への不安', '未来への不安')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('睡眠不足', '睡眠不足')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('嫌なこと', '嫌なこと')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('未来への不安や心配', '未来への不安や心配')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('睡眠不足', '睡眠不足')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('疲れ', '疲れ')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('心配', '心配')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('生活習慣の乱れ', '生活習慣の乱れ')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('分からない', '分からない')),
         ]);
         return [
             new TextMessageBuilder('そうなんですね。' . "\n" . 'アガトンもやる気が起きないことがよくあります。'),
             new TextMessageBuilder('やる気が出ない時って不思議ですよね。' . "\n" . '何があるから今やる気が出ないと思いますか？', $quick_reply)
+        ];
+    }
+
+    /**
+     * 無気力のサンクスメッセージ
+     *
+     * string $reply
+     * @return array
+     */
+    public static function thanksMessageWhenLethargic(string $reply)
+    {
+        if ($reply === '分からない') {
+            $text_message = new TextMessageBuilder('そうなんですね。' . "\n" . 'ぜひ今の自分を否定せずそのまま受け止めてみてください。');
+        } else {
+            $text_message = new TextMessageBuilder('「' . $reply . '」があるから無気力なんですね。' . "\n" . 'ぜひ今の自分を否定せずそのまま受け止めてみてください。');
+        }
+        return [
+            $text_message,
+            new TextMessageBuilder('またいつでもアガトンに話しかけてくみてださい！' . "\n" . 'アガトンはいつでも待っています！！'),
         ];
     }
 
@@ -433,51 +556,115 @@ class Feeling extends Model
         ];
     }
 
-    /**
-     *
-     * 悔しい
-     *
-     */
 
-    /**
-     * 悔しいメッセージ
-     *
-     * @return array
-     */
-    public static function questionAfterAskAboutFeelingIfKuyashi()
-    {
-        return [
-            new TextMessageBuilder('悔しい気持ちなんですね。'),
-            new TextMessageBuilder('どんなところが悔しかったですか？')
-        ];
-    }
 
-    /**
-     * 悔しいのサンクスメッセージ
-     *
-     * @return array
-     */
-    public static function thanksMessageWhenKuyashi($reply)
-    {
-        return [
-            new TextMessageBuilder('「' . $reply . '」ことが悔しかったんですね。'),
-            new TextMessageBuilder('悔しいと感じるということはもっと頑張りたいってことですね！'
-                . "\n" . 'この気持ちを忘れずに頑張ってください！'),
-        ];
-    }
 
-    /**
-     * もやもやメッセージ
-     *
-     * @return array
-     */
-    public static function questionAfterAskAboutFeelingIfMoyamoya()
-    {
-        return [
-            new TextMessageBuilder('もやもやしてるんですね'),
-            new TextMessageBuilder('どんなことで今もやもやしてますか？')
-        ];
-    }
+    // /**
+    //  *
+    //  * 悔しい
+    //  *
+    //  */
+
+    // /**
+    //  * 悔しいメッセージ
+    //  *
+    //  * @return array
+    //  */
+    // public static function questionAfterAskAboutFeelingIfKuyashi()
+    // {
+    //     return [
+    //         new TextMessageBuilder('悔しい気持ちなんですね。'),
+    //         new TextMessageBuilder('どんなところが悔しかったですか？')
+    //     ];
+    // }
+    //     /**
+    //  * 悔しいのサンクスメッセージ
+    //  *
+    //  * @return array
+    //  */
+    // public static function thanksMessageWhenKuyashi($reply)
+    // {
+    //     return [
+    //         new TextMessageBuilder('「' . $reply . '」ことが悔しかったんですね。'),
+    //         new TextMessageBuilder('悔しいと感じるということはもっと頑張りたいってことですね！'
+    //             . "\n" . 'この気持ちを忘れずに頑張ってください！'),
+    //     ];
+    // }
+
+    //   /**
+    //      *
+    //      * 心配
+    //      *
+    //      */
+
+    //     /**
+    //      * 心配していることを可視化させるメッセージ
+    //      *
+    //      * @return array
+    //      */
+    //     public static function questionAfterAskAboutFeelingIfWorry()
+    //     {
+    //         return [
+    //             new TextMessageBuilder('心配な気持ちなんですね。' . "\n" . 'これからどんなことが起きるのが心配ですか？')
+    //         ];
+    //     }
+
+    //     /**
+    //      * 心配の時のサンクスメッセージ
+    //      *
+    //      * @return array
+    //      */
+    //     public static function thanksMessageWhenWorry($reply)
+    //     {
+    //         return [
+    //             new TextMessageBuilder('「' . $reply . '」ことが心配なんですね。'),
+    //             new TextMessageBuilder('どうしたらうまくいくか考えるのもいいかもしれません！'),
+    //             new TextMessageBuilder('また気が向いたらアガトンに話してみてください！'),
+    //         ];
+    //     }
+
+    // /**
+    //  *
+    //  * 眠い
+    //  *
+    //  */
+
+    // /**
+    //  * 眠い
+    //  *
+    //  * @return array
+    //  */
+    // public static function questionAfterAskAboutFeelingIfSleepy()
+    // {
+    //     return [
+    //         new TextMessageBuilder('今は眠いんですね。' . "\n" . 'どうして眠い感じですか？')
+    //     ];
+    // }
+
+    // /**
+    //  * 眠い時のサンクスメッセージ
+    //  *
+    //  * @return array
+    //  */
+    // public static function thanksMessageWhenSleepy()
+    // {
+    //     return [
+    //         new TextMessageBuilder('だから眠いんですね！' . "\n" . '明日に備えて今日はゆっくり寝るか、カフェイン取って目覚まして頑張ってください！'),
+    //     ];
+    // }
+
+    // /**
+    //  * もやもやメッセージ
+    //  *
+    //  * @return array
+    //  */
+    // public static function questionAfterAskAboutFeelingIfMoyamoya()
+    // {
+    //     return [
+    //         new TextMessageBuilder('もやもやしてるんですね'),
+    //         new TextMessageBuilder('どんなことで今もやもやしてますか？')
+    //     ];
+    // }
 
     /**
      *
@@ -505,9 +692,7 @@ class Feeling extends Model
     {
         return [
             new TextMessageBuilder('「' . $reply . '」な気持ちなんですね。'),
-            new TextMessageBuilder('また気が向いたらアガトンにお話してみてください！
-
-            '),
+            new TextMessageBuilder('また気が向いたらアガトンにお話してみてください！'),
         ];
     }
 }
