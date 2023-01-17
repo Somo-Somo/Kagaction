@@ -24,18 +24,18 @@ class ImageReportController extends Controller
         Carbon::setWeekStartsAt(Carbon::SUNDAY); // 週の最初を日曜日に設定
         Carbon::setWeekEndsAt(Carbon::SATURDAY); // 週の最後を土曜日に設定
         $today = Carbon::today();
-        $eightDays = Carbon::today()->subDay(8);
-        $thisWeekConditions = Condition::whereDate('date', '>=', $eightDays)
+        $eightDayAgo = Carbon::today()->subDay(8);
+        $thisWeekConditions = Condition::whereDate('date', '>=', $eightDayAgo)
             ->whereDate('date', '<', $today)
             ->get();
         $userConditions = $thisWeekConditions->groupBy('user_uuid')->toArray();
-        $thisWeekFeelings = Feeling::whereDate('date', '>=', $eightDays)
+        $thisWeekFeelings = Feeling::whereDate('date', '>=', $eightDayAgo)
             ->whereDate('date', '<', $today)
             ->get();
         $userFeelings = $thisWeekFeelings->groupBy('user_uuid')->toArray();
 
-        $weekStartDay = $today->startOfWeek()->toDateString();
-        $weekEndDay = $today->endOfWeek()->toDateString();
+        $weekStartDay = $eightDayAgo->startOfWeek()->toDateString();
+        $weekEndDay = $eightDayAgo->endOfWeek()->toDateString();
 
         $data = [
             'conditions' => $userConditions,
@@ -61,12 +61,17 @@ class ImageReportController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     * @param string $user_uuid
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(string $user_uuid, Request $request)
     {
-        //
+        $test = ImageReport::updateOrCreate(
+            ['user_uuid' => $user_uuid, 'start_day' => $request->start_day, 'end_day' => $request->end_day],
+            ['token' => $request->token]
+        );
+        return;
     }
 
     /**

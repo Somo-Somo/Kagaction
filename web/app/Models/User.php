@@ -119,6 +119,15 @@ class User extends Authenticatable
     }
 
     /**
+     * 週間レポート
+     *
+     */
+    public function image_reports()
+    {
+        return $this->hasMany(ImageReport::class, 'user_uuid', 'uuid');
+    }
+
+    /**
      * セルフチェックの通知
      *
      */

@@ -15,7 +15,12 @@ class CreateImageReportsTable extends Migration
     {
         Schema::create('image_reports', function (Blueprint $table) {
             $table->id();
+            $table->string('user_uuid', 255);
+            $table->string('token', 255);
+            $table->date('start_day');
+            $table->date('end_day');
             $table->timestamps();
+            $table->foreign('user_uuid')->references('uuid')->on('users');
         });
     }
 
