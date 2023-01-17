@@ -32,10 +32,15 @@ class ImageReport extends Model
         $today = Carbon::today();
         $week_start_day = $today->copy()->startOfWeek()->subWeek(1)->toDateString();
         $week_end_day = $today->copy()->endOfWeek()->subWeek(1)->toDateString();
+        $image_report = ImageReport::where('user_uuid', $user_uuid)
+            ->where('start_day', $week_start_day)
+            ->where('end_day', $week_end_day)
+            ->first();
         $url = config('app.firebase_access_url');
+        $image_url = $url . "/o/users%2F" . $user_uuid . "%2Fimages%2Fweekly_report%2F" . $week_start_day . $week_end_day . ".png?alt=media&token=" . $image_report->token;
         return new ImageMessageBuilder(
-            $url . "/o/users%2F1e629af2-3210-4a8d-8849-3cee8bd9c16d%2Fimages%2Fweekly_report%2F2023-01-082023-01-14.png?alt=media&token=2bd089df-30db-4244-b9f4-205b6b7d0954",
-            $url . "/o/users%2F1e629af2-3210-4a8d-8849-3cee8bd9c16d%2Fimages%2Fweekly_report%2F2023-01-082023-01-14.png?alt=media&token=2bd089df-30db-4244-b9f4-205b6b7d0954",
+            $image_url,
+            $image_url
         );
     }
 }
