@@ -12,6 +12,7 @@ import TodoDetail from "./components/Views/TodoDetail/TodoDetail.vue";
 import Schedule from "./components/Views/Schedule/Schedule.vue";
 import SystemError from "./components/Views/Error/SystemError.vue";
 import NotFound from "./components/Views/Error/NotFound.vue";
+import WeeklyReport from "./components/WeeklyReport.vue";
 
 // VueRouterプラグインを使用する
 // これによって<RouterView />コンポーネントなどを使うことができる
@@ -20,8 +21,9 @@ Vue.use(VueRouter);
 // パスとコンポーネントのマッピング
 const routes = [
     {
-        path: "/mock",
-        component: Mock,
+        path: "/report/weekly/:id",
+        component: WeeklyReport,
+        name: "weekly-report",
     },
     {
         path: "/login",
@@ -33,45 +35,6 @@ const routes = [
                 next();
             }
         },
-    },
-    {
-        path: "/onboarding",
-        component: Onboarding,
-    },
-    {
-        path: "/setting",
-        component: Setting,
-    },
-    {
-        path: "/project/:id",
-        component: TodoList,
-        name: "todoList",
-    },
-    {
-        path: "/todo/:id",
-        component: TodoDetail,
-        name: "todoDetail",
-    },
-    {
-        path: "/schedule",
-        component: Schedule,
-        name: "schedule",
-    },
-    {
-        path: "/500",
-        component: SystemError,
-    },
-    {
-        path: "*",
-        component: NotFound,
-    },
-    {
-        path: "/project/*",
-        component: NotFound,
-    },
-    {
-        path: "/todo/*",
-        component: NotFound,
     },
 ];
 

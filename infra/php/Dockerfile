@@ -10,7 +10,7 @@ RUN docker-php-ext-install sockets
 
 RUN apt-get update && \
   apt-get -y install git unzip libzip-dev libicu-dev libonig-dev && \
-  curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+  curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
   apt-get install -y nodejs && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* 
