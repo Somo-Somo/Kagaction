@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\UseCases\Line\SelfCheckNotificationAction;
 use App\UseCases\Line\Todo\Notification\NotifyTodoCheck;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -40,9 +41,8 @@ class LineBotScheduleBatch extends Command
     public function handle()
     {
         Log::info('schedule-batch');
-        $notify_todo_check = new NotifyTodoCheck();
-        $notify_todo_check->invoke();
-
+        $self_check_notification_action = new SelfCheckNotificationAction();
+        $self_check_notification_action->invoke();
         return 0;
     }
 }

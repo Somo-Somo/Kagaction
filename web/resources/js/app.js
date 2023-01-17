@@ -1,26 +1,25 @@
-import './bootstrap'
-import Vue from 'vue'
-import router from './router'
-import store from './store'
-import App from './App.vue'
-import Vuetify from 'vuetify';
-import 'vuetify/dist/vuetify.min.css';
-import '@mdi/font/css/materialdesignicons.css';
-import 'material-design-icons-iconfont/dist/material-design-icons.css';
+import "./bootstrap";
+import Vue from "vue";
+import router from "./router";
+import store from "./store";
+import App from "./App.vue";
+import WeeklyReport from "./components/WeeklyReport.vue";
+import Vuetify from "vuetify";
+import "vuetify/dist/vuetify.min.css";
+import "@mdi/font/css/materialdesignicons.css";
+import "material-design-icons-iconfont/dist/material-design-icons.css";
 
 Vue.use(Vuetify);
 
-const createApp = async () => {
+Vue.component(
+    "weekly-report",
+    require("./components/WeeklyReport.vue").default
+);
 
-await store.dispatch('auth/currentUser')
-
-new Vue({
-    vuetify: new Vuetify(),
-    el: '#app',
-    router, 
-    store,
-    components: { App }, 
-    template: '<App />'
-})
-}
-createApp()
+const app = new Vue({
+    el: "#app",
+    router,
+    components: {
+        WeeklyReport,
+    },
+});

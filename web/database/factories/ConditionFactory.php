@@ -2,19 +2,18 @@
 
 namespace Database\Factories;
 
-use App\Models\Project;
+use App\Models\Condition;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
-use Faker\Generator as Faker;
+use Carbon\Carbon;
 
-class ProjectFactory extends Factory
+class ConditionFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Project::class;
+    protected $model = Condition::class;
 
     /**
      * Define the model's default state.
@@ -23,6 +22,10 @@ class ProjectFactory extends Factory
      */
     public function definition()
     {
-        
+        return [
+            'evaluation' => rand(1, 5),
+            'date' => Carbon::yesterday(),
+            'time' => date('H:i:s'),
+        ];
     }
 }

@@ -117,4 +117,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(Diary::class, 'user_uuid', 'uuid');
     }
+
+    /**
+     * セルフチェックの通知
+     *
+     */
+    public function self_check_notifications()
+    {
+        return $this->hasMany(SelfCheckNotification::class, 'user_uuid', 'uuid');
+    }
+
+    /**
+     * セルフチェックの通知
+     *
+     */
+    public function weekly_report_notifications()
+    {
+        return $this->hasMany(WeeklyReportNotification::class, 'user_uuid', 'uuid');
+    }
 }

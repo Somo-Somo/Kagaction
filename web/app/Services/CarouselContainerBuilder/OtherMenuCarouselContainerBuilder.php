@@ -21,7 +21,7 @@ class OtherMenuCarouselContainerBuilder
         // ],
         [
             'text' => '🔔 通知の設定',
-            'postback_data' => 'action=IF_YOU_WANT_TO_SET_UP_NOTIFY_CHECK_TODO&value='
+            'postback_data' => 'action=SETTING_UP_NOTIFICATION&value='
         ],
         [
             'text' => '📭 お問い合わせ',
