@@ -351,7 +351,15 @@ export default {
                             .then((url) => {
                                 const splitUrl = url.split("=");
                                 const token = splitUrl[splitUrl.length - 1];
-
+                                axios.post(
+                                    "/api/report/weekly/" +
+                                        this.$route.params.id,
+                                    {
+                                        token: token,
+                                        start_day: this.period.start,
+                                        end_day: this.period.end,
+                                    }
+                                );
                                 if (
                                     this.uploadUserCountNum <
                                     this.uploadUserLimitNum

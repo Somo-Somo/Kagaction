@@ -12,6 +12,19 @@ class ImageReport extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
+    protected $fillable = [
+        'user_uuid',
+        'token',
+        'start_day',
+        'end_day',
+        'created_at'
+    ];
+
     public static function setWeeklyImageReport(string $user_uuid)
     {
         Carbon::setWeekStartsAt(Carbon::SUNDAY); // 週の最初を日曜日に設定

@@ -24,3 +24,4 @@ Route::post('/line-bot/reply', [MockUpController::class, 'reply']);
 Route::get('/mockup', [MockUpController::class, 'debug']);
 Route::post('/debug', [DebugController::class, 'debug']);
 Route::get('/report/weekly', [ImageReportController::class, 'index']);
+Route::post('/report/weekly/{id}', [ImageReportController::class, 'store']);
