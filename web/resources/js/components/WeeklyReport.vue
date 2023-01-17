@@ -199,7 +199,7 @@ export default {
             conditions: null,
             feelings: null,
             userUuids: [],
-            uploadUserLimitNum: 0,
+            uploadUserLimitNum: null,
             uploadUserCountNum: 0,
             period: {
                 start: null,
@@ -316,8 +316,6 @@ export default {
                 this.uploadUserLimitNum = userUuidKeys.length;
                 this.period.start = period.start;
                 this.period.end = period.end;
-                console.log(this.period);
-                console.log(period);
 
                 this.ready = true;
                 this.$router.push({
@@ -348,10 +346,12 @@ export default {
                     );
                     uploadString(storageRef, data, "data_url").then(() => {
                         console.log("Uploaded a file!");
+                        this.uploadUserCountNum += 1;
                         getDownloadURL(storageRef)
                             .then((url) => {
-                                console.log(url);
-                                this.uploadUserCountNum += 1;
+                                const splitUrl = url.split("=");
+                                const token = splitUrl[splitUrl.length - 1];
+
                                 if (
                                     this.uploadUserCountNum <
                                     this.uploadUserLimitNum
