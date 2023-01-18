@@ -104,6 +104,7 @@ class MockUpController extends Controller
                     foreach ($conditions as $key => $condition) {
                         $feeling = Feeling::where('condition_id', $condition->id)->first();
                         $diary = Diary::where('condition_id', $condition->id)->first();
+                        Log::debug((array)$feeling);
                         $talk_log_carousel_columns[] = TalkLogCarouselContainerBuilder::createTalkLogBubbleContainer(
                             $condition,
                             $feeling,
