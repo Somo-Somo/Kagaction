@@ -3,6 +3,7 @@
 namespace App\UseCases\Line;
 
 use App\Models\Condition;
+use App\Models\Question;
 use App\Models\SelfCheckNotification;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
@@ -44,8 +45,16 @@ class SelfCheckNotificationAction
         if (count($recive_notifications) > 0) {
             Log::info('has');
             foreach ($recive_notifications as  $recive_notification) {
+                $line_user_id = $recive_notification->user->line_id;
+                $question = Question::where('line_user_id', $line_user_id)->first();
+                $question->update([
+                    'condition_id' => null,
+                    'feeling_id' => null,
+                    'operation_type' => 1,
+                    'order_number' => 1
+                ]);
                 $this->bot->pushMessage(
-                    $recive_notification->user->line_id,
+                    $line_user_id,
                     Condition::askCondition($recive_notification->user->name)
                 );
             }
