@@ -24,6 +24,7 @@ use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
 use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\CarouselContainerBuilder;
 use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
+use LINE\LINEBot\MessageBuilder\ImageMessageBuilder;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\QuickReplyBuilder\ButtonBuilder\QuickReplyButtonBuilder;
@@ -68,6 +69,10 @@ class MockUpController extends Controller
      */
     public function reply(Request $request, FollowAction $follow_action)
     {
+        Carbon::setWeekStartsAt(Carbon::SUNDAY); // 週の最初を日曜日に設定
+        Carbon::setWeekEndsAt(Carbon::SATURDAY); // 週の最後を土曜日に設定
+        $today = Carbon::today();
+
         $status_code = $this->line_bot_service->eventHandler($request);
 
         // リクエストをEventオブジェクトに変換する
@@ -92,19 +97,32 @@ class MockUpController extends Controller
                         Condition::askCondition($user_name)
                     );
                     return;
-                } else if ($event->getText() === '記録をみる') {
-                    Carbon::setWeekStartsAt(Carbon::SUNDAY); // 週の最初を日曜日に設定
-                    Carbon::setWeekEndsAt(Carbon::SATURDAY); // 週の最後を土曜日に設定
-                    $today = Carbon::today();
-                    $start_date = $today->startOfWeek()->toDateString();
-                    $end_date = $today->endOfWeek()->toDateString();
-                    $conditions = Condition::where('user_uuid', $user->uuid)->whereDate('date', '>=', $start_date)->whereDate('date', '<', $end_date)->get();
+                } else if (
+                    $event->getText() === '記録をみる'
+                    || $event->getText() === '先週の記録'
+                    || $event->getText() === '今週の記録'
+                ) {
+                    $view_week = $event->getText() === '先週の記録' ? '先週' : '今週';
+                    $unview_week = $view_week === '今週' ? '先週' : '今週';
+                    $user = User::where('line_id', $event->getUserId())->first();
+                    $quick_reply_button_message = new QuickReplyMessageBuilder([
+                        new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📝 ' . $unview_week . 'の記録', $unview_week . 'の記録')),
+                        new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊 週間レポート',  '週間レポート')),
+                    ]);
+
+                    if ($view_week === '今週') {
+                        $start_day = $today->startOfWeek()->toDateString();
+                        $end_day = $today->endOfWeek()->toDateString();
+                    } else if ($view_week === '先週') {
+                        $start_day = $today->subWeek()->startOfWeek()->toDateString();
+                        $end_day = $today->subWeek()->endOfWeek()->toDateString();
+                    }
+                    $conditions = Condition::where('user_uuid', $user->uuid)->whereDate('date', '>=', $start_day)->whereDate('date', '<', $end_day)->get();
                     $talk_log_carousel_columns = [];
 
-                    foreach ($conditions as $key => $condition) {
+                    foreach ($conditions as $condition) {
                         $feeling = Feeling::where('condition_id', $condition->id)->first();
                         $diary = Diary::where('condition_id', $condition->id)->first();
-                        Log::debug((array)$feeling);
                         $talk_log_carousel_columns[] = TalkLogCarouselContainerBuilder::createTalkLogBubbleContainer(
                             $condition,
                             $feeling,
@@ -112,18 +130,41 @@ class MockUpController extends Controller
                         );
                     }
 
+                    $multi_message = new MultiMessageBuilder();
                     if (count($talk_log_carousel_columns) > 0) {
                         $talk_log_carousels = new CarouselContainerBuilder($talk_log_carousel_columns);
-                        $talk_log_message = new FlexMessageBuilder('今週の記録', $talk_log_carousels);
+                        $multi_message->add(new TextMessageBuilder('📝 ' . $view_week . 'の記録'));
+                        $multi_message->add(new FlexMessageBuilder(
+                            '📝 ' . $view_week . 'の記録',
+                            $talk_log_carousels,
+                            $quick_reply_button_message
+                        ));
                     } else {
-                        $talk_log_message = new TextMessageBuilder('今週の記録はまだありません！');
+                        $multi_message->add(new TextMessageBuilder(
+                            'お探ししたところ' . $view_week . 'の記録はありませんでした。',
+                            $quick_reply_button_message
+                        ));
                     }
-
-                    $user = User::where('line_id', $event->getUserId())->first();
-                    $image_report = ImageReport::setWeeklyImageReport($user->uuid);
+                    $this->bot->replyMessage($event->getReplyToken(), $multi_message);
+                    return response('', $status_code, []);
+                } else if ($event->getText() === '週間レポート') {
+                    $quick_reply_button_message = new QuickReplyMessageBuilder([
+                        new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📝 先週の記録',  '先週の記録')),
+                        new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📝 今週の記録',  '今週の記録')),
+                    ]);
+                    $start_day = $today->subWeek()->startOfWeek()->toDateString();
+                    $end_day = $today->subWeek()->endOfWeek()->toDateString();
+                    $image_url = ImageReport::getWeeklyImageReportUrl($user->uuid, $start_day, $end_day);
                     $multi_message = new MultiMessageBuilder();
-                    $multi_message->add($talk_log_message);
-                    $multi_message->add($image_report);
+                    if ($image_url) {
+                        $multi_message->add(new TextMessageBuilder('📊 週間レポート'));
+                        $multi_message->add(new ImageMessageBuilder($image_url, $image_url, $quick_reply_button_message));
+                    } else {
+                        $multi_message->add(new TextMessageBuilder(
+                            '先週の記録がなかったため先週の週間レポートはありませんでした。',
+                            $quick_reply_button_message
+                        ));
+                    }
                     $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                     return response('', $status_code, []);
                 } else if ($event->getText() === '設定') {
