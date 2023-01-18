@@ -266,7 +266,6 @@ class MockUpController extends Controller
                             $question->update(['order_number' => $order_number]);
                         }
                     } else if ($question->order_number === 3) {
-                        Log::debug($event->getText());
                         # 時間の変更
                         $flex_message = SelfCheckNotification::selectDateTimeFlexMessageBuilder(
                             [
@@ -280,18 +279,11 @@ class MockUpController extends Controller
                         $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                     } elseif ($question->order_number === 4) {
                         # 通知の停止
-                        $quick_reply_message_builder = [];
-                        $quick_reply_message_builder[] =  new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🔔通知の追加', '通知の追加'));
-                        if (count($self_check_notification) > 1) {
-                            $quick_reply_message_builder[] = new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('⏰時間の変更', '時間の変更'));
-                            $quick_reply_message_builder[] =  new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🔕通知の停止', '通知の停止'));
-                        }
                         SelfCheckNotification::where('user_uuid', $user->uuid)->where('time', $event->getText() . ':00')->delete();
                         $this->bot->replyMessage(
                             $event->getReplyToken(),
                             new TextMessageBuilder(
-                                '毎日' . $event->getText() . 'の通知を停止しました！',
-                                new QuickReplyMessageBuilder($quick_reply_message_builder)
+                                '毎日' . $event->getText() . 'の通知を停止しました！'
                             )
                         );
                         $question->update(['order_number' => 1]);
