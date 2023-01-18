@@ -42,20 +42,20 @@ class WatchLogAction
     /**
      * 該当するユーザーに振り返りの通知を送る
      *
-     * @param Event $event
+     * @param string $view_week
+     * @param User $user
      * @param Carbon $today
+     * @param int $current_page
      * @return
      */
-    public function invoke($event, $today)
+    public function invoke($view_week, $user, $today, $current_page)
     {
-        $view_week = $event->getText() === '先週の記録' ? '先週' : '今週';
+        $view_week_en = $view_week === '今週' ? 'THIS_WEEK' : 'LAST_WEEK';
         $unview_week = $view_week === '今週' ? '先週' : '今週';
-        $user = User::where('line_id', $event->getUserId())->first();
         $quick_reply_button_message = new QuickReplyMessageBuilder([
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📝 ' . $unview_week . 'の記録', $unview_week . 'の記録')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊 週間レポート',  '週間レポート')),
         ]);
-        $current_page = 1;
 
         if ($view_week === '今週') {
             $start_day = $today->startOfWeek()->toDateString();
@@ -94,7 +94,7 @@ class WatchLogAction
                             $talk_log_num,
                             $talk_log_carousel_limit,
                             $type = 'prev',
-                            $action_value = 'TALK_LOG_PAGE_TRANSITION'
+                            $action_value = $view_week_en . '_TALK_LOG_PAGE_TRANSITION'
                         )
                     );
                 }
@@ -105,12 +105,14 @@ class WatchLogAction
                             $talk_log_num,
                             $talk_log_carousel_limit,
                             $type = 'next',
-                            $action_value = 'TALK_LOG_PAGE_TRANSITION'
+                            $action_value = $view_week_en . '_TALK_LOG_PAGE_TRANSITION'
                         );
                 }
             }
             $talk_log_carousels = new CarouselContainerBuilder($talk_log_carousel_columns);
-            $multi_message->add(new TextMessageBuilder('📝 ' . $view_week . 'の記録'));
+            if ($current_page === 1) {
+                $multi_message->add(new TextMessageBuilder('📝 ' . $view_week . 'の記録'));
+            }
             $multi_message->add(new FlexMessageBuilder(
                 '📝 ' . $view_week . 'の記録',
                 $talk_log_carousels,

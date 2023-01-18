@@ -100,8 +100,9 @@ class MockUpController extends Controller
                     || $event->getText() === '先週の記録'
                     || $event->getText() === '今週の記録'
                 ) {
+                    $view_week = $event->getText() === '先週の記録' ? '先週' : '今週';
                     $watch_log_action = new WatchLogAction();
-                    $multi_message = $watch_log_action->invoke($event, $today);
+                    $multi_message = $watch_log_action->invoke($view_week, $user, $today, 1);
                     $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                     return response('', $status_code, []);
                 } else if ($event->getText() === '週間レポート') {
@@ -358,6 +359,14 @@ class MockUpController extends Controller
                         'operation_type' => null, // 通知の設定
                         'order_number' => null,
                     ]);
+                } else if (
+                    $action_type === 'THIS_WEEK_TALK_LOG_PAGE_TRANSITION' || $action_type === 'LAST_WEEK_TALK_LOG_PAGE_TRANSITION'
+                ) {
+                    $view_week = $action_type === 'THIS_WEEK_TALK_LOG_PAGE_TRANSITION' ? '今週' : '先週';
+                    $watch_log_action = new WatchLogAction();
+                    $multi_message = $watch_log_action->invoke($view_week, $user, $today, intval($select_value));
+                    $this->bot->replyMessage($event->getReplyToken(), $multi_message);
+                    return response('', $status_code, []);
                 }
             }
         }
