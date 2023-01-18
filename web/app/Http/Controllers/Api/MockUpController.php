@@ -14,6 +14,7 @@ use App\Models\WeeklyReportNotification;
 use App\UseCases\Line\FollowAction;
 use App\Services\LineBotService;
 use App\Services\CarouselContainerBuilder\OtherMenuCarouselContainerBuilder;
+use App\Services\CarouselContainerBuilder\PageTransitionBtnCarouselContainerBuilder;
 use App\Services\CarouselContainerBuilder\TalkLogCarouselContainerBuilder;
 use App\UseCases\Line\SelfCheckNotificationAction;
 use Carbon\Carbon;
@@ -109,6 +110,7 @@ class MockUpController extends Controller
                         new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📝 ' . $unview_week . 'の記録', $unview_week . 'の記録')),
                         new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊 週間レポート',  '週間レポート')),
                     ]);
+                    $current_page = 1;
 
                     if ($view_week === '今週') {
                         $start_day = $today->startOfWeek()->toDateString();
@@ -130,8 +132,38 @@ class MockUpController extends Controller
                         );
                     }
 
+                    $talk_log_num = count($talk_log_carousel_columns);
                     $multi_message = new MultiMessageBuilder();
-                    if (count($talk_log_carousel_columns) > 0) {
+                    if ($talk_log_num > 0) {
+                        if ($talk_log_num > 10) {
+                            $talk_log_carousel_limit = 10;
+                            $last_page = intval(ceil($talk_log_num / $talk_log_carousel_limit));
+                            $slice_start = $current_page === 1 ? 0 : $talk_log_carousel_limit + (($current_page - 2) * 10);
+                            $talk_log_carousel_columns = array_slice($talk_log_carousel_columns, $slice_start, $talk_log_carousel_limit);
+
+                            if ($current_page !== 1) {
+                                array_unshift(
+                                    $talk_log_carousel_columns,
+                                    PageTransitionBtnCarouselContainerBuilder::createPageTransitionBtnBubbleContainer(
+                                        $current_page,
+                                        $talk_log_num,
+                                        $talk_log_carousel_limit,
+                                        $type = 'prev',
+                                        $action_value = 'TALK_LOG_PAGE_TRANSITION'
+                                    )
+                                );
+                            }
+                            if ($current_page !== $last_page) {
+                                $talk_log_carousel_columns[] =
+                                    PageTransitionBtnCarouselContainerBuilder::createPageTransitionBtnBubbleContainer(
+                                        $current_page,
+                                        $talk_log_num,
+                                        $talk_log_carousel_limit,
+                                        $type = 'next',
+                                        $action_value = 'TALK_LOG_PAGE_TRANSITION'
+                                    );
+                            }
+                        }
                         $talk_log_carousels = new CarouselContainerBuilder($talk_log_carousel_columns);
                         $multi_message->add(new TextMessageBuilder('📝 ' . $view_week . 'の記録'));
                         $multi_message->add(new FlexMessageBuilder(
