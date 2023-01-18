@@ -14,13 +14,15 @@ use App\Models\WeeklyReportNotification;
 use App\UseCases\Line\FollowAction;
 use App\Services\LineBotService;
 use App\Services\CarouselContainerBuilder\OtherMenuCarouselContainerBuilder;
-use App\UseCases\Line\SelfCheckNotificationAction;
+use App\UseCases\Line\WatchLogAction;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
 use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
+use LINE\LINEBot\MessageBuilder\ImageMessageBuilder;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\QuickReplyBuilder\ButtonBuilder\QuickReplyButtonBuilder;
@@ -65,6 +67,10 @@ class MockUpController extends Controller
      */
     public function reply(Request $request, FollowAction $follow_action)
     {
+        Carbon::setWeekStartsAt(Carbon::SUNDAY); // 週の最初を日曜日に設定
+        Carbon::setWeekEndsAt(Carbon::SATURDAY); // 週の最後を土曜日に設定
+        $today = Carbon::today();
+
         $status_code = $this->line_bot_service->eventHandler($request);
 
         // リクエストをEventオブジェクトに変換する
@@ -89,10 +95,35 @@ class MockUpController extends Controller
                         Condition::askCondition($user_name)
                     );
                     return;
-                } else if ($event->getText() === '記録をみる') {
-                    $user = User::where('line_id', $event->getUserId())->first();
-                    $imageReport = ImageReport::setWeeklyImageReport($user->uuid);
-                    $this->bot->replyMessage($event->getReplyToken(), $imageReport);
+                } else if (
+                    $event->getText() === '記録をみる'
+                    || $event->getText() === '先週の記録'
+                    || $event->getText() === '今週の記録'
+                ) {
+                    $view_week = $event->getText() === '先週の記録' ? '先週' : '今週';
+                    $watch_log_action = new WatchLogAction();
+                    $multi_message = $watch_log_action->invoke($view_week, $user, $today, 1);
+                    $this->bot->replyMessage($event->getReplyToken(), $multi_message);
+                    return response('', $status_code, []);
+                } else if ($event->getText() === '週間レポート') {
+                    $quick_reply_button_message = new QuickReplyMessageBuilder([
+                        new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📝 先週の記録',  '先週の記録')),
+                        new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📝 今週の記録',  '今週の記録')),
+                    ]);
+                    $start_day = $today->subWeek()->startOfWeek()->toDateString();
+                    $end_day = $today->subWeek()->endOfWeek()->toDateString();
+                    $image_url = ImageReport::getWeeklyImageReportUrl($user->uuid, $start_day, $end_day);
+                    $multi_message = new MultiMessageBuilder();
+                    if ($image_url) {
+                        $multi_message->add(new TextMessageBuilder('📊 週間レポート'));
+                        $multi_message->add(new ImageMessageBuilder($image_url, $image_url, $quick_reply_button_message));
+                    } else {
+                        $multi_message->add(new TextMessageBuilder(
+                            '先週の記録がなかったため先週の週間レポートはありませんでした。',
+                            $quick_reply_button_message
+                        ));
+                    }
+                    $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                     return response('', $status_code, []);
                 } else if ($event->getText() === '設定') {
                     $this->bot->replyMessage(
@@ -328,6 +359,14 @@ class MockUpController extends Controller
                         'operation_type' => null, // 通知の設定
                         'order_number' => null,
                     ]);
+                } else if (
+                    $action_type === 'THIS_WEEK_TALK_LOG_PAGE_TRANSITION' || $action_type === 'LAST_WEEK_TALK_LOG_PAGE_TRANSITION'
+                ) {
+                    $view_week = $action_type === 'THIS_WEEK_TALK_LOG_PAGE_TRANSITION' ? '今週' : '先週';
+                    $watch_log_action = new WatchLogAction();
+                    $multi_message = $watch_log_action->invoke($view_week, $user, $today, intval($select_value));
+                    $this->bot->replyMessage($event->getReplyToken(), $multi_message);
+                    return response('', $status_code, []);
                 }
             }
         }

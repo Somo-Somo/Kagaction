@@ -64,6 +64,22 @@ class Feeling extends Model
         // 'moyamoya' => 'もやもや',
         // 'kuyashi' => '悔しい',
         // 'happy' => '幸せ',
+
+    ];
+
+    const FEELING_EMOJI = [
+        'glad' => '🥰 嬉しい',
+        'fun' => '😆 楽しい',
+        'calm' => '😌 穏やか',
+        'wakuwaku' => '😎 ワクワク',
+        'anxious' => '😔 不安',
+        'hard' => '😣 辛い',
+        'sad' => '😭 悲しい',
+        'tired' => '😫 疲れた',
+        'angry' => '😠 イライラ',
+        'lethargic' => '😑 無気力',
+        // 'moyamoya' => '🤔 もやもや',
+        // 'kuyashi' => '😤 悔しい',
     ];
 
     /**
@@ -83,20 +99,16 @@ class Feeling extends Model
     public static function feelingQuickReplyBtn()
     {
         return [
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🥰嬉しい', '嬉しい')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😆楽しい', '楽しい')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😌穏やか', '穏やか')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😎ワクワク', 'ワクワク')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😠イライラ', 'イライラ')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😔不安', '不安')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😣辛い', '辛い')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😭悲しい', '悲しい')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😫疲れた', '疲れた')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😑無気力', '無気力')),
-            // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🤔もやもや', 'もやもや')),
-            // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😪眠い', '眠い')),
-            // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😤悔しい', '悔しい')),
-            // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😢心配', '心配')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['glad'], '嬉しい')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['fun'], '楽しい')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['calm'], '穏やか')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['wakuwaku'], 'ワクワク')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['angry'], 'イライラ')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['anxious'], '不安')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['hard'], '辛い')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['sad'], '悲しい')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['tired'], '疲れた')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['lethargic'], '無気力')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('ない', 'ない')),
         ];
     }

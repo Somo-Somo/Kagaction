@@ -38,6 +38,7 @@ class Condition extends Model
     ];
 
     const CONDITION_TYPE = ['なし', '絶不調', '不調', 'まあまあ', '好調', '絶好調'];
+    const CONDITION_EMOJI = [null, '😣 絶不調', '🙁 不調', '😐 まあまあ', '🙂 好調', '😆 絶好調'];
 
     const EVALUATION = [
         '絶不調' => 1,
@@ -105,11 +106,11 @@ class Condition extends Model
         $first_message =  $user_name . 'さん、' . $greeting;
         $ask_feeling_message = "今の調子はどうですか？";
         $quick_reply_buttons = [
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😆絶好調', '絶好調')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🙂好調', '好調')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😐まあまあ', 'まあまあ')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🙁不調', '不調')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('😣絶不調', '絶不調')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Condition::CONDITION_EMOJI[5], '絶好調')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Condition::CONDITION_EMOJI[4], '好調')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Condition::CONDITION_EMOJI[3], 'まあまあ')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Condition::CONDITION_EMOJI[2], '不調')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Condition::CONDITION_EMOJI[1], '絶不調')),
         ];
         $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
