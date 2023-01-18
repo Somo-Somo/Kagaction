@@ -14,12 +14,15 @@ use App\Models\WeeklyReportNotification;
 use App\UseCases\Line\FollowAction;
 use App\Services\LineBotService;
 use App\Services\CarouselContainerBuilder\OtherMenuCarouselContainerBuilder;
+use App\Services\CarouselContainerBuilder\TalkLogCarouselContainerBuilder;
 use App\UseCases\Line\SelfCheckNotificationAction;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
+use LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\CarouselContainerBuilder;
 use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
@@ -90,9 +93,37 @@ class MockUpController extends Controller
                     );
                     return;
                 } else if ($event->getText() === '記録をみる') {
+                    Carbon::setWeekStartsAt(Carbon::SUNDAY); // 週の最初を日曜日に設定
+                    Carbon::setWeekEndsAt(Carbon::SATURDAY); // 週の最後を土曜日に設定
+                    $today = Carbon::today();
+                    $start_date = $today->startOfWeek()->toDateString();
+                    $end_date = $today->endOfWeek()->toDateString();
+                    $conditions = Condition::where('user_uuid', $user->uuid)->whereDate('date', '>=', $start_date)->whereDate('date', '<', $end_date)->get();
+                    $talk_log_carousel_columns = [];
+
+                    foreach ($conditions as $key => $condition) {
+                        $feeling = Feeling::where('condition_id', $condition->id)->first();
+                        $diary = Diary::where('condition_id', $condition->id)->first();
+                        $talk_log_carousel_columns[] = TalkLogCarouselContainerBuilder::createTalkLogBubbleContainer(
+                            $condition,
+                            $feeling,
+                            $diary
+                        );
+                    }
+
+                    if (count($talk_log_carousel_columns) > 0) {
+                        $talk_log_carousels = new CarouselContainerBuilder($talk_log_carousel_columns);
+                        $talk_log_message = new FlexMessageBuilder('今週の記録', $talk_log_carousels);
+                    } else {
+                        $talk_log_message = new TextMessageBuilder('今週の記録はまだありません！');
+                    }
+
                     $user = User::where('line_id', $event->getUserId())->first();
-                    $imageReport = ImageReport::setWeeklyImageReport($user->uuid);
-                    $this->bot->replyMessage($event->getReplyToken(), $imageReport);
+                    $image_report = ImageReport::setWeeklyImageReport($user->uuid);
+                    $multi_message = new MultiMessageBuilder();
+                    $multi_message->add($talk_log_message);
+                    $multi_message->add($image_report);
+                    $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                     return response('', $status_code, []);
                 } else if ($event->getText() === '設定') {
                     $this->bot->replyMessage(
