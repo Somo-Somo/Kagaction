@@ -45,10 +45,11 @@ class SelfCheckNotification extends Model
      *
      * 時間設定するときのメッセージ
      *
-     * @param string $day_of_week
-     * @return \LINE\LINEBot\MessageBuilder\FlexMessageBuilder
+     * @param string $meridiem = 'PM' || 'AM'
+     * @param string||null $change_source
+     * @return \LINE\LINEBot\MessageBuilder\Flex\ContainerBuilder\BubbleContainerBuilder
      */
-    public static function createSettingTimeMessageBuilder(string $meridiem)
+    public static function createSettingTimeMessageBuilder(string $meridiem, string $change_source = null)
     {
         // header
         $header_text_builder = new TextComponentBuilder($meridiem === 'AM' ? '午前' : '午後');
@@ -69,7 +70,8 @@ class SelfCheckNotification extends Model
                 } else if ($meridiem === 'PM') {
                     $time =  $column + 12 + (6 * $row) . ':00';
                 }
-                $data =  'action=SELF_CHECK_NOTIFICATION_TIME&value=' . $time;
+                $postback_value = $change_source ?  $change_source . '-' . $time : $time;
+                $data =  'action=SELF_CHECK_NOTIFICATION_TIME&value=' . $postback_value;
                 $button_component =  new ButtonComponentBuilder(
                     new PostbackTemplateActionBuilder($time, $data),
                 );

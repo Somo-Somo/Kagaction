@@ -205,7 +205,7 @@ class MockUpController extends Controller
                     $self_check_notification = SelfCheckNotification::where('user_uuid', $user->uuid)->orderBy('time')->get();
                     $weekly_report_notification = WeeklyReportNotification::where('user_uuid', $user->uuid)->orderBy('time')->get();
                     if ($question->order_number === 1) {
-                        if ($event->getText() === '話す:通知変更') {
+                        if ($event->getText() === '話す : 通知を変更する') {
                             $quick_reply_message_builder = [];
                             if (count($self_check_notification) < 3) {
                                 $quick_reply_message_builder[] =   new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🔔通知の追加', '通知の追加'));
@@ -222,7 +222,7 @@ class MockUpController extends Controller
                                 )
                             );
                             $question->update(['order_number' => 2]);
-                        } else if ($event->getText() === '週間レポート : 通知ON') {
+                        } else if ($event->getText() === '週間レポート : 通知ONにする') {
                             WeeklyReportNotification::create([
                                 'user_uuid' => $user->uuid,
                                 'time' => '09:00:00',
@@ -232,7 +232,7 @@ class MockUpController extends Controller
                                 new TextMessageBuilder('週間レポートの通知をONにしました！')
                             );
                             $question->update(['order_number' => null]);
-                        } else if ($event->getText() === '週間レポート : 通知OFF') {
+                        } else if ($event->getText() === '週間レポート : 通知OFFにする') {
                             WeeklyReportNotification::where('user_uuid', $user->uuid)->delete();
                             $this->bot->replyMessage(
                                 $event->getReplyToken(),
@@ -269,8 +269,8 @@ class MockUpController extends Controller
                         # 時間の変更
                         $flex_message = SelfCheckNotification::selectDateTimeFlexMessageBuilder(
                             [
-                                SelfCheckNotification::createSettingTimeMessageBuilder('AM'),
-                                SelfCheckNotification::createSettingTimeMessageBuilder('PM'),
+                                SelfCheckNotification::createSettingTimeMessageBuilder('AM', $event->getText()),
+                                SelfCheckNotification::createSettingTimeMessageBuilder('PM', $event->getText()),
                             ]
                         );
                         $multi_message = new MultiMessageBuilder();
@@ -279,18 +279,11 @@ class MockUpController extends Controller
                         $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                     } elseif ($question->order_number === 4) {
                         # 通知の停止
-                        $quick_reply_message_builder = [];
-                        $quick_reply_message_builder[] =  new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🔔通知の追加', '通知の追加'));
-                        if (count($self_check_notification) > 1) {
-                            $quick_reply_message_builder[] = new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('⏰時間の変更', '時間の変更'));
-                            $quick_reply_message_builder[] =  new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('🔕通知の停止', '通知の停止'));
-                        }
                         SelfCheckNotification::where('user_uuid', $user->uuid)->where('time', $event->getText() . ':00')->delete();
                         $this->bot->replyMessage(
                             $event->getReplyToken(),
                             new TextMessageBuilder(
-                                '毎日' . $event->getText() . 'の通知を停止しました！',
-                                new QuickReplyMessageBuilder($quick_reply_message_builder)
+                                '毎日' . $event->getText() . 'の通知を停止しました！'
                             )
                         );
                         $question->update(['order_number' => 1]);
@@ -312,13 +305,13 @@ class MockUpController extends Controller
                     } else {
                         $self_check_text = '話す: OFF';
                     }
-                    $quick_reply_array = [new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('💬 話す : 🔄 通知変更', '話す:通知変更'))];
+                    $quick_reply_array = [new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('💬 話す : 通知を変更する', '話す : 通知を変更する'))];
                     if (count($weekly_report_notification) > 0) {
                         $weekly_report_text = '週間レポート : ON';
-                        $quick_reply_array[] = new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊 週間レポート : 🔕 通知OFF', '週間レポート : 通知OFF'));
+                        $quick_reply_array[] = new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊 週間レポート : 🔕 通知OFFにする', '週間レポート : 通知OFFにする'));
                     } else {
                         $weekly_report_text = '週間レポート : OFF';
-                        $quick_reply_array[] = new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊 週間レポート : 🔔 通知ON', '週間レポート : 通知ON'));
+                        $quick_reply_array[] = new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊 週間レポート : 🔔 通知ONにする', '週間レポート : 通知ONにする'));
                     }
                     $multi_message = new MultiMessageBuilder();
                     $multi_message->add(new TextMessageBuilder('🔔通知設定'));
@@ -335,13 +328,22 @@ class MockUpController extends Controller
                         'order_number' => 1,
                     ]);
                 } else if ($action_type === 'SELF_CHECK_NOTIFICATION_TIME') {
+                    Log::debug($select_value);
+                    if (strpos($select_value, '-')) {
+                        list($change_source, $change_time) = explode("-", $select_value);
+                        $message = '話すの通知を毎日:' . $change_source . 'から毎日' . $change_time . 'に変更しました';
+                    } else {
+                        $change_source = null;
+                        $change_time = $select_value;
+                        $message = '話すの通知を毎日:' . $select_value . 'に追加しました';
+                    }
                     SelfCheckNotification::updateOrCreate(
-                        ['user_uuid' => $user->uuid, 'time' => $select_value . ':00'],
+                        ['user_uuid' => $user->uuid, 'time' => $change_source . ':00'],
+                        ['user_uuid' => $user->uuid, 'time' => $change_time . ':00']
                     );
-                    $message = $question->order_number === 2 ? 'に設定しました' : 'に変更しました';
                     $this->bot->replyMessage(
                         $event->getReplyToken(),
-                        new TextMessageBuilder('話す:の通知を毎日:' . $select_value . $message)
+                        new TextMessageBuilder($message)
                     );
                     $question->update([
                         'operation_type' => null, // 通知の設定
