@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Dotenv\Util\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -102,18 +103,34 @@ class Question extends Model
     /**
      * なにが起きたのかきく
      *
-     * @param User $user
-     * @param string $condition
+     * @param string $condition_value
+     * @param Question $question
      * @return
      */
-    public static function askWhatIsHappened(User $user, string $condition)
+    public static function askWhatIsHappened(string $condition_value, Question $question)
     {
-        if ($condition === '絶好調') {
-            $ask_what_is_happened = 'それはもう天才だね！' . "\n" . 'どんなことをしていたんですか？' . "\n" . 'アガトンにも教えて欲しいです！';
-        } else if ($condition === '好調') {
-            $ask_what_is_happened = 'それは最高だね！' . "\n" . 'どんなことをしていたんですか？' . "\n" . 'アガトンにも教えて欲しいです！';
-        } else if ($condition === 'まあまあ') {
-            $ask_what_is_happened = 'まあまあな調子なんですね！' . "\n" . 'ちなみに' .  'どのようなことを今していましたか？';
+        if ($question->operation_type === 1) {
+            $time = '今';
+            $ask =  '今どんなことをしていましたか？';
+            $soso_gobi_response = 'なんですね！';
+            $bad_gobi_response = 'いんですね！';
+        } else {
+            $time = '今日';
+            $ask =  '今日はどのようなことをしていましたか？';
+            $soso_gobi_response = 'だったんですね！';
+            $bad_gobi_response = 'かったんですね！';
+        }
+
+        if ($condition_value === '絶好調') {
+            $ask_what_is_happened = 'それはもう天才だね！' . "\n" . $ask . "\n" . 'アガトンにも教えて欲しいです！';
+        } else if ($condition_value === '好調') {
+            $ask_what_is_happened = 'それは最高だね！' . "\n" . $ask . "\n" . 'アガトンにも教えて欲しいです！';
+        } else if ($condition_value === 'まあまあ') {
+            $ask_what_is_happened = $time . 'はまあまあな調子' . $soso_gobi_response . "\n" . 'ちなみに' . $ask;
+        } else if ($condition_value === '不調') {
+            $ask_what_is_happened = $time . 'はあまり調子が良くな' . $bad_gobi_response . "\n" . 'ちなみに' . $ask;
+        } else if ($condition_value === '絶不調') {
+            $ask_what_is_happened = $time . 'は調子が良くな' . $bad_gobi_response . "\n" . 'ちなみに' . $ask;
         }
         $text_message_builder = new TextMessageBuilder($ask_what_is_happened);
         return $text_message_builder;
@@ -122,21 +139,21 @@ class Question extends Model
     /**
      * 今の気持ちを聞く
      *
-     * @param int $evaluation
-     * @param string $get_text
+     * @param Question $question
      * @return
      */
-    public static function askAboutFeeling(int $evaluation)
+    public static function askAboutFeeling(Question $question)
     {
-        if ($evaluation > 2) {
-            // $first_message = $get_text . 'のですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
-            $first_message = 'なるほど！そのようなことをしていたのですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
-            // $ask_message = $get_text . '時の気持ちを表すものがこの中にあったりしますか？';
-            $ask_message =  'その時の気持ちを表すものがこの中にあったりしますか？';
+        if ($question->operation_type === 1) {
+            $time = '今';
         } else {
-            $first_message = '今日は' . Condition::CONDITION_TYPE[$evaluation] . 'だったんですね。';
-            $ask_message = '今の自分の気持ちを表すものがこの中にあったりしますか？';
+            $time = '今日は';
         }
+
+        // $first_message = $get_text . 'のですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
+        $first_message = 'なるほど！そのようなことを' . $time . 'していたのですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
+        // $ask_message = $get_text . '時の気持ちを表すものがこの中にあったりしますか？';
+        $ask_message =  'そのことをしていた時の気持ちを表すものがこの中にあったりしますか？';
 
         $quick_reply_buttons = Feeling::feelingQuickReplyBtn();
         $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
@@ -154,9 +171,9 @@ class Question extends Model
      * @param Feeling $feeling
      * @return
      */
-    public static function questionAfterAskAboutFeeling(User $user, Feeling $feeling)
+    public static function questionAfterAskAboutFeeling(User $user, Feeling $feeling, Question $question)
     {
-        $multi_message = Feeling::questionAfterAskAboutFeelingMessage($feeling->feeling_type, $user);
+        $multi_message = Feeling::questionAfterAskAboutFeelingMessage($feeling->feeling_type, $user, $question);
         return $multi_message;
     }
 
@@ -172,7 +189,7 @@ class Question extends Model
      */
     public static function thanksMessage(Question $question, string $reply, User $user)
     {
-        $message = Feeling::sortThanksMessage($question->feeling->feeling_type, $reply, $user);
+        $message = Feeling::sortThanksMessage($question, $reply, $user);
         return $message;
     }
 }

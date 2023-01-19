@@ -124,10 +124,11 @@ class Condition extends Model
     /**
      * 調子を聞く
      *
-     * @param string $user_name
+     * @param User $user
+     * @param Question $question
      * @return
      */
-    public static function askConditionByCarousel(string $user_name)
+    public static function askConditionByCarousel(User $user, Question $question)
     {
         $carousels = [
             ['text' => '絶好調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/ai7dz-6bymx.png", "postback_data" => "action=ANSWER_CONDITION&value=絶好調"],
@@ -136,14 +137,19 @@ class Condition extends Model
             ['text' => '不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/abova-tgwn5.png", "postback_data" => "action=ANSWER_CONDITION&value=不調"],
             ['text' => '絶不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/a4slq-53hdi.png", "postback_data" => "action=ANSWER_CONDITION&value=絶不調"],
         ];
+        if ($question->operation_type == 1) {
+            $first_message = '「今の調子や気持ちについて話す」ですね！かしこまりました！';
+            $ask_text = $user->name . 'さんの今の調子はどうですか？';
+        } else {
+            $first_message = '「今日の振り返りをする」ですね！かしこまりました！';
+            $ask_text = $user->name . 'さんの今日の調子はどうですか？';
+        }
 
         $carousel_container = SelectInTalkCarouselContainerBuilder::createSelectInTalkBubbleContainer($carousels);
-        $text =  $user_name . 'さんの今の調子はどうですか？';
-        $ask_message = new TextMessageBuilder($text);
-        $flex_message = new FlexMessageBuilder($text, $carousel_container);
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
-        $multi_message->add($ask_message);
-        $multi_message->add($flex_message);
+        $multi_message->add(new TextMessageBuilder($first_message));
+        $multi_message->add(new TextMessageBuilder($ask_text));
+        $multi_message->add(new FlexMessageBuilder($ask_text, $carousel_container));
         return $multi_message;
     }
 }
