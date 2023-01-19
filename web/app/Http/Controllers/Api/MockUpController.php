@@ -186,7 +186,7 @@ class MockUpController extends Controller
                         }
                     } else if ($event->getText() === '振り返る') {
                         $multi_message = new MultiMessageBuilder();
-                        $multi_message->add(new TextMessageBuilder('「振り返る」ですね！' . "\n" . 'それでは再び振り返っていきましょう！'));
+                        $multi_message->add(new TextMessageBuilder('「振り返る」ですね！' . "\n" . 'それでは再び始めていきましょう！'));
                         $multi_message->add(new TextMessageBuilder('今日他にはどのようなことをしていましたか？'));
                         $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                         $question->update(['order_number' => 1]);
@@ -194,7 +194,7 @@ class MockUpController extends Controller
                         $multi_message = new MultiMessageBuilder();
                         $multi_message->add(new TextMessageBuilder('今日も一日お疲れ様でした！'));
                         $multi_message->add(new TextMessageBuilder('これからもアガトンに色々お話してくれると嬉しいです！'));
-                        $multi_message->add(new TextMessageBuilder('またね！バイバイ！'));
+                        $multi_message->add(new TextMessageBuilder('これで「振り返る」を終わるね！バイバイ！'));
                         $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                         $question->update(['operation_type' => null, 'order_number' => null, 'condition_id' => null, 'feeling_id' => null]);
                     }
