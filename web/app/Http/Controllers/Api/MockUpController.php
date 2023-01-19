@@ -340,12 +340,13 @@ class MockUpController extends Controller
                     if (strpos($select_value, '-')) {
                         list($change_source, $change_time) = explode("-", $select_value);
                         $message = '話すの通知を毎日:' . $change_source . 'から毎日' . $change_time . 'に変更しました';
+                        $change_source_notification = SelfCheckNotification::where('user_uuid', $user->uuid)->first();
                     } else {
-                        $change_source = null;
                         $change_time = $select_value;
                         $message = '話すの通知を毎日:' . $select_value . 'に追加しました';
+                        $change_source_notification = null;
                     }
-                    $change_source_notification = SelfCheckNotification::where('user_uuid', $user->uuid)->where('time', $change_source . ':00')->first();
+
                     if ($change_source_notification) {
                         $change_source_notification->update(['user_uuid' => $user->uuid, 'time' => $change_time . ':00']);
                     } else {
