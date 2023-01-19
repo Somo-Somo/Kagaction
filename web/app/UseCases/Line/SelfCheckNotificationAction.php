@@ -45,18 +45,18 @@ class SelfCheckNotificationAction
         if (count($recive_notifications) > 0) {
             Log::info('has');
             foreach ($recive_notifications as  $recive_notification) {
-                $line_user_id = $recive_notification->user->line_id;
-                $question = Question::where('line_user_id', $line_user_id)->first();
+                $user = $recive_notification->user;
+                $this->bot->replyMessage(
+                    $user->line_id,
+                    Question::whatAreYouTalkingAbout($user)
+                );
+                $question = Question::where('line_user_id', $user->line_id)->first();
                 $question->update([
                     'condition_id' => null,
                     'feeling_id' => null,
-                    'operation_type' => 1,
-                    'order_number' => 1
+                    'operation_type' => null,
+                    'order_number' => null
                 ]);
-                $this->bot->pushMessage(
-                    $line_user_id,
-                    Condition::askCondition($recive_notification->user->name)
-                );
             }
         }
         return;
