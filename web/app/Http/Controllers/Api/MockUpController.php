@@ -83,18 +83,37 @@ class MockUpController extends Controller
                 $follow_action->invoke($event->getUserId());
             } elseif ($event->getType() === 'message') {
                 if ($event->getText() === '話す') {
-                    $user_name = $this->bot->getProfile($event->getUserId())->getJSONDecodedBody()['displayName'];
+                    $this->bot->replyMessage(
+                        $event->getReplyToken(),
+                        Question::whatAreYouTalkingAbout($user)
+                    );
                     $question->update([
                         'condition_id' => null,
                         'feeling_id' => null,
-                        'operation_type' => 1,
-                        'order_number' => 1
+                        'operation_type' => null,
+                        'order_number' => null
+                    ]);
+                    // $this->bot->replyMessage(
+                    //     $event->getReplyToken(),
+                    //     Condition::askCondition($user_name)
+                    // );
+                    return;
+                } else if (
+                    $event->getText() === '今の調子や気持ちについて話す'
+                    || $event->getText() === '今日の振り返りをする'
+                ) {
+                    if ($event->getText() === '今の調子や気持ちについて話す') {
+                        $operation_type = 1;
+                    } else if ($event->getText() === '今日の振り返りをする') {
+                        $operation_type = 2;
+                    }
+                    $question->update([
+                        'operation_type' => $operation_type
                     ]);
                     $this->bot->replyMessage(
                         $event->getReplyToken(),
-                        Condition::askCondition($user_name)
+                        Condition::askConditionByCarousel($user, $question)
                     );
-                    return;
                 } else if (
                     $event->getText() === '記録をみる'
                     || $event->getText() === '先週の記録'
@@ -135,70 +154,48 @@ class MockUpController extends Controller
                         'order_number' => null,
                     ]);
                 }
-                if ($question->operation_type === 1) {
+                if ($question->operation_type === 1 || $question->operation_type === 2) {
                     if ($question->order_number === 1) {
-                        $date_time = new DateTime();
-                        // 保存
-                        $condition = Condition::create([
+                        $this->bot->replyMessage($event->getReplyToken(), Question::askAboutFeeling($question));
+                        Diary::create([
                             'user_uuid' => $user->uuid,
-                            'evaluation' => Condition::EVALUATION[$event->getText()],
-                            'date' => $date_time->format('Y-m-d'),
-                            'time' => $date_time->format('H:i:s')
+                            'condition_id' => $question->condition_id,
+                            'detail' => $event->getText()
                         ]);
-                        $question->update(['condition_id' => $condition->id, 'order_number' => 2]);
-                        if ($event->getText() === '絶好調' || $event->getText() === '好調' || $event->getText() === 'まあまあ') {
-                            $this->bot->replyMessage($event->getReplyToken(), Question::askWhatIsHappened($user, $event->getText()));
-                        } elseif ($event->getText() === '不調' || $event->getText() === '絶不調') {
-                            $this->bot->replyMessage($event->getReplyToken(), Question::askAboutFeeling($question, $event->getText()));
-                        }
-                        $question->update(['order_number' => 2, 'condition_id' => $condition->id]);
+                        $question->update(['order_number' => 2]);
                     } elseif ($question->order_number === 2) {
-                        if ($question->condition->evaluation > 2) {
-                            Diary::create([
-                                'user_uuid' => $user->uuid,
-                                'condition_id' => $question->condition_id,
-                                'detail' => $event->getText()
-                            ]);
-                            $this->bot->replyMessage($event->getReplyToken(), Question::askAboutFeeling($question, $event->getText()));
-                            $question->update(['order_number' => 3]);
-                        } else {
-                            $condition = Condition::where('id', $question->condition_id)->first();
-                            $feeling = Feeling::create([
-                                'user_uuid' => $user->uuid,
-                                'condition_id' => $condition->id,
-                                'feeling_type' => Feeling::JA_EN[$event->getText()],
-                                'date' => $condition->date,
-                                'time' => $condition->time
-                            ]);
-                            $this->bot->replyMessage($event->getReplyToken(), Question::questionAfterAskAboutFeeling($user, $feeling));
-                            $question->update(['order_number' => 3, 'feeling_id' => $feeling->id]);
-                        }
+                        $feeling = Feeling::create([
+                            'user_uuid' => $user->uuid,
+                            'condition_id' => $question->condition->id,
+                            'feeling_type' => Feeling::JA_EN[$event->getText()],
+                            'date' => $question->condition->date,
+                            'time' => $question->condition->time
+                        ]);
+                        $this->bot->replyMessage($event->getReplyToken(),  Question::questionAfterAskAboutFeeling($user, $feeling, $question));
+                        $question->update(['order_number' => 3, 'feeling_id' => $feeling->id]);
                     } elseif ($question->order_number === 3) {
-                        if ($question->condition->evaluation > 2) {
-                            $feeling = Feeling::create([
-                                'user_uuid' => $user->uuid,
-                                'condition_id' => $question->condition->id,
-                                'feeling_type' => Feeling::JA_EN[$event->getText()],
-                                'date' => $question->condition->date,
-                                'time' => $question->condition->time
-                            ]);
-                            $this->bot->replyMessage($event->getReplyToken(),  Question::questionAfterAskAboutFeeling($user, $feeling));
-                            $question->update(['order_number' => 4, 'feeling_id' => $feeling->id]);
-                        } else {
-                            Diary::create([
-                                'user_uuid' => $user->uuid,
-                                'condition_id' => $question->condition_id,
-                                'detail' => $event->getText()
-                            ]);
-                            $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question, $event->getText(), $user));
-                            $question->update(['operation_type' => null, 'order_number' => null, 'condition_id' => null, 'feeling_id' => null]);
-                        }
-                    } else if ($question->order_number === 4) {
                         $diary = Diary::where('user_uuid', $user->uuid)
                             ->where('condition_id', $question->condition->id)
                             ->first();
                         $diary->update(['detail' => $diary->detail . "\n" . $event->getText()]);
                         $this->bot->replyMessage($event->getReplyToken(), Question::thanksMessage($question, $event->getText(), $user));
+                        if ($question->operation_type === 1) {
+                            $question->update(['operation_type' => null, 'order_number' => null, 'condition_id' => null, 'feeling_id' => null]);
+                        } else {
+                            $question->update(['order_number' => null,  'feeling_id' => null]);
+                        }
+                    } else if ($event->getText() === '振り返る') {
+                        $multi_message = new MultiMessageBuilder();
+                        $multi_message->add(new TextMessageBuilder('「振り返る」ですね！' . "\n" . 'それでは再び始めていきましょう！'));
+                        $multi_message->add(new TextMessageBuilder('今日他にはどのようなことをしていましたか？'));
+                        $this->bot->replyMessage($event->getReplyToken(), $multi_message);
+                        $question->update(['order_number' => 1]);
+                    } else if ($event->getText() === '終了する') {
+                        $multi_message = new MultiMessageBuilder();
+                        $multi_message->add(new TextMessageBuilder('今日も一日お疲れ様でした！'));
+                        $multi_message->add(new TextMessageBuilder('これからもアガトンに色々お話してくれると嬉しいです！'));
+                        $multi_message->add(new TextMessageBuilder('これで「振り返る」を終わるね！バイバイ！'));
+                        $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                         $question->update(['operation_type' => null, 'order_number' => null, 'condition_id' => null, 'feeling_id' => null]);
                     }
                 } else if ($question->operation_type === 3) {
@@ -294,7 +291,19 @@ class MockUpController extends Controller
                 list($action_data, $uuid_data) = explode("&", $event->getPostbackData());
                 [$action_key, $action_type] = explode("=", $action_data);
                 [$select_key, $select_value] = explode("=", $uuid_data);
-                if ($action_type === 'SETTING_UP_NOTIFICATION') {
+                if ($action_type === 'ANSWER_CONDITION') {
+                    // 保存
+                    $date_time = new DateTime();
+                    $this->bot->replyMessage($event->getReplyToken(), Question::askWhatIsHappened($select_value, $question));
+                    $condition = Condition::create([
+                        'user_uuid' => $user->uuid,
+                        'evaluation' => Condition::EVALUATION[$select_value],
+                        'date' => $date_time->format('Y-m-d'),
+                        'time' => $date_time->format('H:i:s')
+                    ]);
+                    $question->update(['order_number' => 1, 'condition_id' => $condition->id]);
+                    return;
+                } else if ($action_type === 'SETTING_UP_NOTIFICATION') {
                     $self_check_notification = SelfCheckNotification::where('user_uuid', $user->uuid)->orderBy('time')->get();
                     $weekly_report_notification = WeeklyReportNotification::where('user_uuid', $user->uuid)->orderBy('time')->get();
                     if (count($self_check_notification) > 0) {

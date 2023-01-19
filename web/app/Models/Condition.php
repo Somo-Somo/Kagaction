@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Services\CarouselContainerBuilder\SelectInTalkCarouselContainerBuilder;
 use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use LINE\LINEBot\MessageBuilder\FlexMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\QuickReplyBuilder\ButtonBuilder\QuickReplyButtonBuilder;
 use LINE\LINEBot\QuickReplyBuilder\QuickReplyMessageBuilder;
@@ -116,6 +118,38 @@ class Condition extends Model
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
         $multi_message->add(new TextMessageBuilder($first_message));
         $multi_message->add(new TextMessageBuilder($ask_feeling_message, $quick_reply_message_builder));
+        return $multi_message;
+    }
+
+    /**
+     * 調子を聞く
+     *
+     * @param User $user
+     * @param Question $question
+     * @return
+     */
+    public static function askConditionByCarousel(User $user, Question $question)
+    {
+        $carousels = [
+            ['text' => '絶好調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/ai7dz-6bymx.png", "postback_data" => "action=ANSWER_CONDITION&value=絶好調"],
+            ['text' => '好調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/a4i1u-i6lkt.png", "postback_data" => "action=ANSWER_CONDITION&value=好調"],
+            ['text' => 'まあまあ', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/awp2h-avjb5.png", "postback_data" => "action=ANSWER_CONDITION&value=まあまあ"],
+            ['text' => '不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/abova-tgwn5.png", "postback_data" => "action=ANSWER_CONDITION&value=不調"],
+            ['text' => '絶不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/a4slq-53hdi.png", "postback_data" => "action=ANSWER_CONDITION&value=絶不調"],
+        ];
+        if ($question->operation_type == 1) {
+            $first_message = '「今の調子や気持ちについて話す」ですね！かしこまりました！';
+            $ask_text = $user->name . 'さんの今の調子はどうですか？';
+        } else {
+            $first_message = '「今日の振り返りをする」ですね！かしこまりました！';
+            $ask_text = $user->name . 'さんの今日の調子はどうですか？';
+        }
+
+        $carousel_container = SelectInTalkCarouselContainerBuilder::createSelectInTalkBubbleContainer($carousels);
+        $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
+        $multi_message->add(new TextMessageBuilder($first_message));
+        $multi_message->add(new TextMessageBuilder($ask_text));
+        $multi_message->add(new FlexMessageBuilder($ask_text, $carousel_container));
         return $multi_message;
     }
 }
