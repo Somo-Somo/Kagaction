@@ -91,8 +91,8 @@ class Question extends Model
         $first_message =  $user->name . 'さん、' . $greeting;
         $ask_message = 'どちらを行いますか？';
         $quick_reply_message_builder = new QuickReplyMessageBuilder([
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('今の調子や気持ちについて話す', '今の調子や気持ちについて話す')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('今日の振り返りをする', '今日の振り返りをする')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('💬 今の調子や気持ちについて話す', '今の調子や気持ちについて話す')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('💭 今日の振り返りをする', '今日の振り返りをする')),
         ]);
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
         $multi_message->add(new TextMessageBuilder($first_message));
