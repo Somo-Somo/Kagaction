@@ -76,6 +76,36 @@ class Question extends Model
      * @param string $condition
      * @return
      */
+    public static function whatAreYouTalkingAbout($user)
+    {
+        $time = new DateTime();
+        $now_hour = $time->format('H');
+        if ($now_hour > 4 && $now_hour < 11) {
+            $greeting = 'おはよう！';
+        } else if ($now_hour >= 11 && $now_hour < 18) {
+            $greeting = 'こんにちは！';
+        } else {
+            $greeting = 'こんばんは！';
+        }
+        $first_message =  $user->name . 'さん、' . $greeting;
+        $ask_message = 'どちらを行いますか？';
+        $quick_reply_message_builder = new QuickReplyMessageBuilder([
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('今の調子や気持ちについて話す', '今の調子や気持ちについて話す')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('今日の振り返りをする', '今日の振り返りをする')),
+        ]);
+        $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
+        $multi_message->add(new TextMessageBuilder($first_message));
+        $multi_message->add(new TextMessageBuilder($ask_message, $quick_reply_message_builder));
+        return $multi_message;
+    }
+
+    /**
+     * なにが起きたのかきく
+     *
+     * @param User $user
+     * @param string $condition
+     * @return
+     */
     public static function askWhatIsHappened(User $user, string $condition)
     {
         if ($condition === '絶好調') {
@@ -90,38 +120,21 @@ class Question extends Model
     }
 
     /**
-     * なにが起きたのかきく
-     *
-     * @param Question $question
-     * @param User $user
-     * @return
-     */
-    public static function askWhyYouAreInGoodCondition(Question $question, User $user)
-    {
-        $question->update(['order_number' => 4]);
-        $condition = Condition::where('id', $question->condition_id)->first();
-        $message = 'そうだったんですね!' . "\n" . 'そしたらどうして' . $user->name . 'さんは今' . Condition::CONDITION_TYPE[$condition->evaluation] . 'なのですか？';
-        $text_message_builder = new TextMessageBuilder($message);
-        return $text_message_builder;
-    }
-
-    /**
      * 今の気持ちを聞く
      *
-     * @param Question $question
+     * @param int $evaluation
      * @param string $get_text
      * @return
      */
-    public static function askAboutFeeling(Question $question, string $get_text)
+    public static function askAboutFeeling(int $evaluation)
     {
-        $condition = Condition::where('id', $question->condition_id)->first();
-        if ($condition->evaluation > 2) {
+        if ($evaluation > 2) {
             // $first_message = $get_text . 'のですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
             $first_message = 'なるほど！そのようなことをしていたのですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
             // $ask_message = $get_text . '時の気持ちを表すものがこの中にあったりしますか？';
             $ask_message =  'その時の気持ちを表すものがこの中にあったりしますか？';
         } else {
-            $first_message = '今日は' . $get_text . 'だったんですね。';
+            $first_message = '今日は' . Condition::CONDITION_TYPE[$evaluation] . 'だったんですね。';
             $ask_message = '今の自分の気持ちを表すものがこの中にあったりしますか？';
         }
 
@@ -160,12 +173,6 @@ class Question extends Model
     public static function thanksMessage(Question $question, string $reply, User $user)
     {
         $message = Feeling::sortThanksMessage($question->feeling->feeling_type, $reply, $user);
-        $question->update([
-            'condition_id' => null,
-            'feeling_id' => null,
-            'operation_type' => null,
-            'order_number' => null
-        ]);
         return $message;
     }
 }
