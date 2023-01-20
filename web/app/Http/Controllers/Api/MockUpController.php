@@ -151,7 +151,7 @@ class MockUpController extends Controller
                     );
                     $question->update([
                         'operation_type' => null,
-                        'order_number' => null,
+                        'order_number' => null
                     ]);
                 }
                 if ($question->operation_type === 1 || $question->operation_type === 2) {
@@ -222,7 +222,7 @@ class MockUpController extends Controller
                         } else if ($event->getText() === '週間レポート : 通知ONにする') {
                             WeeklyReportNotification::create([
                                 'user_uuid' => $user->uuid,
-                                'time' => '09:00:00',
+                                'time' => '09:00:00'
                             ]);
                             $this->bot->replyMessage(
                                 $event->getReplyToken(),
@@ -305,11 +305,11 @@ class MockUpController extends Controller
                     return;
                 } else if ($action_type === 'SETTING_UP_NOTIFICATION') {
                     $self_check_notification = SelfCheckNotification::where('user_uuid', $user->uuid)->orderBy('time')->get();
-                    $weekly_report_notification = WeeklyReportNotification::where('user_uuid', $user->uuid)->orderBy('time')->get();
+                    $weekly_report_notification = WeeklyReportNotification::where('user_uuid', $user->uuid)->get();
                     if (count($self_check_notification) > 0) {
                         $self_check_text =  '話す:';
-                        foreach ($self_check_notification as $key => $value) {
-                            $self_check_text .= "\n" . "・" . substr($value->time, 0, -3);
+                        foreach ($self_check_notification as $value) {
+                            $self_check_text .= "\n" . '・' . substr($value->time, 0, -3);
                         }
                     } else {
                         $self_check_text = '話す: OFF';
@@ -317,13 +317,13 @@ class MockUpController extends Controller
                     $quick_reply_array = [new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('💬 話す : 通知を変更する', '話す : 通知を変更する'))];
                     if (count($weekly_report_notification) > 0) {
                         $weekly_report_text = '週間レポート : ON';
-                        $quick_reply_array[] = new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊 週間レポート : 🔕 通知OFFにする', '週間レポート : 通知OFFにする'));
+                        $quick_reply_array[] = new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊週間レポート : 🔕 通知OFFにする', '週間レポート : 通知OFFにする'));
                     } else {
                         $weekly_report_text = '週間レポート : OFF';
-                        $quick_reply_array[] = new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊 週間レポート : 🔔 通知ONにする', '週間レポート : 通知ONにする'));
+                        $quick_reply_array[] = new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📊週間レポート : 🔔 通知ONにする', '週間レポート : 通知ONにする'));
                     }
                     $multi_message = new MultiMessageBuilder();
-                    $multi_message->add(new TextMessageBuilder('🔔通知設定'));
+                    $multi_message->add(new TextMessageBuilder('🔔 通知設定'));
                     $multi_message->add(new TextMessageBuilder($self_check_text));
                     $multi_message->add(new TextMessageBuilder(
                         $weekly_report_text,
@@ -334,33 +334,35 @@ class MockUpController extends Controller
                         'condition_id' => null,
                         'feeling_id' => null,
                         'operation_type' => 3, // 通知の設定
-                        'order_number' => 1,
+                        'order_number' => 1
                     ]);
                 } else if ($action_type === 'SELF_CHECK_NOTIFICATION_TIME') {
-                    Log::debug($select_value);
                     if (strpos($select_value, '-')) {
                         list($change_source, $change_time) = explode("-", $select_value);
                         $message = '話すの通知を毎日:' . $change_source . 'から毎日' . $change_time . 'に変更しました';
+                        $change_source_notification = SelfCheckNotification::where('user_uuid', $user->uuid)->first();
                     } else {
-                        $change_source = null;
                         $change_time = $select_value;
                         $message = '話すの通知を毎日:' . $select_value . 'に追加しました';
+                        $change_source_notification = null;
                     }
-                    SelfCheckNotification::updateOrCreate(
-                        ['user_uuid' => $user->uuid, 'time' => $change_source . ':00'],
-                        ['user_uuid' => $user->uuid, 'time' => $change_time . ':00']
-                    );
+
+                    if ($change_source_notification) {
+                        $change_source_notification->update(['user_uuid' => $user->uuid, 'time' => $change_time . ':00']);
+                    } else {
+                        SelfCheckNotification::create(['user_uuid' => $user->uuid, 'time' => $change_time . ':00']);
+                    }
                     $this->bot->replyMessage(
                         $event->getReplyToken(),
                         new TextMessageBuilder($message)
                     );
                     $question->update([
                         'operation_type' => null, // 通知の設定
-                        'order_number' => null,
+                        'order_number' => null
                     ]);
                 } else if ($action_type === 'WEEKLY_REPORT_NOTIFICATION_TIME') {
-                    WeeklyReportNotification::updateOrCreate(
-                        ['user_uuid' => $user->uuid, 'time' => $select_value . ':00'],
+                    WeeklyReportNotification::create(
+                        ['user_uuid' => $user->uuid, 'time' => $select_value . ':00']
                     );
                     $this->bot->replyMessage(
                         $event->getReplyToken(),
@@ -368,7 +370,7 @@ class MockUpController extends Controller
                     );
                     $question->update([
                         'operation_type' => null, // 通知の設定
-                        'order_number' => null,
+                        'order_number' => null
                     ]);
                 } else if (
                     $action_type === 'THIS_WEEK_TALK_LOG_PAGE_TRANSITION' || $action_type === 'LAST_WEEK_TALK_LOG_PAGE_TRANSITION'

@@ -46,7 +46,7 @@ class SelfCheckNotificationAction
             Log::info('has');
             foreach ($recive_notifications as  $recive_notification) {
                 $user = $recive_notification->user;
-                $this->bot->replyMessage(
+                $this->bot->pushMessage(
                     $user->line_id,
                     Question::whatAreYouTalkingAbout($user)
                 );
