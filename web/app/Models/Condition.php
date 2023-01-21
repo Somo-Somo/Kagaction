@@ -41,6 +41,13 @@ class Condition extends Model
 
     const CONDITION_TYPE = ['なし', '絶不調', '不調', 'まあまあ', '好調', '絶好調'];
     const CONDITION_EMOJI = [null, '😣 絶不調', '🙁 不調', '😐 まあまあ', '🙂 好調', '😆 絶好調'];
+    const CAROUSEL =  [
+        ['text' => '絶好調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/ai7dz-6bymx.png", "postback_data" => "action=ANSWER_CONDITION&value=絶好調"],
+        ['text' => '好調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/a4i1u-i6lkt.png", "postback_data" => "action=ANSWER_CONDITION&value=好調"],
+        ['text' => 'まあまあ', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/awp2h-avjb5.png", "postback_data" => "action=ANSWER_CONDITION&value=まあまあ"],
+        ['text' => '不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/abova-tgwn5.png", "postback_data" => "action=ANSWER_CONDITION&value=不調"],
+        ['text' => '絶不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/a4slq-53hdi.png", "postback_data" => "action=ANSWER_CONDITION&value=絶不調"],
+    ];
 
     const EVALUATION = [
         '絶不調' => 1,
@@ -130,13 +137,6 @@ class Condition extends Model
      */
     public static function askConditionByCarousel(User $user, Question $question)
     {
-        $carousels = [
-            ['text' => '絶好調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/ai7dz-6bymx.png", "postback_data" => "action=ANSWER_CONDITION&value=絶好調"],
-            ['text' => '好調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/a4i1u-i6lkt.png", "postback_data" => "action=ANSWER_CONDITION&value=好調"],
-            ['text' => 'まあまあ', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/awp2h-avjb5.png", "postback_data" => "action=ANSWER_CONDITION&value=まあまあ"],
-            ['text' => '不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/abova-tgwn5.png", "postback_data" => "action=ANSWER_CONDITION&value=不調"],
-            ['text' => '絶不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/a4slq-53hdi.png", "postback_data" => "action=ANSWER_CONDITION&value=絶不調"],
-        ];
         if ($question->operation_type == 1) {
             $first_message = '「今の調子や気持ちについて話す」ですね！かしこまりました！';
             $ask_text = $user->name . 'さんの今の調子はどうですか？';
@@ -145,7 +145,7 @@ class Condition extends Model
             $ask_text = $user->name . 'さんの今日の調子はどうですか？';
         }
 
-        $carousel_container = SelectInTalkCarouselContainerBuilder::createSelectInTalkBubbleContainer($carousels);
+        $carousel_container = SelectInTalkCarouselContainerBuilder::createSelectInTalkBubbleContainer(Condition::CAROUSEL);
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
         $multi_message->add(new TextMessageBuilder($first_message));
         $multi_message->add(new TextMessageBuilder($ask_text));

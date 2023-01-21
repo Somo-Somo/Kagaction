@@ -5,8 +5,6 @@ namespace App\UseCases\Line;
 use App\Models\User;
 use App\Models\Question;
 use App\Models\Onboarding;
-use App\Models\TodoCheckNotificationDateTime;
-use App\Repositories\User\UserRepositoryInterface;
 use Illuminate\Support\Str;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
@@ -23,21 +21,22 @@ class FollowAction
      */
     protected $bot;
 
-    public function __construct(UserRepositoryInterface $user_repository_interface)
+    public function __construct()
     {
         $this->httpClient = new CurlHTTPClient(config('app.line_channel_access_token'));
         $this->bot = new LINEBot($this->httpClient, ['channelSecret' => config('app.line_channel_secret')]);
-        $this->user_repository = $user_repository_interface;
     }
 
     /**
      * ユーザーが会員登録されているか確認する
      *
      * @param string $line_user_id
+     * @param $event
      * @return
      */
-    public function invoke(string $line_user_id)
+    public function invoke($event)
     {
+        $line_user_id = $event->getUserId();
         // ユーザーが既に会員登録されているか確認する
         $has_user_account = User::where('line_id', $line_user_id)->first();
         // Line上で登録済みか
@@ -57,23 +56,18 @@ class FollowAction
                 'user_uuid' => $user['uuid']
             ]);
 
-            // TodoCheckNotificationDateTime::create([
-            //     'user_uuid' => $user['uuid'],
-            //     'notification_date' => 0,
-            //     'notification_time' => '21:00:00'
-            // ]);
-
-            // userをneo4jのDBにも登録
-            // if ($user) {
-            //     $this->user_repository->register($user);
-            // }
+            $this->bot->replyMessage(
+                $event->getReplyToken(),
+                Onboarding::firstGreeting()
+            );
         }
 
         if ($has_line_user_account === NULL) {
             // Lineユーザーへの質問テーブルにも新しくレコードを保存する
             Question::create([
                 'line_user_id' => $line_user_id,
-                'operation_type' => 0
+                'operation_type' => 0,
+                'order_number' => 1
             ]);
         }
 

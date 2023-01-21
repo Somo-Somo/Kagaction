@@ -64,9 +64,8 @@ class WatchLogAction
             $start_day = $today->subWeek()->startOfWeek()->toDateString();
             $end_day = $today->subWeek()->endOfWeek()->toDateString();
         }
-        $conditions = Condition::where('user_uuid', $user->uuid)->whereDate('date', '>=', $start_day)->whereDate('date', '<', $end_day)->get();
+        $conditions = Condition::where('user_uuid', $user->uuid)->whereDate('date', '>=', $start_day)->whereDate('date', '<=', $end_day)->get();
         $talk_log_carousel_columns = [];
-
         foreach ($conditions as $condition) {
             $feeling = Feeling::where('condition_id', $condition->id)->first();
             $diary = Diary::where('condition_id', $condition->id)->first();

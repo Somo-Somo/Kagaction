@@ -6,6 +6,7 @@ use DateTime;
 use Dotenv\Util\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\QuickReplyBuilder\ButtonBuilder\QuickReplyButtonBuilder;
 use LINE\LINEBot\QuickReplyBuilder\QuickReplyMessageBuilder;
@@ -88,7 +89,8 @@ class Question extends Model
         } else {
             $greeting = 'こんばんは！';
         }
-        $first_message =  $user->name . 'さん、' . $greeting;
+        $user_name = $user->nickname ? $user->nickname : $user->name;
+        $first_message =  $user_name . 'さん、' . $greeting;
         $ask_message = 'どちらを行いますか？';
         $quick_reply_message_builder = new QuickReplyMessageBuilder([
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('💬 今の調子や気持ちについて話す', '今の調子や気持ちについて話す')),
@@ -109,7 +111,7 @@ class Question extends Model
      */
     public static function askWhatIsHappened(string $condition_value, Question $question)
     {
-        if ($question->operation_type === 1) {
+        if ($question->operation_type === 0 || $question->operation_type === 1) {
             $time = '今';
             $ask =  '今どんなことをしていましたか？';
             $soso_gobi_response = 'なんですね！';
@@ -122,9 +124,9 @@ class Question extends Model
         }
 
         if ($condition_value === '絶好調') {
-            $ask_what_is_happened = 'それはもう天才だね！' . "\n" . $ask . "\n" . 'アガトンにも教えて欲しいです！';
+            $ask_what_is_happened = 'それはもう天才ですね！' . "\n" . $ask . "\n" . 'アガトンにも教えて欲しいです！';
         } else if ($condition_value === '好調') {
-            $ask_what_is_happened = 'それは最高だね！' . "\n" . $ask . "\n" . 'アガトンにも教えて欲しいです！';
+            $ask_what_is_happened = 'それは最高ですね！' . "\n" . $ask . "\n" . 'アガトンにも教えて欲しいです！';
         } else if ($condition_value === 'まあまあ') {
             $ask_what_is_happened = $time . 'はまあまあな調子' . $soso_gobi_response . "\n" . 'ちなみに' . $ask;
         } else if ($condition_value === '不調') {
@@ -144,7 +146,7 @@ class Question extends Model
      */
     public static function askAboutFeeling(Question $question)
     {
-        if ($question->operation_type === 1) {
+        if ($question->operation_type === 0 || $question->operation_type === 1) {
             $time = '今';
         } else {
             $time = '今日は';
@@ -154,8 +156,8 @@ class Question extends Model
         $first_message = 'なるほど！そのようなことを' . $time . 'していたのですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
         // $ask_message = $get_text . '時の気持ちを表すものがこの中にあったりしますか？';
         $ask_message =  'そのことをしていた時の気持ちを表すものがこの中にあったりしますか？';
-
         $quick_reply_buttons = Feeling::feelingQuickReplyBtn();
+        if ($question->condition->evaluation < 3) krsort($quick_reply_buttons);
         $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
         $multi_message->add(new TextMessageBuilder($first_message));

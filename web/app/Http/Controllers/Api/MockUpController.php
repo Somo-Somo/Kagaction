@@ -9,11 +9,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Diary;
 use App\Models\Feeling;
 use App\Models\ImageReport;
+use App\Models\Onboarding;
 use App\Models\SelfCheckNotification;
 use App\Models\WeeklyReportNotification;
 use App\UseCases\Line\FollowAction;
 use App\Services\LineBotService;
 use App\Services\CarouselContainerBuilder\OtherMenuCarouselContainerBuilder;
+use App\UseCases\Line\OnboardingAction;
 use App\UseCases\Line\WatchLogAction;
 use Carbon\Carbon;
 use DateTime;
@@ -80,7 +82,7 @@ class MockUpController extends Controller
             $user = User::where('line_id', $event->getUserId())->first();
             $question = Question::where('line_user_id', $event->getUserId())->first();
             if ($event->getType() === 'follow') {
-                $follow_action->invoke($event->getUserId());
+                $follow_action->invoke($event);
             } elseif ($event->getType() === 'message') {
                 if ($event->getText() === '話す') {
                     $this->bot->replyMessage(
@@ -150,11 +152,13 @@ class MockUpController extends Controller
                         new FlexMessageBuilder('メニュー: その他', OtherMenuCarouselContainerBuilder::createCarouselContainerBuilder())
                     );
                     $question->update([
-                        'operation_type' => null,
-                        'order_number' => null
+                        'operation_type' => 0,
+                        'order_number' => 1
                     ]);
-                }
-                if ($question->operation_type === 1 || $question->operation_type === 2) {
+                } else if ($question->operation_type === 0) {
+                    $onboarding = new OnboardingAction();
+                    $onboarding->invoke($user, $question, $event);
+                } else if ($question->operation_type === 1 || $question->operation_type === 2) {
                     if ($question->order_number === 1) {
                         $this->bot->replyMessage($event->getReplyToken(), Question::askAboutFeeling($question));
                         Diary::create([
@@ -194,7 +198,7 @@ class MockUpController extends Controller
                         $multi_message = new MultiMessageBuilder();
                         $multi_message->add(new TextMessageBuilder('今日も一日お疲れ様でした！'));
                         $multi_message->add(new TextMessageBuilder('これからもアガトンに色々お話してくれると嬉しいです！'));
-                        $multi_message->add(new TextMessageBuilder('これで「振り返る」を終わるね！バイバイ！'));
+                        $multi_message->add(new TextMessageBuilder('これで「今日の振り返り」を終了します。'));
                         $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                         $question->update(['operation_type' => null, 'order_number' => null, 'condition_id' => null, 'feeling_id' => null]);
                     }
@@ -301,7 +305,8 @@ class MockUpController extends Controller
                         'date' => $date_time->format('Y-m-d'),
                         'time' => $date_time->format('H:i:s')
                     ]);
-                    $question->update(['order_number' => 1, 'condition_id' => $condition->id]);
+                    $order_number = $question->operation_type === 0 ? 4 : 1;
+                    $question->update(['order_number' => $order_number, 'condition_id' => $condition->id]);
                     return;
                 } else if ($action_type === 'SETTING_UP_NOTIFICATION') {
                     $self_check_notification = SelfCheckNotification::where('user_uuid', $user->uuid)->orderBy('time')->get();
@@ -337,6 +342,20 @@ class MockUpController extends Controller
                         'order_number' => 1
                     ]);
                 } else if ($action_type === 'SELF_CHECK_NOTIFICATION_TIME') {
+                    if ($question->operation_type === 0) {
+                        $multi_message = new MultiMessageBuilder();
+                        $multi_message->add(new TextMessageBuilder('毎日' . $select_value . 'に通知を設定しました！'));
+                        $multi_message->add(new TextMessageBuilder(
+                            'これら全ての通知の設定を変更したい場合は、メニューの「設定」->「通知の設定」から変更することができます！',
+                            new QuickReplyMessageBuilder([
+                                new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('了解！', '了解！'))
+                            ])
+                        ));
+                        $this->bot->replyMessage($event->getReplyToken(), $multi_message);
+                        SelfCheckNotification::create(['user_uuid' => $user->uuid, 'time' => $select_value . ':00']);
+                        $question->update(['order_number' => 11]);
+                        return;
+                    }
                     if (strpos($select_value, '-')) {
                         list($change_source, $change_time) = explode("-", $select_value);
                         $message = '話すの通知を毎日:' . $change_source . 'から毎日' . $change_time . 'に変更しました';
