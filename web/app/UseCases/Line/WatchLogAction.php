@@ -58,13 +58,17 @@ class WatchLogAction
         ]);
 
         if ($view_week === '今週') {
-            $start_day = $today->startOfWeek()->toDateString();
-            $end_day = $today->endOfWeek()->toDateString();
+            $start_day = $today->copy()->startOfWeek()->toDateString();
+            $end_day = $today->copy()->endOfWeek()->toDateString();
         } else if ($view_week === '先週') {
-            $start_day = $today->subWeek()->startOfWeek()->toDateString();
-            $end_day = $today->subWeek()->endOfWeek()->toDateString();
+            $start_day = $today->copy()->subWeek()->startOfWeek()->toDateString();
+            $end_day = $today->copy()->subWeek()->endOfWeek()->toDateString();
         }
-        $conditions = Condition::where('user_uuid', $user->uuid)->whereDate('date', '>=', $start_day)->whereDate('date', '<=', $end_day)->get();
+
+        $conditions = Condition::where('user_uuid', $user->uuid)
+            ->whereDate('date', '>=', $start_day)
+            ->whereDate('date', '<=', $end_day)->get();
+
         $talk_log_carousel_columns = [];
         foreach ($conditions as $condition) {
             $feeling = Feeling::where('condition_id', $condition->id)->first();
