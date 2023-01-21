@@ -277,7 +277,7 @@ class Feeling extends Model
     {
         $user_name = $user->nickname ? $user->nickname : $user->name;
         return [
-            new TextMessageBuilder('嬉しい気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '!アガトンもなんだか嬉しいです！'),
+            new TextMessageBuilder('嬉しい気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '。アガトンもなんだか嬉しいです！'),
             new TextMessageBuilder('どんなところが' . $user_name . 'さんにとって嬉しかったですか？')
         ];
     }
@@ -308,7 +308,7 @@ class Feeling extends Model
     public static function questionAfterAskAboutFeelingIfFun(int $op_num)
     {
         return [
-            new TextMessageBuilder('楽しい気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '!'),
+            new TextMessageBuilder('楽しい気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '！'),
             new TextMessageBuilder('どんなところが楽しかったですか？')
         ];
     }
@@ -341,8 +341,8 @@ class Feeling extends Model
     {
         $user_name = $user->nickname ? $user->nickname : $user->name;
         return [
-            new TextMessageBuilder('穏やかな気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '!'),
-            new TextMessageBuilder('なぜ穏やかな気持ちになりましたか？')
+            new TextMessageBuilder('穏やかな気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '！'),
+            new TextMessageBuilder('どうして穏やかな気持ちになりましたか？')
         ];
     }
 
@@ -372,8 +372,8 @@ class Feeling extends Model
     public static function questionAfterAskAboutFeelingIfWakuwaku(int $op_num)
     {
         return [
-            new TextMessageBuilder('ワクワクしている気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '!'),
-            new TextMessageBuilder('どんなことに今ワクワクしているんですか!？')
+            new TextMessageBuilder('ワクワクしている気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '！'),
+            new TextMessageBuilder('どんなことに今ワクワクしているんですか！？')
         ];
     }
 
@@ -510,7 +510,7 @@ class Feeling extends Model
     public static function questionAfterAskAboutFeelingIfTired(int $op_num)
     {
         return [
-            new TextMessageBuilder('疲れているんですね。' . "\n" . 'お疲れ様です!'),
+            new TextMessageBuilder('疲れているんですね。' . "\n" . 'お疲れ様です！'),
             new TextMessageBuilder('どういった部分が疲れましたか！？'),
         ];
     }
