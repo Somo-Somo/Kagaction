@@ -6,6 +6,7 @@ use DateTime;
 use Dotenv\Util\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\QuickReplyBuilder\ButtonBuilder\QuickReplyButtonBuilder;
 use LINE\LINEBot\QuickReplyBuilder\QuickReplyMessageBuilder;
@@ -155,8 +156,8 @@ class Question extends Model
         $first_message = 'なるほど！そのようなことを' . $time . 'していたのですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
         // $ask_message = $get_text . '時の気持ちを表すものがこの中にあったりしますか？';
         $ask_message =  'そのことをしていた時の気持ちを表すものがこの中にあったりしますか？';
-
         $quick_reply_buttons = Feeling::feelingQuickReplyBtn();
+        if ($question->condition->evaluation < 3) krsort($quick_reply_buttons);
         $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
         $multi_message->add(new TextMessageBuilder($first_message));

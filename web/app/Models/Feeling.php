@@ -109,12 +109,12 @@ class Feeling extends Model
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['calm'], '穏やか')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['wakuwaku'], 'ワクワク')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['angry'], 'イライラ')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['lethargic'], '無気力')),
+            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['tired'], '疲れた')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['anxious'], '不安')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['hard'], '辛い')),
             new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['sad'], '悲しい')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['tired'], '疲れた')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder(Feeling::FEELING_EMOJI['lethargic'], '無気力')),
-            new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('ない', 'ない')),
+            // new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('ない', 'ない')),
         ];
     }
 
