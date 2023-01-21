@@ -25,8 +25,7 @@ class SelectInTalkCarouselContainerBuilder
         foreach ($carousels as $key => $value) {
             // $image_url = config('app.app_env') === 'local' ?
             //     $value['image_url']['local'] : $value['image_url']['production'];
-            $image_url = $value['image_url'];
-            $url = config('app.mix_firebase_access_url') . $image_url;
+            $url = $value['image_url'];
             $img_component_builders = new ImageComponentBuilder($url);
             $img_component_builders->setSize('xs');
             $img_component_builders->setOffsetTop('8px');

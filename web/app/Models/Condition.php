@@ -86,27 +86,27 @@ class Condition extends Model
         // ],
         [
             'text' => '絶好調',
-            'image_url' => "/o/condition%2Fgreat.png?alt=media&token=378eee5e-1074-4ab9-8b67-6583d4d9666d",
+            'image_url' => "https://firebasestorage.googleapis.com/v0/b/agathon-prod.appspot.com/o/condition%2Fgreat.png?alt=media&token=378eee5e-1074-4ab9-8b67-6583d4d9666d",
             "postback_data" => "action=ANSWER_CONDITION&value=絶好調"
         ],
         [
             'text' => '好調',
-            'image_url' => "/o/condition%2Fgood.png?alt=media&token=981928c3-9509-4023-a57a-f284faab230f",
+            'image_url' => "https://firebasestorage.googleapis.com/v0/b/agathon-prod.appspot.com/o/condition%2Fgood.png?alt=media&token=981928c3-9509-4023-a57a-f284faab230f",
             "postback_data" => "action=ANSWER_CONDITION&value=好調"
         ],
         [
             'text' => 'まあまあ',
-            'image_url' => "/o/condition%2Fok.png?alt=media&token=bc1e3771-0503-4034-9641-cda6b32ecfa9",
+            'image_url' => "https://firebasestorage.googleapis.com/v0/b/agathon-prod.appspot.com/o/condition%2Fok.png?alt=media&token=bc1e3771-0503-4034-9641-cda6b32ecfa9",
             "postback_data" => "action=ANSWER_CONDITION&value=まあまあ"
         ],
         [
             'text' => '不調',
-            'image_url' =>  "/o/condition%2Fbad.png?alt=media&token=d2586a9a-3d09-4d6d-9325-585a6f3b3257",
+            'image_url' =>  "https://firebasestorage.googleapis.com/v0/b/agathon-prod.appspot.com/o/condition%2Fbad.png?alt=media&token=d2586a9a-3d09-4d6d-9325-585a6f3b3257",
             "postback_data" => "action=ANSWER_CONDITION&value=不調"
         ],
         [
             'text' => '絶不調',
-            'image_url' => "/o/condition%2Fworse.png?alt=media&token=855a5b34-4b3c-4fa9-9546-98cadda1f0f9",
+            'image_url' => "https://firebasestorage.googleapis.com/v0/b/agathon-prod.appspot.com/o/condition%2Fworse.png?alt=media&token=855a5b34-4b3c-4fa9-9546-98cadda1f0f9",
             "postback_data" => "action=ANSWER_CONDITION&value=絶不調"
         ],
     ];
