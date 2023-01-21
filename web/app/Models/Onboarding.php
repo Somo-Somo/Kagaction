@@ -127,9 +127,9 @@ class Onboarding extends Model
      */
     public static function explainWeeklyReport()
     {
-        $image_url = config('app.env') === 'production' ?
-            config('app.mix_firebase_access_url') . '/o/onboarding%2Fweekly_report.png?alt=media&token=22249168-826f-4b66-95c6-a996251bfcf9' :
-            config('app.mix_firebase_access_url') . '/o/onboarding%2Fweekly_report.png?alt=media&token=293fcb05-a919-4ce4-a7fe-9d41c7c05385';
+        $image_url = config('app.env') === 'local' ?
+            config('app.mix_firebase_access_url') . '/o/onboarding%2Fweekly_report.png?alt=media&token=293fcb05-a919-4ce4-a7fe-9d41c7c05385' :
+            config('app.mix_firebase_access_url') . '/o/onboarding%2Fweekly_report.png?alt=media&token=22249168-826f-4b66-95c6-a996251bfcf9';
 
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
         $multi_message->add(new TextMessageBuilder('また、毎週日曜日に記録した調子や感情をもとに生成した画像を週のレポートとして送信します。'));
