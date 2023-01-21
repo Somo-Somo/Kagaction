@@ -43,45 +43,70 @@ class Condition extends Model
     const CONDITION_EMOJI = [null, '😣 絶不調', '🙁 不調', '😐 まあまあ', '🙂 好調', '😆 絶好調'];
 
     const CAROUSEL =  [
+        // [
+        //     'text' => '絶好調',
+        //     'image_url' =>
+        //     [
+        //         'local' => "/o/condition%2Fgreat.png?alt=media&token=702583dd-e71c-467d-808b-27f926455a55",
+        //         'production' => "/o/condition%2Fgreat.png?alt=media&token=378eee5e-1074-4ab9-8b67-6583d4d9666d"
+        //     ],
+        //     "postback_data" => "action=ANSWER_CONDITION&value=絶好調"
+        // ],
+        // [
+        //     'text' => '好調',
+        //     'image_url' => [
+        //         'local' => "/o/condition%2Fgood.png?alt=media&token=622ba252-d170-46dd-9a62-731a01b5899a",
+        //         'production' => "/o/condition%2Fgood.png?alt=media&token=981928c3-9509-4023-a57a-f284faab230f"
+        //     ],
+        //     "postback_data" => "action=ANSWER_CONDITION&value=好調"
+        // ],
+        // [
+        //     'text' => 'まあまあ',
+        //     'image_url' => [
+        //         'local' => '/o/condition%2Fok.png?alt=media&token=c40e34d9-2bc9-468e-9cb0-d6cbf00f34ce',
+        //         'production' => "/o/condition%2Fok.png?alt=media&token=bc1e3771-0503-4034-9641-cda6b32ecfa9",
+        //     ],
+        //     "postback_data" => "action=ANSWER_CONDITION&value=まあまあ"
+        // ],
+        // [
+        //     'text' => '不調',
+        //     'image_url' => [
+        //         'local' => '/o/condition%2Fbad.png?alt=media&token=6583d734-1d00-4c6e-912f-32554e8109a6',
+        //         'production' => "/o/condition%2Fbad.png?alt=media&token=d2586a9a-3d09-4d6d-9325-585a6f3b3257",
+        //     ],
+        //     "postback_data" => "action=ANSWER_CONDITION&value=不調"
+        // ],
+        // [
+        //     'text' => '絶不調',
+        //     'image_url' => [
+        //         'local' => "/o/condition%2Fworse.png?alt=media&token=6cfdf57c-c8a8-4afa-970b-f702f3b843aa",
+        //         'production' => "/o/condition%2Fworse.png?alt=media&token=855a5b34-4b3c-4fa9-9546-98cadda1f0f9",
+        //     ],
+        //     "postback_data" => "action=ANSWER_CONDITION&value=絶不調"
+        // ],
         [
             'text' => '絶好調',
-            'image_url' =>
-            [
-                'local' => "/o/condition%2Fgreat.png?alt=media&token=702583dd-e71c-467d-808b-27f926455a55",
-                'production' => "/o/condition%2Fgreat.png?alt=media&token=378eee5e-1074-4ab9-8b67-6583d4d9666d"
-            ],
+            'image_url' => "/o/condition%2Fgreat.png?alt=media&token=378eee5e-1074-4ab9-8b67-6583d4d9666d",
             "postback_data" => "action=ANSWER_CONDITION&value=絶好調"
         ],
         [
             'text' => '好調',
-            'image_url' => [
-                'local' => "/o/condition%2Fgood.png?alt=media&token=622ba252-d170-46dd-9a62-731a01b5899a",
-                'production' => "/o/condition%2Fgood.png?alt=media&token=981928c3-9509-4023-a57a-f284faab230f"
-            ],
+            'image_url' => "/o/condition%2Fgood.png?alt=media&token=981928c3-9509-4023-a57a-f284faab230f",
             "postback_data" => "action=ANSWER_CONDITION&value=好調"
         ],
         [
             'text' => 'まあまあ',
-            'image_url' => [
-                'local' => '/o/condition%2Fok.png?alt=media&token=c40e34d9-2bc9-468e-9cb0-d6cbf00f34ce',
-                'production' => "/o/condition%2Fok.png?alt=media&token=bc1e3771-0503-4034-9641-cda6b32ecfa9",
-            ],
+            'image_url' => "/o/condition%2Fok.png?alt=media&token=bc1e3771-0503-4034-9641-cda6b32ecfa9",
             "postback_data" => "action=ANSWER_CONDITION&value=まあまあ"
         ],
         [
             'text' => '不調',
-            'image_url' => [
-                'local' => '/o/condition%2Fbad.png?alt=media&token=6583d734-1d00-4c6e-912f-32554e8109a6',
-                'production' => "/o/condition%2Fbad.png?alt=media&token=d2586a9a-3d09-4d6d-9325-585a6f3b3257",
-            ],
+            'image_url' =>  "/o/condition%2Fbad.png?alt=media&token=d2586a9a-3d09-4d6d-9325-585a6f3b3257",
             "postback_data" => "action=ANSWER_CONDITION&value=不調"
         ],
         [
             'text' => '絶不調',
-            'image_url' => [
-                'local' => "/o/condition%2Fworse.png?alt=media&token=6cfdf57c-c8a8-4afa-970b-f702f3b843aa",
-                'production' => "/o/condition%2Fworse.png?alt=media&token=855a5b34-4b3c-4fa9-9546-98cadda1f0f9",
-            ],
+            'image_url' => "/o/condition%2Fworse.png?alt=media&token=855a5b34-4b3c-4fa9-9546-98cadda1f0f9",
             "postback_data" => "action=ANSWER_CONDITION&value=絶不調"
         ],
     ];
