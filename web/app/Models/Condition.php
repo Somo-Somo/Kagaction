@@ -43,7 +43,7 @@ class Condition extends Model
     const CONDITION_EMOJI = [null, '😣 絶不調', '🙁 不調', '😐 まあまあ', '🙂 好調', '😆 絶好調'];
     const CAROUSEL =  [
         ['text' => '絶好調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/ai7dz-6bymx.png", "postback_data" => "action=ANSWER_CONDITION&value=絶好調"],
-        ['text' => '好調', 'image_url' => "https://firebasestorage.googleapis.com/v0/b/agathon-prod.appspot.com/o/%E5%A5%BD%E8%AA%BF.svg?alt=media&token=c3a11db1-f5d9-41ec-9725-68be61560cea", "postback_data" => "action=ANSWER_CONDITION&value=好調"],
+        ['text' => '好調', 'image_url' => "https://firebasestorage.googleapis.com/v0/b/agathon-prod.appspot.com/o/%E5%A5%BD%E8%AA%BF.png?alt=media&token=cad59b6d-18c0-479c-afe1-b89d2283a2b1", "postback_data" => "action=ANSWER_CONDITION&value=好調"],
         ['text' => 'まあまあ', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/awp2h-avjb5.png", "postback_data" => "action=ANSWER_CONDITION&value=まあまあ"],
         ['text' => '不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/abova-tgwn5.png", "postback_data" => "action=ANSWER_CONDITION&value=不調"],
         ['text' => '絶不調', 'image_url' => "https://s12.aconvert.com/convert/p3r68-cdx67/a4slq-53hdi.png", "postback_data" => "action=ANSWER_CONDITION&value=絶不調"],
