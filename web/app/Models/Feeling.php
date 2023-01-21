@@ -5,6 +5,7 @@ namespace App\Models;
 use GuzzleHttp\Psr7\Message;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use LINE\LINEBot\MessageBuilder\ImageMessageBuilder;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\QuickReplyBuilder\ButtonBuilder\QuickReplyButtonBuilder;
@@ -83,7 +84,7 @@ class Feeling extends Model
     ];
 
     const RESPONSE_GOBI = [
-        null, 'なんですね', 'だったんですね'
+        'なんですね', 'なんですね', 'だったんですね'
     ];
 
     /**
@@ -222,10 +223,24 @@ class Feeling extends Model
         // else if (Feeling::EN_JA[$feeling_type] === 'もやもや') {
         // }
 
-        if ($op_num  === 1) {
+        if ($op_num  === 0) {
+            $messages[] = new TextMessageBuilder(
+                'このような感じで記録することができます！' . "\n" . '記録したい際はメニューから「話す」を押してください！',
+            );
+            $messages[] = new ImageMessageBuilder(
+                "https://s4.aconvert.com/convert/p3r68-cdx67/a9mf1-0poyp.png",
+                "https://s4.aconvert.com/convert/p3r68-cdx67/a9mf1-0poyp.png",
+                new QuickReplyMessageBuilder([
+                    new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('了解！', '了解！'))
+                ])
+            );
+            // $messages[] = new TextMessageBuilder(
+            //     'その時々のことを記録したい場合は「今の調子や気持ちについて話す」、' . "\n" . '1日の最後にまとめて振り返りたい場合は「今日の振り返りをする」を押してください！'
+            // );
+        } else if ($op_num  === 1) {
             $messages[] = new TextMessageBuilder('これからもアガトンに色々お話してくれると嬉しいです！');
-            $messages[] = new TextMessageBuilder('これで「話す」を終わるね！バイバイ！');
-        } else {
+            $messages[] = new TextMessageBuilder('これで「話す」を終わります！');
+        } else if ($op_num  === 2) {
             $quick_reply_button = [
                 new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('振り返る', '振り返る')),
                 new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('終了する', '終了する')),
@@ -278,7 +293,7 @@ class Feeling extends Model
     public static function thanksMessageWhenGlad()
     {
         return [
-            new TextMessageBuilder('アガトンに嬉しかったことを共有してくれてありがとう！')
+            new TextMessageBuilder('アガトンに嬉しかったことを共有してくれてありがとうございます！')
         ];
     }
 
@@ -341,7 +356,7 @@ class Feeling extends Model
     public static function thanksMessageWhenCalm()
     {
         return [
-            new TextMessageBuilder('だから穏やかな気持ちなんですね！' . "\n" . '教えてくれてありがとう！'),
+            new TextMessageBuilder('だから穏やかな気持ちなんですね！' . "\n" . '教えてくれてありがとうございます！'),
         ];
     }
 
@@ -372,7 +387,7 @@ class Feeling extends Model
     public static function thanksMessageWhenWakuwaku()
     {
         return [
-            new TextMessageBuilder('だからワクワクしている気持ちなんですね！' . "\n" . 'アガトンにワクワクを共有してくれてありがとう！'),
+            new TextMessageBuilder('だからワクワクしている気持ちなんですね！' . "\n" . 'アガトンにワクワクを共有してくれてありがとうございます！'),
         ];
     }
 
@@ -405,7 +420,7 @@ class Feeling extends Model
     {
         return [
             new TextMessageBuilder('なるほど。だから不安な気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '。'),
-            new TextMessageBuilder('アガトンにも教えてくれてありがとう！'),
+            new TextMessageBuilder('アガトンにも教えてくれてありがとうございます！'),
         ];
     }
 
@@ -438,7 +453,7 @@ class Feeling extends Model
     {
         return [
             new TextMessageBuilder('だから' . $user->name . 'さんは辛い感情' . Feeling::RESPONSE_GOBI[$op_num] . '。'),
-            new TextMessageBuilder('アガトンにも教えてくれてありがとう！'),
+            new TextMessageBuilder('アガトンにも教えてくれてありがとうございます！'),
         ];
     }
 
@@ -508,7 +523,7 @@ class Feeling extends Model
     {
         return [
             new TextMessageBuilder('なるほど。「' . $reply . '」が疲れたのですね！'),
-            new TextMessageBuilder('お疲れの中アガトンにお話してくれてありがとう！'),
+            new TextMessageBuilder('お疲れの中アガトンにお話してくれてありがとうございます！'),
         ];
     }
 
