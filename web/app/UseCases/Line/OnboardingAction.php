@@ -127,7 +127,7 @@ class OnboardingAction
                 $multi_message = new MultiMessageBuilder();
                 $multi_message->add(new TextMessageBuilder('了解しました！'));
                 $multi_message->add(new TextMessageBuilder(
-                    'これら全ての通知の設定を変更したい場合は、メニューの「設定」->「通知の設定」から変更することができます！',
+                    '通知の設定を変更したい場合は、メニューの「設定」->「通知の設定」から変更することができます！',
                     new QuickReplyMessageBuilder([
                         new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('了解！', '了解！'))
                     ])
