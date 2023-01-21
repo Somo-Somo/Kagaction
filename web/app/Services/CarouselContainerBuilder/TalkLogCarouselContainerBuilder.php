@@ -39,9 +39,10 @@ class TalkLogCarouselContainerBuilder
         $date_array = [$date_emoji_component, $date_text_component];
         $body_box_array[] = new BoxComponentBuilder('baseline', $date_array);
 
-        $condition_emoji = '💪 :';
+        $condition_emoji = '調子 :';
         $condition_emoji_component = new TextComponentBuilder($condition_emoji, 0);
-        $condition_emoji_component->setSize('md');
+        $condition_emoji_component->setSize('xs');
+        $condition_emoji_component->setWeight('bold');
 
         $condition_text = Condition::CONDITION_EMOJI[$condition->evaluation];
         $condition_text_component  = new TextComponentBuilder($condition_text);
@@ -52,11 +53,12 @@ class TalkLogCarouselContainerBuilder
         $condition_array = [$condition_emoji_component, $condition_text_component];
         $body_box_array[] = new BoxComponentBuilder('baseline', $condition_array);
 
-        $feeling_emoji = '❤️ :';
+        $feeling_emoji = '感情 :';
         $feeling_emoji_component = new TextComponentBuilder($feeling_emoji, 0);
-        $feeling_emoji_component->setSize('md');
+        $feeling_emoji_component->setSize('xs');
+        $feeling_emoji_component->setWeight('bold');
 
-        $feeling_text = $feeling ? Feeling::FEELING_EMOJI[$feeling->feeling_type] : 'なし';
+        $feeling_text = $feeling ? Feeling::FEELING_EMOJI[$feeling->feeling_type] : '記録なし';
         $feeling_text_component  = new TextComponentBuilder($feeling_text);
         $feeling_text_component->setMargin('sm');
         $feeling_text_component->setSize('md');
@@ -74,7 +76,7 @@ class TalkLogCarouselContainerBuilder
         $memo_title_component->setSize('xxs');
         $memo_title_component->setColor('#8c8c8c');
 
-        $memo_text = $diary ? $diary->detail : 'なし';
+        $memo_text = $diary ? $diary->detail : '記録なし';
         $memo_text_component  = new TextComponentBuilder($memo_text);
         $memo_text_component->setColor('#8c8c8c');
         $memo_text_component->setSize('xxs');
