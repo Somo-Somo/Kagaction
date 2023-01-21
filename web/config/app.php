@@ -138,14 +138,14 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'firebase_api_key' => env('FIREBASE_API_KEY'),
-    'firebase_auth_domain' => env('FIREBASE_auth_domain'),
-    'firebase_database_url' => env('FIREBASE_DATABASE_URL'),
-    'firebase_project_id' => env('FIREBASE_PROJECT_ID'),
-    'firebase_storage_bucket' => env('FIREBASE_STORAGE_BUCKET'),
-    'firebase_messageing_sender_id' => env('FIREBASE_MESSAGING_SENDER_ID'),
-    'firebase_app_id' => env('FIREBASE_APP_ID'),
-    'firebase_access_url' => env('FIREBASE_ACCESS_URL'),
+    'mix_firebase_api_key' => env('MIX_FIREBASE_API_KEY'),
+    'mix_firebase_auth_domain' => env('MIX_FIREBASE_auth_domain'),
+    'mix_firebase_database_url' => env('MIX_FIREBASE_DATABASE_URL'),
+    'mix_firebase_project_id' => env('MIX_FIREBASE_PROJECT_ID'),
+    'mix_firebase_storage_bucket' => env('MIX_FIREBASE_STORAGE_BUCKET'),
+    'mix_firebase_messageing_sender_id' => env('MIX_FIREBASE_MESSAGING_SENDER_ID'),
+    'mix_firebase_app_id' => env('MIX_FIREBASE_APP_ID'),
+    'mix_firebase_access_url' => env('MIX_FIREBASE_ACCESS_URL'),
 
     /*
     |--------------------------------------------------------------------------

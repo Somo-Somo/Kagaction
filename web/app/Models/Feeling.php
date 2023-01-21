@@ -225,11 +225,7 @@ class Feeling extends Model
 
         if ($op_num  === 0) {
             $messages[] = new TextMessageBuilder(
-                'このような感じで記録することができます！' . "\n" . '記録したい際はメニューから「話す」を押してください！',
-            );
-            $messages[] = new ImageMessageBuilder(
-                "https://s4.aconvert.com/convert/p3r68-cdx67/a9mf1-0poyp.png",
-                "https://s4.aconvert.com/convert/p3r68-cdx67/a9mf1-0poyp.png",
+                'というような感じで記録することができます！' . "\n" . '記録したい際はメニューから「話す」を押してください！',
                 new QuickReplyMessageBuilder([
                     new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('了解！', '了解！'))
                 ])

@@ -40,7 +40,7 @@ class ImageReport extends Model
             ->where('start_day', $start_day)
             ->where('end_day', $end_day)
             ->first();
-        $url = config('app.firebase_access_url');
+        $url = config('app.mix_firebase_access_url');
         $image_url = $image_report ?
             $url . "/o/users%2F" . $user_uuid . "%2Fimages%2Fweekly_report%2F" . $start_day . $end_day . ".png?alt=media&token=" . $image_report->token
             : null;

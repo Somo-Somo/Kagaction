@@ -53,7 +53,7 @@ class Onboarding extends Model
         $multi_message = new MultiMessageBuilder();
         $multi_message->add(new TextMessageBuilder($nickname . 'とお呼びしたら良いのですね！' . "\n" . '答えてくれてありがとうございます🙇‍♂️'));
         $multi_message->add(new TextMessageBuilder(
-            'このアガトンではアガトンとのチャットでの会話を通して、その日の自分の調子や感情を簡単に記録することができます！',
+            'このアガトンではチャットでの会話を通して、その日の自分の調子や感情を簡単に記録することができます。',
             new QuickReplyMessageBuilder([
                 new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('なるほど', 'なるほど'))
             ])
@@ -70,7 +70,7 @@ class Onboarding extends Model
     {
         $multi_message = new MultiMessageBuilder();
         $multi_message->add(new TextMessageBuilder(
-            'どのような会話の感じで記録していくのか実際に体験してみましょう！',
+            'どのような形で会話して記録していくのか実際に体験してみましょう！',
             new QuickReplyMessageBuilder([
                 new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('OK！', 'OK！'))
             ])
@@ -85,7 +85,7 @@ class Onboarding extends Model
      */
     public static function askConditionInDemo(string $nickname)
     {
-        $ask_message = $nickname . 'の今の調子はどうですか？' . "\n" . 'この5つの中からタップしてお選びください！';
+        $ask_message = $nickname . 'さんの今の調子はどうですか？' . "\n" . 'この5つの中からタップしてお選びください！';
         $carousel_container = SelectInTalkCarouselContainerBuilder::createSelectInTalkBubbleContainer(Condition::CAROUSEL);
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
         $multi_message->add(new TextMessageBuilder($ask_message));
@@ -107,11 +107,14 @@ class Onboarding extends Model
         $multi_message->add(new TextMessageBuilder(
             $about_diffrent
         ));
+        $image_url = config('app.env') === 'production' ?
+            config('app.mix_firebase_access_url') . '/o/onboarding%2Fselect_talk_about.jpg?alt=media&token=32ee6db3-bd06-4c8d-ad1e-c0b1bcbdacfb' :
+            config('app.mix_firebase_access_url') . '/o/onboarding%2Fselect_talk_about.jpg?alt=media&token=6f6e30a4-fb72-4ed9-a10b-29224dd229bf';
         $multi_message->add(new ImageMessageBuilder(
-            'https://s4.aconvert.com/convert/p3r68-cdx67/a1jg1-iljs3.png',
-            'https://s4.aconvert.com/convert/p3r68-cdx67/a1jg1-iljs3.png',
+            $image_url,
+            $image_url,
             new QuickReplyMessageBuilder([
-                new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('了解！', '了解！'))
+                new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('なるほど！', 'なるほど！'))
             ])
         ));
         return  $multi_message;
@@ -124,13 +127,17 @@ class Onboarding extends Model
      */
     public static function explainWeeklyReport()
     {
+        $image_url = config('app.env') === 'production' ?
+            config('app.mix_firebase_access_url') . '/o/onboarding%2Fweekly_report.png?alt=media&token=22249168-826f-4b66-95c6-a996251bfcf9' :
+            config('app.mix_firebase_access_url') . '/o/onboarding%2Fweekly_report.png?alt=media&token=293fcb05-a919-4ce4-a7fe-9d41c7c05385';
+
         $multi_message = new \LINE\LINEBot\MessageBuilder\MultiMessageBuilder();
-        $multi_message->add(new TextMessageBuilder('そして、これらの記録した調子や感情をもとに毎週日曜日に週のレポートとし色で表したグラフの画像を生成して送信します。'));
+        $multi_message->add(new TextMessageBuilder('また、毎週日曜日に記録した調子や感情をもとに生成した画像を週のレポートとして送信します。'));
         $multi_message->add(new ImageMessageBuilder(
-            'https://s4.aconvert.com/convert/p3r68-cdx67/aq3q0-804c2.png',
-            'https://s4.aconvert.com/convert/p3r68-cdx67/aq3q0-804c2.png',
+            $image_url,
+            $image_url,
             new QuickReplyMessageBuilder([
-                new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('なるほど！', 'なるほど！'))
+                new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('了解！', '了解！'))
             ])
         ));
         return  $multi_message;

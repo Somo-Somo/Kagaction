@@ -2,6 +2,7 @@
 
 namespace App\Services\CarouselContainerBuilder;
 
+use Illuminate\Support\Facades\Log;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\BoxComponentBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\ImageComponentBuilder;
 use LINE\LINEBot\MessageBuilder\Flex\ComponentBuilder\TextComponentBuilder;
@@ -22,7 +23,10 @@ class SelectInTalkCarouselContainerBuilder
     {
         $bubble_container_builders = [];
         foreach ($carousels as $key => $value) {
-            $img_component_builders = new ImageComponentBuilder($value['image_url']);
+            $image_url = config('app.env') === 'production' ?
+                $value['image_url']['production'] : $value['image_url']['local'];
+            $url = config('app.mix_firebase_access_url') . $image_url;
+            $img_component_builders = new ImageComponentBuilder($url);
             $img_component_builders->setSize('xs');
             $img_component_builders->setOffsetTop('8px');
             $text_component_builders = new TextComponentBuilder($value['text']);

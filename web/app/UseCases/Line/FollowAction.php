@@ -5,6 +5,7 @@ namespace App\UseCases\Line;
 use App\Models\User;
 use App\Models\Question;
 use App\Models\Onboarding;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;

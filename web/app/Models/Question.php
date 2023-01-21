@@ -114,19 +114,19 @@ class Question extends Model
         if ($question->operation_type === 0 || $question->operation_type === 1) {
             $time = '今';
             $ask =  '今どんなことをしていましたか？';
-            $soso_gobi_response = 'なんですね！';
-            $bad_gobi_response = 'いんですね！';
+            $soso_gobi_response = 'なんですね。';
+            $bad_gobi_response = 'いんですね。';
         } else {
             $time = '今日';
             $ask =  '今日はどのようなことをしていましたか？';
-            $soso_gobi_response = 'だったんですね！';
-            $bad_gobi_response = 'かったんですね！';
+            $soso_gobi_response = 'だったんですね。';
+            $bad_gobi_response = 'かったんですね。';
         }
 
         if ($condition_value === '絶好調') {
-            $ask_what_is_happened = 'それはもう天才ですね！' . "\n" . $ask . "\n" . 'アガトンにも教えて欲しいです！';
+            $ask_what_is_happened = '絶好調！！それはもう天才ですね。' . "\n" . $ask . "\n" . 'アガトンにも教えて欲しいです！';
         } else if ($condition_value === '好調') {
-            $ask_what_is_happened = 'それは最高ですね！' . "\n" . $ask . "\n" . 'アガトンにも教えて欲しいです！';
+            $ask_what_is_happened = '好調！！それは最高ですね。' . "\n" . $ask . "\n" . 'アガトンにも教えて欲しいです！';
         } else if ($condition_value === 'まあまあ') {
             $ask_what_is_happened = $time . 'はまあまあな調子' . $soso_gobi_response . "\n" . 'ちなみに' . $ask;
         } else if ($condition_value === '不調') {
@@ -153,7 +153,7 @@ class Question extends Model
         }
 
         // $first_message = $get_text . 'のですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
-        $first_message = 'なるほど！そのようなことを' . $time . 'していたのですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
+        $first_message = 'なるほど！そのようなことを' . $time . 'していたのですね。' . "\n" . 'アガトンに教えてくれてありがとうございます！';
         // $ask_message = $get_text . '時の気持ちを表すものがこの中にあったりしますか？';
         $ask_message =  'そのことをしていた時の気持ちに最も近いものをこの中から選んでください！';
         $quick_reply_buttons = Feeling::feelingQuickReplyBtn();
