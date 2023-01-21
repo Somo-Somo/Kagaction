@@ -279,9 +279,10 @@ class Feeling extends Model
      */
     public static function questionAfterAskAboutFeelingIfGlad(User $user, int $op_num)
     {
+        $user_name = $user->nickname ? $user->nickname : $user->name;
         return [
             new TextMessageBuilder('嬉しい気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '!アガトンもなんだか嬉しいです！'),
-            new TextMessageBuilder('どんなところが' . $user->name . 'さんにとって嬉しかったですか？')
+            new TextMessageBuilder('どんなところが' . $user_name . 'さんにとって嬉しかったですか？')
         ];
     }
 
@@ -342,9 +343,10 @@ class Feeling extends Model
      */
     public static function questionAfterAskAboutFeelingIfCalm(User $user, int $op_num)
     {
+        $user_name = $user->nickname ? $user->nickname : $user->name;
         return [
             new TextMessageBuilder('穏やかな気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '!'),
-            new TextMessageBuilder('どんなことが' . $user->name . 'さんを穏やかな気持ちにさせていますか？')
+            new TextMessageBuilder('なぜ穏やかな気持ちになりましたか？')
         ];
     }
 
@@ -405,9 +407,10 @@ class Feeling extends Model
      */
     public static function questionAfterAskAboutFeelingIfAnxious(User $user, int $op_num)
     {
+        $user_name = $user->nickname ? $user->nickname : $user->name;
         return [
             new TextMessageBuilder('不安な気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '。アガトンもよく不安になります。'),
-            new TextMessageBuilder($user->name . 'さんが今不安に思うことを全部アガトンに吐き出してみてください！')
+            new TextMessageBuilder($user_name . 'さんが今不安に思うことを全部アガトンに吐き出してみてください！')
         ];
     }
 
@@ -451,8 +454,9 @@ class Feeling extends Model
      */
     public static function thanksMessageWhenHard(User $user, int $op_num)
     {
+        $user_name = $user->nickname ? $user->nickname : $user->name;
         return [
-            new TextMessageBuilder('だから' . $user->name . 'さんは辛い感情' . Feeling::RESPONSE_GOBI[$op_num] . '。'),
+            new TextMessageBuilder('だから' . $user_name . 'さんは辛い感情' . Feeling::RESPONSE_GOBI[$op_num] . '。'),
             new TextMessageBuilder('アガトンにも教えてくれてありがとうございます！'),
         ];
     }
@@ -471,8 +475,9 @@ class Feeling extends Model
      */
     public static function questionAfterAskAboutFeelingIfSadness(User $user, int $op_num)
     {
+        $user_name = $user->nickname ? $user->nickname : $user->name;
         return [
-            new TextMessageBuilder($user->name . 'さんは今悲しい気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '。'),
+            new TextMessageBuilder($user_name . 'さんは今悲しい気持ち' . Feeling::RESPONSE_GOBI[$op_num] . '。'),
             new TextMessageBuilder('どんなことに悲しいと感じましたか？')
         ];
     }

@@ -155,7 +155,7 @@ class Question extends Model
         // $first_message = $get_text . 'のですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
         $first_message = 'なるほど！そのようなことを' . $time . 'していたのですね！' . "\n" . 'アガトンに教えてくれてありがとうございます！';
         // $ask_message = $get_text . '時の気持ちを表すものがこの中にあったりしますか？';
-        $ask_message =  'そのことをしていた時の気持ちを表すものがこの中にあったりしますか？';
+        $ask_message =  'そのことをしていた時の気持ちに最も近いものをこの中から選んでください！';
         $quick_reply_buttons = Feeling::feelingQuickReplyBtn();
         if ($question->condition->evaluation < 3) krsort($quick_reply_buttons);
         $quick_reply_message_builder = new QuickReplyMessageBuilder($quick_reply_buttons);

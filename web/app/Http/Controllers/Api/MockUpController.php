@@ -152,8 +152,8 @@ class MockUpController extends Controller
                         new FlexMessageBuilder('メニュー: その他', OtherMenuCarouselContainerBuilder::createCarouselContainerBuilder())
                     );
                     $question->update([
-                        'operation_type' => 0,
-                        'order_number' => 1
+                        'operation_type' => null,
+                        'order_number' => null
                     ]);
                 } else if ($question->operation_type === 0) {
                     $onboarding = new OnboardingAction();
