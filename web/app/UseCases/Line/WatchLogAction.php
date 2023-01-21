@@ -66,7 +66,6 @@ class WatchLogAction
         }
         $conditions = Condition::where('user_uuid', $user->uuid)->whereDate('date', '>=', $start_day)->whereDate('date', '<=', $end_day)->get();
         $talk_log_carousel_columns = [];
-        Log::debug((array)$conditions);
         foreach ($conditions as $condition) {
             $feeling = Feeling::where('condition_id', $condition->id)->first();
             $diary = Diary::where('condition_id', $condition->id)->first();
