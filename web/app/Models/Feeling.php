@@ -239,7 +239,7 @@ class Feeling extends Model
             // );
         } else if ($op_num  === 1) {
             $messages[] = new TextMessageBuilder('これからもアガトンに色々お話してくれると嬉しいです！');
-            $messages[] = new TextMessageBuilder('これで「話す」を終わります！');
+            $messages[] = new TextMessageBuilder('これで「今の調子や気持ちについて話す」を終了します。');
         } else if ($op_num  === 2) {
             $quick_reply_button = [
                 new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('振り返る', '振り返る')),

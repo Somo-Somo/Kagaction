@@ -198,7 +198,7 @@ class MockUpController extends Controller
                         $multi_message = new MultiMessageBuilder();
                         $multi_message->add(new TextMessageBuilder('今日も一日お疲れ様でした！'));
                         $multi_message->add(new TextMessageBuilder('これからもアガトンに色々お話してくれると嬉しいです！'));
-                        $multi_message->add(new TextMessageBuilder('これで「振り返る」を終わるね！バイバイ！'));
+                        $multi_message->add(new TextMessageBuilder('これで「今日の振り返り」を終了します。'));
                         $this->bot->replyMessage($event->getReplyToken(), $multi_message);
                         $question->update(['operation_type' => null, 'order_number' => null, 'condition_id' => null, 'feeling_id' => null]);
                     }
