@@ -131,8 +131,8 @@ class MockUpController extends Controller
                         new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📝 先週の記録',  '先週の記録')),
                         new QuickReplyButtonBuilder(new MessageTemplateActionBuilder('📝 今週の記録',  '今週の記録')),
                     ]);
-                    $start_day = $today->subWeek()->startOfWeek()->toDateString();
-                    $end_day = $today->subWeek()->endOfWeek()->toDateString();
+                    $start_day = $today->copy()->subWeek()->startOfWeek()->toDateString();
+                    $end_day = $today->copy()->subWeek()->endOfWeek()->toDateString();
                     $image_url = ImageReport::getWeeklyImageReportUrl($user->uuid, $start_day, $end_day);
                     $multi_message = new MultiMessageBuilder();
                     if ($image_url) {

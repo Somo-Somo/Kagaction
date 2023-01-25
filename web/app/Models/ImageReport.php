@@ -37,8 +37,8 @@ class ImageReport extends Model
     public static function getWeeklyImageReportUrl(string $user_uuid, string $start_day, string $end_day)
     {
         $image_report = ImageReport::where('user_uuid', $user_uuid)
-            ->where('start_day', $start_day)
-            ->where('end_day', $end_day)
+            ->where('start_day', '=', $start_day)
+            ->where('end_day', '=', $end_day)
             ->first();
         $url = config('app.mix_firebase_access_url');
         $image_url = $image_report ?
