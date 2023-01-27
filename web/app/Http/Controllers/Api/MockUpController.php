@@ -17,6 +17,7 @@ use App\Services\LineBotService;
 use App\Services\CarouselContainerBuilder\OtherMenuCarouselContainerBuilder;
 use App\UseCases\Line\OnboardingAction;
 use App\UseCases\Line\WatchLogAction;
+use App\UseCases\Line\WeeklyReportNotificationAction;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
@@ -155,6 +156,11 @@ class MockUpController extends Controller
                         'operation_type' => null,
                         'order_number' => null
                     ]);
+                } else if ($event->getText() === 'テスト') {
+                    $usecase = new WeeklyReportNotificationAction();
+                    $usecase->invoke($event);
+                    return;
+                    // $this->bot->replyText($event->getReplyToken(), 'テスト');
                 } else if ($question->operation_type === 0) {
                     $onboarding = new OnboardingAction();
                     $onboarding->invoke($user, $question, $event);
