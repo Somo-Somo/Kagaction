@@ -24,7 +24,7 @@ class ConditionFactory extends Factory
     {
         return [
             'evaluation' => rand(1, 5),
-            'date' => Carbon::yesterday(),
+            'date' => new Carbon('-1 weeks'),
             'time' => date('H:i:s'),
         ];
     }

@@ -40,7 +40,7 @@ class FeelingFactory extends Factory
         $feeling = $feelings[rand(0, count($feelings) - 1)];
         return [
             'feeling_type' => $feeling,
-            'date' => Carbon::yesterday(),
+            'date' => new Carbon('-1 weeks'),
             'time' => date('H:i:s'),
         ];
     }

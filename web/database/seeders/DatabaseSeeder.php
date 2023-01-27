@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::factory(3)->create()->each(function ($user) {
-            Condition::factory(3)->create(['user_uuid' => $user->uuid])->each(
+        User::factory(2)->create()->each(function ($user) {
+            Condition::factory(12)->create(['user_uuid' => $user->uuid])->each(
                 function ($condition) {
                     Feeling::factory(1)->create(['user_uuid' => $condition->user_uuid, 'condition_id' => $condition->id]);
                 }
