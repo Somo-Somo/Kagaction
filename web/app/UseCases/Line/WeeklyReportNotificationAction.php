@@ -50,7 +50,7 @@ class WeeklyReportNotificationAction
         $end_day = $today->copy()->subWeek()->endOfWeek()->toDateString();
         $datetime = new DateTime();
         $time = $datetime->format('H') . ':00:00';
-        $recive_notifications = WeeklyReportNotification::where('time', '09:00:00')->get();
+        $recive_notifications = WeeklyReportNotification::where('time', $time)->get();
         if (count($recive_notifications) > 0) {
             Log::info('has');
             foreach ($recive_notifications as  $recive_notification) {
@@ -128,10 +128,10 @@ class WeeklyReportNotificationAction
                         }
                         $text = $condition_text . "\n" . $feeling_text;
                         $multi_message = new MultiMessageBuilder();
-                        $multi_message->add(new TextMessageBuilder($start_day . ' ~ ' . $end_day . 'までの週間レポート'));
+                        $multi_message->add(new TextMessageBuilder($start_day . ' ~ ' . $end_day . 'の週間レポート'));
                         $multi_message->add(new TextMessageBuilder($text));
                         $multi_message->add(new ImageMessageBuilder($image_url, $image_url));
-                        $this->bot->pushMessage('U49669ef1e05a33be44e450d020d23504', $multi_message);
+                        $this->bot->pushMessage($user->line_id, $multi_message);
                     }
                 }
             }
