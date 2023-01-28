@@ -5,13 +5,12 @@ namespace App\UseCases\Line;
 use App\Models\Condition;
 use App\Models\Feeling;
 use App\Models\ImageReport;
-use App\Models\Question;
 use App\Models\WeeklyReportNotification;
 use Carbon\Carbon;
+use DateTime;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
 use Illuminate\Support\Facades\Log;
-use DateTime;
 use LINE\LINEBot\MessageBuilder\ImageMessageBuilder;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
@@ -49,6 +48,8 @@ class WeeklyReportNotificationAction
         $today = Carbon::today();
         $start_day = $today->copy()->subWeek()->startOfWeek()->toDateString();
         $end_day = $today->copy()->subWeek()->endOfWeek()->toDateString();
+        $datetime = new DateTime();
+        $time = $datetime->format('H') . ':00:00';
         $recive_notifications = WeeklyReportNotification::where('time', '09:00:00')->get();
         if (count($recive_notifications) > 0) {
             Log::info('has');
@@ -129,7 +130,7 @@ class WeeklyReportNotificationAction
                         $multi_message->add(new TextMessageBuilder($start_day . ' ~ ' . $end_day . 'までの週間レポート'));
                         $multi_message->add(new TextMessageBuilder($text));
                         $multi_message->add(new ImageMessageBuilder($image_url, $image_url));
-                        $this->bot->pushMessage($user->line_id, $multi_message);
+                        $this->bot->pushMessage('U49669ef1e05a33be44e450d020d23504', $multi_message);
                     }
                 }
             }
