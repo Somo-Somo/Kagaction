@@ -79,12 +79,12 @@ class Feeling extends Model
         'tired' => '😫 疲れた',
         'angry' => '😠 イライラ',
         'lethargic' => '😑 無気力',
-        // 'moyamoya' => '🤔 もやもや',
+        'moyamoya' => '🤔 もやもや',
         // 'kuyashi' => '😤 悔しい',
     ];
 
     const RESPONSE_GOBI = [
-        'なんですね', 'なんですね', 'だったんですね'
+        'なんですね', 'なんですね', 'だったんですね', 'だったんですね',
     ];
 
     /**

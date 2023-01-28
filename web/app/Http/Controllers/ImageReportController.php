@@ -24,25 +24,23 @@ class ImageReportController extends Controller
         Carbon::setWeekStartsAt(Carbon::SUNDAY); // 週の最初を日曜日に設定
         Carbon::setWeekEndsAt(Carbon::SATURDAY); // 週の最後を土曜日に設定
         $today = Carbon::today();
-        $eightDayAgo = Carbon::today()->subDay(8);
-        $thisWeekConditions = Condition::whereDate('date', '>=', $eightDayAgo)
-            ->whereDate('date', '<', $today)
+        $start_day = $today->copy()->subWeek()->startOfWeek()->toDateString();
+        $end_day = $today->copy()->subWeek()->endOfWeek()->toDateString();
+        $thisWeekConditions = Condition::whereDate('date', '>=', $start_day)
+            ->whereDate('date', '<', $end_day)
             ->get();
         $userConditions = $thisWeekConditions->groupBy('user_uuid')->toArray();
-        $thisWeekFeelings = Feeling::whereDate('date', '>=', $eightDayAgo)
-            ->whereDate('date', '<', $today)
+        $thisWeekFeelings = Feeling::whereDate('date', '>=', $start_day)
+            ->whereDate('date', '<', $end_day)
             ->get();
         $userFeelings = $thisWeekFeelings->groupBy('user_uuid')->toArray();
-
-        $weekStartDay = $eightDayAgo->startOfWeek()->toDateString();
-        $weekEndDay = $eightDayAgo->endOfWeek()->toDateString();
 
         $data = [
             'conditions' => $userConditions,
             'feelings' => $userFeelings,
             'period' => [
-                'start' => $weekStartDay,
-                'end' => $weekEndDay,
+                'start' => $start_day,
+                'end' => $end_day,
             ]
         ];
         return response()->json($data, Response::HTTP_OK);

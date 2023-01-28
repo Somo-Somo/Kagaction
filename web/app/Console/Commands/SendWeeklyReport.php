@@ -2,19 +2,19 @@
 
 namespace App\Console\Commands;
 
-use App\UseCases\Line\Habit\UpdateHabitDate;
+use App\UseCases\Line\WeeklyReportNotificationAction;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 
-class UpdateHabitDateBatch extends Command
+class SendWeeklyReport extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'batch:update-habit-date';
+    protected $signature = 'send-weekly-report';
 
     /**
      * The console command description.
@@ -40,9 +40,9 @@ class UpdateHabitDateBatch extends Command
      */
     public function handle()
     {
-        Log::info('update-habit-date');
-        $update_habit_date = new UpdateHabitDate();
-        $update_habit_date->invoke();
+        Log::info('send-weekly-report');
+        $weekly_report_notification = new WeeklyReportNotificationAction();
+        $weekly_report_notification->invoke();
         return 0;
     }
 }
