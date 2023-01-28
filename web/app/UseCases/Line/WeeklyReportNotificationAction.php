@@ -60,6 +60,7 @@ class WeeklyReportNotificationAction
                     $start_day,
                     $end_day
                 );
+                Log::debug($image_url);
                 if ($image_url) {
                     $last_week_conditions = Condition::where('user_uuid', $user->uuid)
                         ->whereDate('date', '>=', $start_day)
