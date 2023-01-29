@@ -3,18 +3,15 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\User;
-use App\Repositories\User\UserRepositoryInterface;
-use Illuminate\Support\Facades\Log;
 
-class RunningHerokuAndNeo4j extends Command
+class SendKaizenForm extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:running-heroku-and-neo4j';
+    protected $signature = 'send-kaizen-form';
 
     /**
      * The console command description.
@@ -33,10 +30,9 @@ class RunningHerokuAndNeo4j extends Command
      *
      * @return void
      */
-    public function __construct(UserRepositoryInterface $user_repository_interface)
+    public function __construct()
     {
         parent::__construct();
-        $this->user_repository = $user_repository_interface;
     }
 
     /**
@@ -46,8 +42,7 @@ class RunningHerokuAndNeo4j extends Command
      */
     public function handle()
     {
-        $this->user_repository->getUserHasProjetAndTodo(env('TEST_USER_UUID'));
-        User::where('uuid', env('TEST_USER_UUID'))->first();
+
         return;
     }
 }
