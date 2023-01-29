@@ -157,10 +157,13 @@ class MockUpController extends Controller
                         'order_number' => null
                     ]);
                 } else if ($event->getText() === 'テスト') {
-                    $usecase = new WeeklyReportNotificationAction();
-                    $usecase->invoke($event);
+                    // $url = ImageReport::getWeeklyImageReportUrl(
+                    //     $user->uuid,
+                    //     $today->copy()->subWeek()->startOfWeek()->toDateString(),
+                    //     $today->copy()->subWeek()->endOfWeek()->toDateString()
+                    // );
+                    // $this->bot->replyText($event->getReplyToken(), $url);
                     return;
-                    // $this->bot->replyText($event->getReplyToken(), 'テスト');
                 } else if ($question->operation_type === 0) {
                     $onboarding = new OnboardingAction();
                     $onboarding->invoke($user, $question, $event);
