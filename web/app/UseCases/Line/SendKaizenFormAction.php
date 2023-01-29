@@ -48,7 +48,7 @@ class SendKaizenFormAction
             foreach ($users as $key => $user) {
                 $multi_message = new MultiMessageBuilder();
                 $multi_message->add(new TextMessageBuilder(
-                    '1週間アガトンα版をご利用いただきありがとうございました。'
+                    '1週間アガトンα版をご利用いただきありがとうございます。'
                         . "\n" . '使いづらかった部分や改善点がございましたらこちらのフォームの詳細からご入力いただけると嬉しいです！'
                 ));
                 $multi_message->add(new TextMessageBuilder('https://forms.gle/GaK15x3oDPnDUNCw8'));
