@@ -43,9 +43,8 @@ class SendKaizenFormAction
         Carbon::setWeekEndsAt(Carbon::SATURDAY); // 週の最後を土曜日に設定
         $today = Carbon::today();
         $users = User::whereDate('created_at', $today->copy()->subWeek())->get();
-        Log::debug((array)$users);
         if (count($users) > 0) {
-            foreach ($users as $key => $user) {
+            foreach ($users as $user) {
                 $multi_message = new MultiMessageBuilder();
                 $multi_message->add(new TextMessageBuilder(
                     '1週間アガトンα版をご利用いただきありがとうございます。'
