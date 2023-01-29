@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\UseCases\Line\SendKaizenFormAction;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class SendKaizenForm extends Command
 {
@@ -21,7 +20,6 @@ class SendKaizenForm extends Command
      * @var string
      */
     protected $description = 'Command description';
-
 
     /**
      * Create a new command instance.
@@ -40,9 +38,8 @@ class SendKaizenForm extends Command
      */
     public function handle()
     {
-        Log::info('send-kaizen-form');
         $send_kaizen_form = new SendKaizenFormAction();
         $send_kaizen_form->invoke();
-        return;
+        return 0;
     }
 }
