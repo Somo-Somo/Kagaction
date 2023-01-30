@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\UseCases\Line\WeeklyReportNotificationAction;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
 
 
@@ -41,8 +42,10 @@ class SendWeeklyReport extends Command
     public function handle()
     {
         Log::info('send-weekly-report');
-        $weekly_report_notification = new WeeklyReportNotificationAction();
-        $weekly_report_notification->invoke();
+        if (intval(date('w')) === 0) {
+            $weekly_report_notification = new WeeklyReportNotificationAction();
+            $weekly_report_notification->invoke();
+        }
         return 0;
     }
 }
